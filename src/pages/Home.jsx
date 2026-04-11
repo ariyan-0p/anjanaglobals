@@ -16,11 +16,41 @@ import './Home.css'
 const heroImgBaliFresh = `${heroImgBali}?v=2`
 
 const heroSlides = [
-  { image: heroImgDubai, dest: 'Dubai, UAE', tag: 'Middle East' },
-  { image: heroImgBaliFresh, dest: 'Bali, Indonesia', tag: 'Southeast Asia' },
-  { image: heroImgSingapore, dest: 'Singapore', tag: 'City State' },
-  { image: heroImgBaku, dest: 'Baku, Azerbaijan', tag: 'Land of Fire' },
-  { image: heroImgKualaLumpur, dest: 'Kuala Lumpur, Malaysia', tag: 'Truly Asia' },
+  {
+    image: heroImgDubai,
+    dest: 'Dubai, UAE',
+    tag: 'Middle East',
+    title: 'The destination specialist trusted by',
+    accent: 'partners and travellers',
+  },
+  {
+    image: heroImgBaliFresh,
+    dest: 'Bali, Indonesia',
+    tag: 'Southeast Asia',
+    title: 'We plan journeys with',
+    accent: 'precision and warmth',
+  },
+  {
+    image: heroImgSingapore,
+    dest: 'Singapore',
+    tag: 'City State',
+    title: 'From first quote to final transfer,',
+    accent: 'everything just works',
+  },
+  {
+    image: heroImgBaku,
+    dest: 'Baku, Azerbaijan',
+    tag: 'Land of Fire',
+    title: 'Built on reliability and relationships —',
+    accent: 'trusted since 2003',
+  },
+  {
+    image: heroImgKualaLumpur,
+    dest: 'Kuala Lumpur, Malaysia',
+    tag: 'Truly Asia',
+    title: 'One brand. Five destinations.',
+    accent: 'consistently exceptional delivery',
+  },
 ]
 
 const stats = [
@@ -171,15 +201,10 @@ export default function Home() {
             </div>
 
             <h1 className="home-hero__title">
-              Beyond destinations.
+              {heroSlides[currentSlide].title}
               <br />
-              <span className="home-hero__title-accent">Exceptional</span> experiences.
+              <span className="home-hero__title-accent">{heroSlides[currentSlide].accent}</span>
             </h1>
-
-            <p className="home-hero__lead">
-              Trusted DMC across the Middle East & Asia since 2003 — for travel professionals and
-              travellers who expect precision, warmth, and depth.
-            </p>
 
             <div className="home-hero__actions">
               <Link to="/destinations" className="btn-primary">
