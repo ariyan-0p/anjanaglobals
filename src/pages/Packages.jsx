@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Clock, CheckCircle, ArrowRight, ChevronRight, Filter } from 'lucide-react'
 import { packages } from '../data/packages'
@@ -10,6 +10,14 @@ export default function Packages() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeDest, setActiveDest] = useState('All')
   const [selected, setSelected] = useState(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   const filtered = packages.filter(p => {
     const catMatch = activeCategory === 'All' || p.category?.toLowerCase() === activeCategory.toLowerCase()
@@ -36,10 +44,10 @@ export default function Packages() {
       </div>
 
       {/* Filters */}
-      <div style={{ background: 'white', borderBottom: '1px solid #E5E7EB', padding: '20px 0', position: 'sticky', top: '70px', zIndex: 100 }}>
+      <div style={{ background: 'white', borderBottom: '1px solid #E5E7EB', padding: isMobile ? '14px 0' : '20px 0', position: isMobile ? 'static' : 'sticky', top: '70px', zIndex: 100 }}>
         <div className="container">
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6B7280', fontSize: '13px', fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6B7280', fontSize: '13px', fontFamily: 'var(--font-body)', flexShrink: 0 }}>
               <Filter size={15} />
               <span style={{ fontWeight: '700' }}>Filter by:</span>
             </div>
@@ -53,14 +61,14 @@ export default function Packages() {
                     background: activeDest === d ? '#C8102E' : '#F3F4F6',
                     color: activeDest === d ? 'white' : '#374151',
                     border: 'none', fontSize: '13px', fontWeight: '600',
-                    cursor: 'pointer', transition: 'all 0.2s', fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'var(--font-body)',
                   }}
                 >
                   {d}
                 </button>
               ))}
             </div>
-            <div style={{ width: '1px', height: '20px', background: '#E5E7EB' }} />
+            {!isMobile && <div style={{ width: '1px', height: '20px', background: '#E5E7EB' }} />}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {categories.map(c => (
                 <button
@@ -72,14 +80,14 @@ export default function Packages() {
                     color: activeCategory === c ? 'white' : '#6B7280',
                     border: activeCategory === c ? 'none' : '1px solid #E5E7EB',
                     fontSize: '12px', fontWeight: '600',
-                    cursor: 'pointer', transition: 'all 0.2s', fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'var(--font-body)',
                   }}
                 >
                   {c}
                 </button>
               ))}
             </div>
-            <span style={{ marginLeft: 'auto', fontSize: '13px', color: '#9CA3AF', fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+            <span style={{ marginLeft: 'auto', fontSize: '13px', color: '#9CA3AF', fontFamily: 'var(--font-body)', flexShrink: 0 }}>
               {filtered.length} package{filtered.length !== 1 ? 's' : ''} found
             </span>
           </div>
@@ -87,7 +95,7 @@ export default function Packages() {
       </div>
 
       {/* Packages Grid */}
-      <section style={{ padding: '60px 0 100px', background: '#F8F7F4', minHeight: '600px' }}>
+      <section style={{ padding: 'clamp(44px, 7vw, 60px) 0 clamp(56px, 9vw, 100px)', background: '#F8F7F4', minHeight: '600px' }}>
         <div className="container">
           {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 0', color: '#9CA3AF' }}>
@@ -97,9 +105,9 @@ export default function Packages() {
               </button>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '22px' }}>
               {filtered.map(pkg => (
-                <PackageCard key={pkg.id} pkg={pkg} onExpand={() => setSelected(selected === pkg.id ? null : pkg.id)} expanded={selected === pkg.id} />
+                <PackageCard key={pkg.id} pkg={pkg} onExpand={() => setSelected(selected === pkg.id ? null : pkg.id)} expanded={selected === pkg.id} isMobile={isMobile} />
               ))}
             </div>
           )}
@@ -113,7 +121,7 @@ export default function Packages() {
           <h2 style={{ color: 'white', fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', margin: '0 auto 16px', maxWidth: '600px' }}>
             We Build Custom Itineraries Too
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '16px', marginBottom: '32px', fontFamily: "'Inter', sans-serif", maxWidth: '500px', margin: '0 auto 32px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '16px', marginBottom: '32px', fontFamily: 'var(--font-body)', maxWidth: '500px', margin: '0 auto 32px' }}>
             Tell us your dates, budget, and dream experience — we'll build the perfect trip around you.
           </p>
           <Link to="/contact" className="btn-primary" style={{ padding: '16px 40px' }}>
@@ -125,7 +133,7 @@ export default function Packages() {
   )
 }
 
-function PackageCard({ pkg, onExpand, expanded }) {
+function PackageCard({ pkg, onExpand, expanded, isMobile }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -141,7 +149,7 @@ function PackageCard({ pkg, onExpand, expanded }) {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
-      <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: isMobile ? '200px' : '220px', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', inset: 0,
           background: `url(${pkg.image}) center/cover`,
@@ -154,7 +162,7 @@ function PackageCard({ pkg, onExpand, expanded }) {
             position: 'absolute', top: '16px', left: '16px',
             background: pkg.tagColor || '#C8102E',
             color: 'white', padding: '5px 14px', borderRadius: '100px',
-            fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', fontFamily: "'Inter', sans-serif",
+            fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', fontFamily: 'var(--font-body)',
           }}>
             {pkg.tag}
           </div>
@@ -164,18 +172,18 @@ function PackageCard({ pkg, onExpand, expanded }) {
           background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
           color: 'white', padding: '5px 12px', borderRadius: '100px',
           fontSize: '11px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px',
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: 'var(--font-body)',
         }}>
           <Clock size={11} /> {pkg.duration}
         </div>
       </div>
 
       {/* Content */}
-      <div style={{ padding: '26px' }}>
+      <div style={{ padding: isMobile ? '20px' : '26px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
           <MapPin size={13} color="#9CA3AF" />
-          <span style={{ fontSize: '12px', color: '#9CA3AF', fontWeight: '600', letterSpacing: '0.5px', fontFamily: "'Inter', sans-serif" }}>{pkg.destinationName}</span>
-          <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#B8963E', fontWeight: '700', background: '#FDF8F0', padding: '3px 10px', borderRadius: '100px', fontFamily: "'Inter', sans-serif" }}>
+          <span style={{ fontSize: '12px', color: '#9CA3AF', fontWeight: '600', letterSpacing: '0.5px', fontFamily: 'var(--font-body)' }}>{pkg.destinationName}</span>
+          <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#B8963E', fontWeight: '700', background: '#FDF8F0', padding: '3px 10px', borderRadius: '100px', fontFamily: 'var(--font-body)' }}>
             {pkg.type}
           </span>
         </div>
@@ -187,13 +195,13 @@ function PackageCard({ pkg, onExpand, expanded }) {
           {pkg.highlights.slice(0, expanded ? pkg.highlights.length : 3).map(h => (
             <div key={h} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
               <CheckCircle size={13} color="#10B981" style={{ flexShrink: 0 }} />
-              <span style={{ fontSize: '13px', color: '#4B5563', fontFamily: "'Inter', sans-serif" }}>{h}</span>
+              <span style={{ fontSize: '13px', color: '#4B5563', fontFamily: 'var(--font-body)' }}>{h}</span>
             </div>
           ))}
           {pkg.highlights.length > 3 && (
             <button
               onClick={onExpand}
-              style={{ background: 'none', border: 'none', color: '#C8102E', fontSize: '13px', fontWeight: '600', cursor: 'pointer', padding: '4px 0', fontFamily: "'Inter', sans-serif", display: 'flex', alignItems: 'center', gap: '4px' }}
+              style={{ background: 'none', border: 'none', color: '#C8102E', fontSize: '13px', fontWeight: '600', cursor: 'pointer', padding: '4px 0', fontFamily: 'var(--font-body)', display: 'flex', alignItems: 'center', gap: '4px' }}
             >
               {expanded ? '▲ Show less' : `+${pkg.highlights.length - 3} more highlights`}
             </button>
@@ -202,23 +210,23 @@ function PackageCard({ pkg, onExpand, expanded }) {
 
         {/* Inclusions */}
         <div style={{ padding: '12px', background: '#F8F7F4', borderRadius: '8px', marginBottom: '20px' }}>
-          <p style={{ fontSize: '11px', fontWeight: '700', color: '#9CA3AF', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: "'Inter', sans-serif" }}>Includes</p>
+          <p style={{ fontSize: '11px', fontWeight: '700', color: '#9CA3AF', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: 'var(--font-body)' }}>Includes</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {pkg.inclusions.slice(0, 4).map(inc => (
-              <span key={inc} style={{ fontSize: '12px', color: '#4B5563', background: 'white', border: '1px solid #E5E7EB', padding: '3px 10px', borderRadius: '100px', fontFamily: "'Inter', sans-serif" }}>
+              <span key={inc} style={{ fontSize: '12px', color: '#4B5563', background: 'white', border: '1px solid #E5E7EB', padding: '3px 10px', borderRadius: '100px', fontFamily: 'var(--font-body)' }}>
                 {inc}
               </span>
             ))}
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
+        <div style={{ display: 'flex', alignItems: isMobile ? 'stretch' : 'center', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '12px' : 0, justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
           <div>
-            <p style={{ fontSize: '11px', color: '#9CA3AF', marginBottom: '2px', fontFamily: "'Inter', sans-serif" }}>Starting from</p>
-            <p style={{ fontSize: '24px', fontWeight: '900', color: '#C8102E', fontFamily: "'Inter', sans-serif", lineHeight: 1 }}>{pkg.price}</p>
-            <p style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '2px', fontFamily: "'Inter', sans-serif" }}>{pkg.priceNote}</p>
+            <p style={{ fontSize: '11px', color: '#9CA3AF', marginBottom: '2px', fontFamily: 'var(--font-body)' }}>Starting from</p>
+            <p style={{ fontSize: '24px', fontWeight: '900', color: '#C8102E', fontFamily: 'var(--font-body)', lineHeight: 1 }}>{pkg.price}</p>
+            <p style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '2px', fontFamily: 'var(--font-body)' }}>{pkg.priceNote}</p>
           </div>
-          <Link to="/contact" className="btn-primary" style={{ padding: '11px 22px', fontSize: '12px' }}>
+          <Link to="/contact" className="btn-primary" style={{ padding: '11px 22px', fontSize: '12px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>
             Book Now <ChevronRight size={14} />
           </Link>
         </div>

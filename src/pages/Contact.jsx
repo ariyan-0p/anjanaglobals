@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, CheckCircle } from 'lucide-react'
 
@@ -35,6 +35,14 @@ const enquiryTypes = [
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -44,7 +52,7 @@ export default function Contact() {
   const inputStyle = {
     width: '100%', padding: '13px 16px',
     border: '1.5px solid #E5E7EB', borderRadius: '8px',
-    fontSize: '14px', fontFamily: "'Inter', sans-serif",
+    fontSize: '14px', fontFamily: 'var(--font-body)',
     outline: 'none', background: 'white',
     transition: 'border-color 0.2s, box-shadow 0.2s',
     color: '#1A1A2E',
@@ -53,7 +61,7 @@ export default function Contact() {
   const labelStyle = {
     fontSize: '12px', fontWeight: '700', color: '#374151',
     letterSpacing: '0.5px', display: 'block', marginBottom: '6px',
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: 'var(--font-body)',
   }
 
   const focusStyle = (e) => {
@@ -84,9 +92,9 @@ export default function Contact() {
       </div>
 
       {/* Quick contact bar */}
-      <div style={{ background: '#C8102E', padding: '20px 0' }}>
+      <div style={{ background: '#C8102E', padding: '18px 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', gap: '40px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: isMobile ? '18px' : '40px', justifyContent: 'center', flexWrap: 'wrap' }}>
             {[
               { icon: <Phone size={16} />, label: 'Call Us', value: '+91 98765 43210', href: 'tel:+919876543210' },
               { icon: <MessageCircle size={16} />, label: 'WhatsApp', value: '+91 98765 43210', href: 'https://wa.me/919876543210' },
@@ -96,11 +104,11 @@ export default function Contact() {
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ color: 'rgba(255,255,255,0.7)' }}>{item.icon}</div>
                 <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Inter', sans-serif" }}>{item.label}</p>
+                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>{item.label}</p>
                   {item.href ? (
-                    <a href={item.href} style={{ fontSize: '15px', color: 'white', fontWeight: '700', fontFamily: "'Inter', sans-serif", textDecoration: 'none' }}>{item.value}</a>
+                    <a href={item.href} style={{ fontSize: '15px', color: 'white', fontWeight: '700', fontFamily: 'var(--font-body)', textDecoration: 'none' }}>{item.value}</a>
                   ) : (
-                    <p style={{ fontSize: '15px', color: 'white', fontWeight: '700', fontFamily: "'Inter', sans-serif" }}>{item.value}</p>
+                    <p style={{ fontSize: '15px', color: 'white', fontWeight: '700', fontFamily: 'var(--font-body)' }}>{item.value}</p>
                   )}
                 </div>
               </div>
@@ -110,9 +118,9 @@ export default function Contact() {
       </div>
 
       {/* Main section */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: 'white' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 480px', gap: '80px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr minmax(320px, 480px)', gap: isMobile ? '28px' : '80px', alignItems: 'start' }}>
 
             {/* Form */}
             <div>
@@ -129,7 +137,7 @@ export default function Contact() {
                 }}>
                   <CheckCircle size={48} color="#10B981" style={{ margin: '0 auto 16px' }} />
                   <h3 style={{ fontSize: '22px', color: '#065F46', marginBottom: '12px' }}>Message Received!</h3>
-                  <p style={{ color: '#047857', fontSize: '15px', lineHeight: '1.7', fontFamily: "'Inter', sans-serif" }}>
+                  <p style={{ color: '#047857', fontSize: '15px', lineHeight: '1.7', fontFamily: 'var(--font-body)' }}>
                     Thank you for reaching out. Our team will get back to you within 2 hours during business hours.
                   </p>
                   <button
@@ -142,7 +150,7 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>First Name *</label>
                       <input type="text" required placeholder="Your first name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
@@ -153,7 +161,7 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>Email Address *</label>
                       <input type="email" required placeholder="you@example.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
@@ -171,7 +179,7 @@ export default function Contact() {
                     </select>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>Destination</label>
                       <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
@@ -191,7 +199,7 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>Approximate Travel Dates</label>
                       <input type="text" placeholder="e.g. Dec 2025, flexible" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
@@ -223,7 +231,7 @@ export default function Contact() {
                     Send Enquiry <ArrowRight size={16} />
                   </button>
 
-                  <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: "'Inter', sans-serif" }}>
+                  <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
                     🔒 Your information is safe with us. We never share your data with third parties.
                   </p>
                 </form>
@@ -234,12 +242,12 @@ export default function Contact() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Offices */}
               {offices.map((office, i) => (
-                <div key={i} style={{ background: '#F8F7F4', borderRadius: '16px', padding: '32px' }}>
+                <div key={i} style={{ background: '#F8F7F4', borderRadius: '16px', padding: isMobile ? '22px' : '32px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                     <span style={{ fontSize: '28px' }}>{office.flag}</span>
                     <div>
-                      <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A2E', fontFamily: "'Inter', sans-serif" }}>{office.city}</h3>
-                      <p style={{ fontSize: '12px', color: '#9CA3AF', fontFamily: "'Inter', sans-serif" }}>{office.country}</p>
+                      <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A2E', fontFamily: 'var(--font-body)' }}>{office.city}</h3>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', fontFamily: 'var(--font-body)' }}>{office.country}</p>
                     </div>
                   </div>
                   {[
@@ -251,12 +259,12 @@ export default function Contact() {
                     <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 0', borderBottom: j < 3 ? '1px solid rgba(0,0,0,0.06)' : 'none' }}>
                       <span style={{ color: '#C8102E', flexShrink: 0, marginTop: '2px' }}>{item.icon}</span>
                       {item.href ? (
-                        <a href={item.href} style={{ fontSize: '14px', color: '#374151', fontFamily: "'Inter', sans-serif", transition: 'color 0.2s' }}
+                        <a href={item.href} style={{ fontSize: '14px', color: '#374151', fontFamily: 'var(--font-body)', transition: 'color 0.2s' }}
                           onMouseEnter={e => e.currentTarget.style.color = '#C8102E'}
                           onMouseLeave={e => e.currentTarget.style.color = '#374151'}
                         >{item.value}</a>
                       ) : (
-                        <span style={{ fontSize: '14px', color: '#374151', fontFamily: "'Inter', sans-serif", lineHeight: '1.5' }}>{item.value}</span>
+                        <span style={{ fontSize: '14px', color: '#374151', fontFamily: 'var(--font-body)', lineHeight: '1.5' }}>{item.value}</span>
                       )}
                     </div>
                   ))}
@@ -270,7 +278,7 @@ export default function Contact() {
                 rel="noreferrer"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '16px',
-                  background: '#25D366', borderRadius: '16px', padding: '24px 28px',
+                  background: '#25D366', borderRadius: '16px', padding: isMobile ? '20px' : '24px 28px',
                   color: 'white', textDecoration: 'none',
                   transition: 'all 0.3s',
                 }}
@@ -281,15 +289,15 @@ export default function Contact() {
                   <MessageCircle size={24} />
                 </div>
                 <div>
-                  <p style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px', fontFamily: "'Inter', sans-serif" }}>Chat on WhatsApp</p>
-                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', fontFamily: "'Inter', sans-serif" }}>Fastest way to reach us — we're online now!</p>
+                  <p style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px', fontFamily: 'var(--font-body)' }}>Chat on WhatsApp</p>
+                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)' }}>Fastest way to reach us — we're online now!</p>
                 </div>
                 <ArrowRight size={20} style={{ marginLeft: 'auto', flexShrink: 0 }} />
               </a>
 
               {/* Assurances */}
               <div style={{ background: '#0A0F1E', borderRadius: '16px', padding: '28px' }}>
-                <p style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.4)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '16px', fontFamily: "'Inter', sans-serif" }}>
+                <p style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.4)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '16px', fontFamily: 'var(--font-body)' }}>
                   Our Promise to You
                 </p>
                 {[
@@ -298,7 +306,7 @@ export default function Contact() {
                   '💰 No hidden fees, ever',
                   '✅ IATA Accredited & Ministry recognised',
                 ].map((item, i) => (
-                  <p key={i} style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', padding: '8px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', fontFamily: "'Inter', sans-serif" }}>
+                  <p key={i} style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', padding: '8px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', fontFamily: 'var(--font-body)' }}>
                     {item}
                   </p>
                 ))}

@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, startTransition } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Menu, X, ChevronDown, Phone } from 'lucide-react'
 import logoColor from '../assets/Anjna Global Logo final.png'
+import './Navbar.css'
 
 const navLinks = [
-  { label: 'Home', path: '/' },
+  { label: 'Home', path: '/', end: true },
   { label: 'About', path: '/about' },
   {
     label: 'Destinations',
@@ -19,7 +20,7 @@ const navLinks = [
   },
   { label: 'Services', path: '/services' },
   { label: 'Packages', path: '/packages' },
-  { label: 'B2B Partners', path: '/b2b' },
+  { label: 'B2B', path: '/b2b', title: 'B2B Partners' },
   { label: 'Contact', path: '/contact' },
 ]
 
@@ -35,15 +36,17 @@ export default function Navbar() {
   const transparent = isHome && !scrolled
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll)
+    const onScroll = () => setScrolled(window.scrollY > 48)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   useEffect(() => {
-    setMobileOpen(false)
-    setMobileExpanded(null)
-    setActiveDropdown(null)
+    startTransition(() => {
+      setMobileOpen(false)
+      setMobileExpanded(null)
+      setActiveDropdown(null)
+    })
   }, [location])
 
   useEffect(() => {
@@ -56,213 +59,175 @@ export default function Navbar() {
     setActiveDropdown(label)
   }
   const handleMouseLeave = () => {
-    dropdownTimeout.current = setTimeout(() => setActiveDropdown(null), 150)
+    dropdownTimeout.current = setTimeout(() => setActiveDropdown(null), 180)
   }
 
-  const navBg = transparent
-    ? 'transparent'
-    : 'rgba(10, 15, 30, 0.96)'
-
-  const logoFilter = transparent ? 'brightness(0) invert(1)' : 'none'
+  /* Same full lockup (AG + wordmark + tagline) everywhere; hero renders it white via CSS */
+  const lightNav = !transparent
+  const logoHeight = transparent ? 48 : 40
 
   return (
     <>
-      <nav style={{
-        position: 'fixed',
-        top: 0, left: 0, right: 0,
-        zIndex: 1000,
-        background: navBg,
-        backdropFilter: transparent ? 'none' : 'blur(16px)',
-        borderBottom: transparent ? 'none' : '1px solid rgba(255,255,255,0.06)',
-        transition: 'all 0.4s ease',
-        padding: transparent ? '18px 0' : '0',
-      }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: transparent ? 'auto' : '70px' }}>
-          {/* Logo */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+      <nav
+        className={`site-nav ${transparent ? 'site-nav--hero' : 'site-nav--light'}`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+        }}
+      >
+        <div className={`site-nav__bar site-nav__inner${transparent ? ' site-nav__inner--hero' : ''}`}>
+          <Link to="/" className="site-nav__brand">
             <img
               src={logoColor}
               alt="Anjna Global"
-              style={{
-                height: transparent ? '54px' : '40px',
-                width: 'auto',
-                transition: 'all 0.4s ease',
-                filter: logoFilter,
-              }}
+              height={logoHeight}
+              style={{ height: logoHeight, width: 'auto' }}
             />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="desktop-nav">
+          <div className="site-nav__links">
             {navLinks.map(link => (
               <div
                 key={link.path}
-                style={{ position: 'relative' }}
+                className="site-nav__dropdown-wrap"
                 onMouseEnter={() => link.children && handleMouseEnter(link.label)}
                 onMouseLeave={() => link.children && handleMouseLeave()}
               >
                 <NavLink
                   to={link.path}
-                  style={({ isActive }) => ({
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '8px 14px',
-                    color: isActive ? '#C8102E' : 'rgba(255,255,255,0.88)',
-                    fontSize: '13.5px',
-                    fontWeight: '500',
-                    letterSpacing: '0.3px',
-                    transition: 'color 0.25s',
-                    whiteSpace: 'nowrap',
-                    textDecoration: 'none',
-                    borderRadius: '6px',
-                  })}
-                  onMouseEnter={e => {
-                    if (!e.currentTarget.classList.contains('active')) {
-                      e.currentTarget.style.color = '#ffffff'
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = 'transparent'
-                  }}
+                  end={link.end === true}
+                  title={link.title}
+                  className={({ isActive }) =>
+                    `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
+                  }
                 >
                   {link.label}
-                  {link.children && <ChevronDown size={13} style={{ opacity: 0.6, transition: 'transform 0.2s', transform: activeDropdown === link.label ? 'rotate(180deg)' : 'rotate(0)' }} />}
+                  {link.children && (
+                    <ChevronDown
+                      size={14}
+                      aria-hidden
+                      style={{
+                        opacity: 0.75,
+                        transition: 'transform 0.2s ease',
+                        transform: activeDropdown === link.label ? 'rotate(180deg)' : 'none',
+                      }}
+                    />
+                  )}
                 </NavLink>
 
-                {/* Dropdown */}
                 {link.children && activeDropdown === link.label && (
                   <div
+                    className={`site-nav__dropdown${lightNav ? ' site-nav__dropdown--light' : ''}`}
                     onMouseEnter={() => handleMouseEnter(link.label)}
                     onMouseLeave={handleMouseLeave}
-                    style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 8px)',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      background: 'rgba(10, 15, 30, 0.98)',
-                      backdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255,255,255,0.09)',
-                      borderRadius: '10px',
-                      padding: '8px 0',
-                      minWidth: '210px',
-                      boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
-                      animation: 'slideDown 0.2s ease',
-                      zIndex: 10,
-                    }}
                   >
-                    <div style={{ padding: '8px 16px 6px', fontSize: '10px', fontWeight: '700', letterSpacing: '2px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
-                      Our Destinations
-                    </div>
+                    <div className="site-nav__dropdown-label">Destinations</div>
                     {link.children.map(child => (
-                      <Link
-                        key={child.path}
-                        to={child.path}
-                        style={{
-                          display: 'block',
-                          padding: '10px 16px',
-                          color: 'rgba(255,255,255,0.75)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          transition: 'all 0.2s',
-                          borderRadius: '0',
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.color = '#ffffff'
-                          e.currentTarget.style.background = 'rgba(200,16,46,0.15)'
-                          e.currentTarget.style.paddingLeft = '22px'
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.color = 'rgba(255,255,255,0.75)'
-                          e.currentTarget.style.background = 'transparent'
-                          e.currentTarget.style.paddingLeft = '16px'
-                        }}
-                      >
+                      <Link key={child.path} to={child.path} className="site-nav__dropdown-link">
                         {child.label}
                       </Link>
                     ))}
-                    <div style={{ margin: '8px 16px 4px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                      <Link
-                        to="/destinations"
-                        style={{ fontSize: '12px', color: '#C8102E', fontWeight: '600', letterSpacing: '0.5px' }}
-                      >
-                        View All Destinations →
+                    <div className="site-nav__dropdown-footer">
+                      <Link to="/destinations" className="site-nav__dropdown-all">
+                        View all →
                       </Link>
                     </div>
                   </div>
                 )}
               </div>
             ))}
-
-            <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.15)', margin: '0 8px' }} />
-
-            <a
-              href="tel:+919876543210"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '8px 14px',
-                color: 'rgba(255,255,255,0.7)',
-                fontSize: '13px',
-                fontWeight: '500',
-                textDecoration: 'none',
-              }}
-            >
-              <Phone size={14} />
-              +91 98765 43210
-            </a>
-
-            <Link to="/contact" className="btn-primary" style={{ padding: '10px 22px', fontSize: '12px', marginLeft: '4px' }}>
-              Get a Quote
-            </Link>
           </div>
 
-          {/* Mobile burger */}
-          <button
-            onClick={() => setMobileOpen(o => !o)}
-            className="mobile-menu-btn"
-            style={{ color: 'white', padding: '8px', display: 'none' }}
-          >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="site-nav__tail">
+            <div className="site-nav__actions">
+              <a
+                href="tel:+919876543210"
+                className="site-nav__phone"
+                aria-label="Call +91 98765 43210"
+              >
+                <Phone size={16} strokeWidth={1.75} aria-hidden />
+                +91&nbsp;98765&nbsp;43210
+              </a>
+              <Link to="/contact" className="btn-primary site-nav__cta" style={{ padding: '10px 18px', fontSize: '14px' }}>
+                Get a quote
+              </Link>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileOpen(o => !o)}
+              className="site-nav__mobile-toggle"
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       {mobileOpen && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 999,
-          background: 'rgba(10,15,30,0.98)',
-          display: 'flex', flexDirection: 'column',
-          paddingTop: '80px',
-          animation: 'fadeIn 0.25s ease',
-          overflowY: 'auto',
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 999,
+            background: 'rgba(10,15,30,0.98)',
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: '100px',
+            animation: 'fadeIn 0.25s ease',
+            overflowY: 'auto',
+            fontFamily: 'var(--font-body)',
+          }}
+        >
           <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {navLinks.map(link => (
               <div key={link.path}>
                 {link.children ? (
                   <>
                     <button
+                      type="button"
                       onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
                       style={{
-                        width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '16px 0', color: 'white', fontSize: '18px', fontFamily: "'Playfair Display', serif",
-                        borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'none',
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '16px 0',
+                        color: 'white',
+                        fontSize: '17px',
+                        fontWeight: '500',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        background: 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left',
                       }}
                     >
                       {link.label}
-                      <ChevronDown size={18} style={{ transform: mobileExpanded === link.label ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                      <ChevronDown
+                        size={18}
+                        style={{
+                          transform: mobileExpanded === link.label ? 'rotate(180deg)' : 'none',
+                          transition: 'transform 0.2s ease',
+                        }}
+                      />
                     </button>
                     {mobileExpanded === link.label && (
-                      <div style={{ paddingLeft: '16px', paddingBottom: '8px' }}>
+                      <div style={{ paddingLeft: '12px', paddingBottom: '8px' }}>
                         {link.children.map(child => (
                           <Link
                             key={child.path}
                             to={child.path}
-                            style={{ display: 'block', padding: '12px 0', color: 'rgba(255,255,255,0.65)', fontSize: '16px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                            style={{
+                              display: 'block',
+                              padding: '12px 0',
+                              color: 'rgba(255,255,255,0.7)',
+                              fontSize: '15px',
+                              borderBottom: '1px solid rgba(255,255,255,0.04)',
+                            }}
                           >
                             {child.label}
                           </Link>
@@ -273,7 +238,16 @@ export default function Navbar() {
                 ) : (
                   <Link
                     to={link.path}
-                    style={{ display: 'block', padding: '16px 0', color: 'white', fontSize: '18px', fontFamily: "'Playfair Display', serif", borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                    end={link.end === true}
+                    title={link.title}
+                    style={{
+                      display: 'block',
+                      padding: '16px 0',
+                      color: 'white',
+                      fontSize: '17px',
+                      fontWeight: '500',
+                      borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    }}
                   >
                     {link.label}
                   </Link>
@@ -281,28 +255,37 @@ export default function Navbar() {
               </div>
             ))}
 
-            <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <a href="tel:+919876543210" className="site-nav__phone" style={{ justifyContent: 'center', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <Phone size={18} aria-hidden />
+                +91 98765 43210
+              </a>
               <Link to="/contact" className="btn-primary" style={{ textAlign: 'center', justifyContent: 'center' }}>
-                Get a Quote
+                Get a quote
               </Link>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                padding: '14px', background: '#25D366', color: 'white', borderRadius: '4px',
-                fontSize: '13px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase',
-              }}>
-                WhatsApp Us
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '14px',
+                  background: '#25D366',
+                  color: 'white',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                WhatsApp
               </a>
             </div>
           </div>
         </div>
       )}
-
-      <style>{`
-        @media (max-width: 1024px) {
-          .desktop-nav { display: none !important; }
-          .mobile-menu-btn { display: flex !important; }
-        }
-      `}</style>
     </>
   )
 }

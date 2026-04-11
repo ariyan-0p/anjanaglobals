@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle, Star, Users, TrendingUp, Clock, Award, Headphones, Shield } from 'lucide-react'
 
@@ -50,13 +51,22 @@ const partnerTypes = [
 const destinations = ['🇦🇪 Dubai', '🇦🇿 Azerbaijan', '🇸🇬 Singapore', '🇲🇾 Malaysia', '🇮🇩 Bali']
 
 export default function B2B() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   return (
     <main>
       {/* Hero */}
       <div style={{
-        minHeight: '500px',
+        minHeight: isMobile ? '440px' : '500px',
         background: 'url(https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80) center/cover no-repeat',
-        position: 'relative', display: 'flex', alignItems: 'flex-end', paddingBottom: '60px', paddingTop: '80px',
+        position: 'relative', display: 'flex', alignItems: 'flex-end', paddingBottom: isMobile ? '44px' : '60px', paddingTop: '80px',
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(10,15,30,0.9) 0%, rgba(29,52,97,0.85) 100%)' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1, color: 'white' }}>
@@ -70,7 +80,7 @@ export default function B2B() {
             <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: '900', marginBottom: '16px' }}>
               Your Trusted DMC Partner
             </h1>
-            <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.7', marginBottom: '32px', fontFamily: "'Inter', sans-serif" }}>
+              <p style={{ fontSize: isMobile ? '16px' : '18px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.7', marginBottom: '32px', fontFamily: 'var(--font-body)' }}>
               Join 500+ travel agencies and operators who rely on Anjna Global for competitive rates, seamless operations, and on-ground excellence across 5 destinations.
             </p>
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
@@ -97,8 +107,8 @@ export default function B2B() {
               { value: '5', label: 'Destinations' },
             ].map((s, i) => (
               <div key={i} style={{ textAlign: 'center', color: 'white' }}>
-                <p style={{ fontSize: '28px', fontWeight: '900', fontFamily: "'Inter', sans-serif", lineHeight: 1 }}>{s.value}</p>
-                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', letterSpacing: '1px', textTransform: 'uppercase', marginTop: '4px', fontFamily: "'Inter', sans-serif" }}>{s.label}</p>
+                <p style={{ fontSize: '28px', fontWeight: '900', fontFamily: 'var(--font-body)', lineHeight: 1 }}>{s.value}</p>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', letterSpacing: '1px', textTransform: 'uppercase', marginTop: '4px', fontFamily: 'var(--font-body)' }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -106,7 +116,7 @@ export default function B2B() {
       </div>
 
       {/* Benefits */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: 'white' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: '60px' }}>
             <span className="tag">Partner Benefits</span>
@@ -115,7 +125,7 @@ export default function B2B() {
               We don't just handle bookings — we become an extension of your business, committed to your success.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
             {partnerBenefits.map((b, i) => (
               <div
                 key={i}
@@ -140,7 +150,7 @@ export default function B2B() {
                 <div style={{ color: b.color, marginBottom: '16px', width: '48px', height: '48px', background: b.color + '15', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {b.icon}
                 </div>
-                <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A2E', marginBottom: '10px', fontFamily: "'Inter', sans-serif" }}>{b.title}</h3>
+                <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A2E', marginBottom: '10px', fontFamily: 'var(--font-body)' }}>{b.title}</h3>
                 <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.7' }}>{b.desc}</p>
               </div>
             ))}
@@ -149,9 +159,9 @@ export default function B2B() {
       </section>
 
       {/* Who We Work With */}
-      <section style={{ padding: '100px 0', background: '#F8F7F4' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: '#F8F7F4' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '28px' : '80px', alignItems: 'center' }}>
             <div>
               <span className="tag">Who We Work With</span>
               <h2 className="section-heading">Built for Travel Professionals</h2>
@@ -163,7 +173,7 @@ export default function B2B() {
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', padding: '20px', background: 'white', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
                     <div style={{ fontSize: '28px', flexShrink: 0 }}>{t.icon}</div>
                     <div>
-                      <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#1A1A2E', marginBottom: '4px', fontFamily: "'Inter', sans-serif" }}>{t.title}</h4>
+                      <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#1A1A2E', marginBottom: '4px', fontFamily: 'var(--font-body)' }}>{t.title}</h4>
                       <p style={{ fontSize: '13px', color: '#6B7280' }}>{t.desc}</p>
                     </div>
                   </div>
@@ -173,27 +183,27 @@ export default function B2B() {
 
             <div>
               {/* Destinations coverage */}
-              <div style={{ background: 'white', borderRadius: '20px', padding: '40px', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+              <div style={{ background: 'white', borderRadius: '20px', padding: isMobile ? '24px' : '40px', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
                   Destinations We Cover
                 </h3>
                 {destinations.map((d, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: i < 4 ? '1px solid #F3F4F6' : 'none' }}>
                     <CheckCircle size={16} color="#10B981" />
-                    <span style={{ fontSize: '15px', color: '#1A1A2E', fontFamily: "'Inter', sans-serif", fontWeight: '600' }}>{d}</span>
-                    <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#6B7280', fontFamily: "'Inter', sans-serif" }}>Full DMC Services</span>
+                    <span style={{ fontSize: '15px', color: '#1A1A2E', fontFamily: 'var(--font-body)', fontWeight: '600' }}>{d}</span>
+                    <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#6B7280', fontFamily: 'var(--font-body)' }}>Full DMC Services</span>
                   </div>
                 ))}
               </div>
 
               {/* Accreditation */}
-              <div style={{ background: 'linear-gradient(135deg, #0A0F1E, #1D3461)', borderRadius: '20px', padding: '32px', color: 'white' }}>
-                <p style={{ fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '12px', fontFamily: "'Inter', sans-serif" }}>
+              <div style={{ background: 'linear-gradient(135deg, #0A0F1E, #1D3461)', borderRadius: '20px', padding: isMobile ? '24px' : '32px', color: 'white' }}>
+                <p style={{ fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '12px', fontFamily: 'var(--font-body)' }}>
                   Accreditations
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {['🏆 IATA Accredited Agency', '🤝 TAAI Member', '🇮🇳 Ministry of Tourism Recognised', '⭐ 20+ Years in Industry'].map((a, i) => (
-                    <p key={i} style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', fontFamily: "'Inter', sans-serif" }}>{a}</p>
+                    <p key={i} style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)' }}>{a}</p>
                   ))}
                 </div>
               </div>
@@ -203,9 +213,9 @@ export default function B2B() {
       </section>
 
       {/* Registration Form */}
-      <section id="register" style={{ padding: '100px 0', background: 'white' }}>
+      <section id="register" style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: 'white' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '28px' : '80px', alignItems: 'start' }}>
             <div>
               <span className="tag">Join Our Network</span>
               <h2 className="section-heading">Register as a Trade Partner</h2>
@@ -223,17 +233,17 @@ export default function B2B() {
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <CheckCircle size={16} color="#C8102E" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '15px', color: '#374151', fontFamily: "'Inter', sans-serif" }}>{item}</span>
+                    <span style={{ fontSize: '15px', color: '#374151', fontFamily: 'var(--font-body)' }}>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ background: '#F8F7F4', borderRadius: '20px', padding: '48px 40px' }}>
-              <h3 style={{ fontSize: '22px', color: '#0A0F1E', marginBottom: '28px', fontFamily: "'Playfair Display', serif" }}>
+            <div style={{ background: '#F8F7F4', borderRadius: '20px', padding: isMobile ? '26px 20px' : '48px 40px' }}>
+              <h3 style={{ fontSize: '22px', color: '#0A0F1E', marginBottom: '28px', fontFamily: 'var(--font-body)' }}>
                 Partner Registration
               </h3>
-              <PartnerForm />
+              <PartnerForm isMobile={isMobile} />
             </div>
           </div>
         </div>
@@ -242,11 +252,11 @@ export default function B2B() {
   )
 }
 
-function PartnerForm() {
+function PartnerForm({ isMobile }) {
   const inputStyle = {
     width: '100%', padding: '13px 16px',
     border: '1.5px solid #E5E7EB', borderRadius: '8px',
-    fontSize: '14px', fontFamily: "'Inter', sans-serif",
+    fontSize: '14px', fontFamily: 'var(--font-body)',
     outline: 'none', background: 'white',
     transition: 'border-color 0.2s',
   }
@@ -256,40 +266,40 @@ function PartnerForm() {
 
   return (
     <form onSubmit={e => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
         <div>
-          <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+          <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
             First Name *
           </label>
           <input type="text" placeholder="Rahul" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
         </div>
         <div>
-          <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+          <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
             Last Name *
           </label>
           <input type="text" placeholder="Sharma" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
         </div>
       </div>
       <div>
-        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Company / Agency Name *
         </label>
         <input type="text" placeholder="Sunshine Travels Pvt Ltd" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
       </div>
       <div>
-        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Business Email *
         </label>
         <input type="email" placeholder="sales@sunshinetravels.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
       </div>
       <div>
-        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Phone / WhatsApp *
         </label>
         <input type="tel" placeholder="+91 98765 43210" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
       </div>
       <div>
-        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Destinations of Interest
         </label>
         <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
@@ -303,7 +313,7 @@ function PartnerForm() {
         </select>
       </div>
       <div>
-        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
+        <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           How did you hear about us?
         </label>
         <textarea rows={3} placeholder="Google, referral, trade fair, etc." style={{ ...inputStyle, resize: 'vertical' }} onFocus={focusStyle} onBlur={blurStyle} />
@@ -311,7 +321,7 @@ function PartnerForm() {
       <button type="submit" className="btn-primary" style={{ justifyContent: 'center', padding: '16px', marginTop: '4px' }}>
         Submit Registration <ArrowRight size={16} />
       </button>
-      <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: "'Inter', sans-serif" }}>
+      <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
         Our B2B team will contact you within 24 hours.
       </p>
     </form>

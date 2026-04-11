@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowRight, MapPin, Clock, Calendar, DollarSign, Globe, CheckCircle, Star, ChevronRight } from 'lucide-react'
 import { getDestination } from '../data/destinations'
@@ -10,6 +10,14 @@ export default function DestinationDetail() {
   const pkgs = getPackagesByDestination(slug)
   const [activeTab, setActiveTab] = useState('overview')
   const [activeImg, setActiveImg] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   if (!dest) {
     return (
@@ -26,12 +34,12 @@ export default function DestinationDetail() {
     <main>
       {/* Hero */}
       <div style={{
-        position: 'relative', height: '70vh', minHeight: '500px',
+        position: 'relative', height: isMobile ? '62vh' : '70vh', minHeight: isMobile ? '420px' : '500px',
         background: `url(${dest.heroImage}) center/cover no-repeat`,
         overflow: 'hidden',
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,15,30,0.3) 0%, rgba(10,15,30,0.8) 100%)' }} />
-        <div className="container" style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '60px', paddingTop: '80px' }}>
+        <div className="container" style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: isMobile ? '36px' : '60px', paddingTop: '80px' }}>
           <div className="breadcrumb">
             <Link to="/">Home</Link>
             <span>›</span>
@@ -41,15 +49,15 @@ export default function DestinationDetail() {
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '24px', flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: '48px', marginBottom: '8px' }}>{dest.flag}</div>
+              <div style={{ fontSize: isMobile ? '36px' : '48px', marginBottom: '8px' }}>{dest.flag}</div>
               <h1 style={{ color: 'white', fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: '900', marginBottom: '8px' }}>
                 {dest.name}
               </h1>
-              <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '18px', fontStyle: 'italic', fontFamily: "'Inter', sans-serif" }}>
+              <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: isMobile ? '15px' : '18px', fontStyle: 'italic', fontFamily: 'var(--font-body)' }}>
                 {dest.tagline}
               </p>
             </div>
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ marginLeft: isMobile ? 0 : 'auto', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <Link to="/contact" className="btn-primary" style={{ padding: '14px 28px' }}>
                 Get a Quote <ArrowRight size={16} />
               </Link>
@@ -62,9 +70,9 @@ export default function DestinationDetail() {
       </div>
 
       {/* Quick facts bar */}
-      <div style={{ background: '#0A0F1E', padding: '20px 0' }}>
+      <div style={{ background: '#0A0F1E', padding: '18px 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <div style={{ display: 'grid', gap: '12px 18px', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))' }}>
             {[
               { icon: <Calendar size={16} />, label: 'Best Time to Visit', value: dest.bestTime },
               { icon: <DollarSign size={16} />, label: 'Currency', value: dest.currency },
@@ -75,8 +83,8 @@ export default function DestinationDetail() {
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ color: '#C8102E' }}>{fact.icon}</div>
                 <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Inter', sans-serif" }}>{fact.label}</p>
-                  <p style={{ fontSize: '14px', color: 'white', fontWeight: '600', fontFamily: "'Inter', sans-serif" }}>{fact.value}</p>
+                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>{fact.label}</p>
+                  <p style={{ fontSize: '14px', color: 'white', fontWeight: '600', fontFamily: 'var(--font-body)' }}>{fact.value}</p>
                 </div>
               </div>
             ))}
@@ -85,15 +93,15 @@ export default function DestinationDetail() {
       </div>
 
       {/* Tabs */}
-      <div style={{ background: 'white', borderBottom: '1px solid #E5E7EB', position: 'sticky', top: '70px', zIndex: 100 }}>
+      <div style={{ background: 'white', borderBottom: '1px solid #E5E7EB', position: isMobile ? 'static' : 'sticky', top: '70px', zIndex: 100 }}>
         <div className="container">
-          <div style={{ display: 'flex', gap: '0' }}>
+          <div style={{ display: 'flex', gap: '0', overflowX: 'auto' }}>
             {tabs.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 style={{
-                  padding: '18px 24px',
+                  padding: isMobile ? '14px 16px' : '18px 24px',
                   background: 'none', border: 'none',
                   borderBottom: activeTab === tab ? '3px solid #C8102E' : '3px solid transparent',
                   color: activeTab === tab ? '#C8102E' : '#6B7280',
@@ -103,7 +111,7 @@ export default function DestinationDetail() {
                   letterSpacing: '0.5px',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: 'var(--font-body)',
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -115,11 +123,11 @@ export default function DestinationDetail() {
       </div>
 
       {/* Tab Content */}
-      <section style={{ padding: '80px 0', background: 'white', minHeight: '500px' }}>
+      <section style={{ padding: 'clamp(52px, 8vw, 80px) 0', background: 'white', minHeight: '500px' }}>
         <div className="container">
           {/* OVERVIEW */}
           {activeTab === 'overview' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '60px', alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? '24px' : '60px', alignItems: 'start' }}>
               <div>
                 <h2 style={{ fontSize: '2rem', color: '#0A0F1E', marginBottom: '20px' }}>About {dest.name}</h2>
                 <p style={{ fontSize: '16px', color: '#374151', lineHeight: '1.85', marginBottom: '32px' }}>
@@ -129,13 +137,13 @@ export default function DestinationDetail() {
                 {/* Gallery */}
                 {dest.galleryImages && (
                   <div>
-                    <h3 style={{ fontSize: '1.3rem', color: '#0A0F1E', marginBottom: '16px', fontFamily: "'Inter', sans-serif", fontWeight: '700' }}>
+                    <h3 style={{ fontSize: '1.3rem', color: '#0A0F1E', marginBottom: '16px', fontFamily: 'var(--font-body)', fontWeight: '700' }}>
                       Photo Gallery
                     </h3>
-                    <div style={{ position: 'relative', marginBottom: '16px', borderRadius: '12px', overflow: 'hidden', height: '300px' }}>
+                    <div style={{ position: 'relative', marginBottom: '16px', borderRadius: '12px', overflow: 'hidden', height: isMobile ? '240px' : '300px' }}>
                       <img src={dest.galleryImages[activeImg]} alt={dest.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.3s' }} />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '10px' }}>
                       {dest.galleryImages.map((img, i) => (
                         <div
                           key={i}
@@ -158,12 +166,12 @@ export default function DestinationDetail() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* Popular for */}
                 <div style={{ background: '#F8F7F4', borderRadius: '16px', padding: '28px' }}>
-                  <h4 style={{ fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9CA3AF', marginBottom: '16px', fontFamily: "'Inter', sans-serif" }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9CA3AF', marginBottom: '16px', fontFamily: 'var(--font-body)' }}>
                     Popular For
                   </h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {dest.popularFor.map(tag => (
-                      <span key={tag} style={{ padding: '6px 14px', background: 'white', border: `2px solid ${dest.color}33`, borderRadius: '100px', fontSize: '13px', color: '#374151', fontWeight: '600', fontFamily: "'Inter', sans-serif" }}>
+                      <span key={tag} style={{ padding: '6px 14px', background: 'white', border: `2px solid ${dest.color}33`, borderRadius: '100px', fontSize: '13px', color: '#374151', fontWeight: '600', fontFamily: 'var(--font-body)' }}>
                         {tag}
                       </span>
                     ))}
@@ -172,13 +180,13 @@ export default function DestinationDetail() {
 
                 {/* Airlines */}
                 <div style={{ background: '#F8F7F4', borderRadius: '16px', padding: '28px' }}>
-                  <h4 style={{ fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9CA3AF', marginBottom: '16px', fontFamily: "'Inter', sans-serif" }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#9CA3AF', marginBottom: '16px', fontFamily: 'var(--font-body)' }}>
                     Airlines Available
                   </h4>
                   {dest.airlines.map(a => (
                     <div key={a} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
                       <CheckCircle size={14} color="#10B981" />
-                      <span style={{ fontSize: '14px', color: '#374151', fontFamily: "'Inter', sans-serif" }}>{a}</span>
+                      <span style={{ fontSize: '14px', color: '#374151', fontFamily: 'var(--font-body)' }}>{a}</span>
                     </div>
                   ))}
                 </div>
@@ -186,14 +194,14 @@ export default function DestinationDetail() {
                 {/* CTA card */}
                 <div style={{ background: 'linear-gradient(135deg, #C8102E, #8B0A1F)', borderRadius: '16px', padding: '28px', color: 'white' }}>
                   <h4 style={{ fontSize: '18px', marginBottom: '12px' }}>Plan Your {dest.name} Trip</h4>
-                  <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.6', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+                  <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.6', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
                     Get a customised itinerary and competitive quote within 2 hours.
                   </p>
                   <Link to="/contact" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                     background: 'white', color: '#C8102E', padding: '12px 20px',
                     borderRadius: '6px', fontWeight: '700', fontSize: '13px',
-                    letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Inter', sans-serif",
+                    letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-body)',
                   }}>
                     Get Free Quote <ArrowRight size={14} />
                   </Link>
@@ -224,7 +232,7 @@ export default function DestinationDetail() {
                     <div style={{ width: '44px', height: '44px', background: dest.bgColor, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', fontSize: '22px' }}>
                       🏛️
                     </div>
-                    <h3 style={{ fontSize: '18px', color: '#1A1A2E', fontFamily: "'Inter', sans-serif", fontWeight: '700' }}>{h}</h3>
+                    <h3 style={{ fontSize: '18px', color: '#1A1A2E', fontFamily: 'var(--font-body)', fontWeight: '700' }}>{h}</h3>
                     <p style={{ fontSize: '13px', color: '#9CA3AF', marginTop: '8px' }}>Top attraction in {dest.name}</p>
                   </div>
                 ))}
@@ -236,7 +244,7 @@ export default function DestinationDetail() {
           {activeTab === 'packages' && (
             <div>
               <h2 style={{ fontSize: '2rem', color: '#0A0F1E', marginBottom: '12px' }}>{dest.name} Packages</h2>
-              <p style={{ color: '#6B7280', fontSize: '16px', marginBottom: '40px', fontFamily: "'Inter', sans-serif" }}>
+              <p style={{ color: '#6B7280', fontSize: '16px', marginBottom: '40px', fontFamily: 'var(--font-body)' }}>
                 {pkgs.length} curated packages available for {dest.name}
               </p>
               {pkgs.length === 0 ? (
@@ -253,26 +261,26 @@ export default function DestinationDetail() {
                     >
                       <div style={{ height: '200px', position: 'relative', overflow: 'hidden' }}>
                         <img src={pkg.image} alt={pkg.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        {pkg.tag && <div style={{ position: 'absolute', top: '14px', left: '14px', background: pkg.tagColor, color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '11px', fontWeight: '700', fontFamily: "'Inter', sans-serif" }}>{pkg.tag}</div>}
+                        {pkg.tag && <div style={{ position: 'absolute', top: '14px', left: '14px', background: pkg.tagColor, color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '11px', fontWeight: '700', fontFamily: 'var(--font-body)' }}>{pkg.tag}</div>}
                       </div>
                       <div style={{ padding: '24px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <Clock size={12} color="#9CA3AF" />
-                          <span style={{ fontSize: '12px', color: '#9CA3AF', fontFamily: "'Inter', sans-serif" }}>{pkg.duration}</span>
+                          <span style={{ fontSize: '12px', color: '#9CA3AF', fontFamily: 'var(--font-body)' }}>{pkg.duration}</span>
                         </div>
                         <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A2E', marginBottom: '12px' }}>{pkg.title}</h3>
                         <div style={{ marginBottom: '16px' }}>
                           {pkg.highlights.slice(0, 3).map(h => (
                             <div key={h} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                               <CheckCircle size={12} color="#10B981" />
-                              <span style={{ fontSize: '13px', color: '#6B7280', fontFamily: "'Inter', sans-serif" }}>{h}</span>
+                              <span style={{ fontSize: '13px', color: '#6B7280', fontFamily: 'var(--font-body)' }}>{h}</span>
                             </div>
                           ))}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
                           <div>
-                            <p style={{ fontSize: '11px', color: '#9CA3AF', fontFamily: "'Inter', sans-serif" }}>Starting from</p>
-                            <p style={{ fontSize: '20px', fontWeight: '800', color: '#C8102E', fontFamily: "'Inter', sans-serif" }}>{pkg.price}</p>
+                            <p style={{ fontSize: '11px', color: '#9CA3AF', fontFamily: 'var(--font-body)' }}>Starting from</p>
+                            <p style={{ fontSize: '20px', fontWeight: '800', color: '#C8102E', fontFamily: 'var(--font-body)' }}>{pkg.price}</p>
                           </div>
                           <Link to="/contact" className="btn-primary" style={{ padding: '9px 18px', fontSize: '12px' }}>
                             Enquire <ChevronRight size={13} />
@@ -288,7 +296,7 @@ export default function DestinationDetail() {
 
           {/* TRAVEL INFO */}
           {activeTab === 'travel info' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px' }}>
               {[
                 {
                   title: 'Visa Information',
@@ -340,13 +348,13 @@ export default function DestinationDetail() {
                   ],
                 },
               ].map((section, i) => (
-                <div key={i} style={{ background: '#F8F7F4', borderRadius: '16px', padding: '32px' }}>
+                <div key={i} style={{ background: '#F8F7F4', borderRadius: '16px', padding: isMobile ? '22px' : '32px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                     <span style={{ fontSize: '28px' }}>{section.icon}</span>
-                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', fontFamily: "'Inter', sans-serif" }}>{section.title}</h3>
+                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', fontFamily: 'var(--font-body)' }}>{section.title}</h3>
                   </div>
                   {section.content.map((line, j) => (
-                    <p key={j} style={{ fontSize: '14px', color: line === '' ? 'transparent' : '#4B5563', lineHeight: '1.8', fontFamily: "'Inter', sans-serif", fontWeight: line.startsWith('•') ? '400' : line.includes(':') ? '600' : '400' }}>
+                    <p key={j} style={{ fontSize: '14px', color: line === '' ? 'transparent' : '#4B5563', lineHeight: '1.8', fontFamily: 'var(--font-body)', fontWeight: line.startsWith('•') ? '400' : line.includes(':') ? '600' : '400' }}>
                       {line || '·'}
                     </p>
                   ))}
@@ -360,7 +368,7 @@ export default function DestinationDetail() {
       {/* Other destinations */}
       <section style={{ padding: '80px 0', background: '#F8F7F4' }}>
         <div className="container">
-          <h3 style={{ fontSize: '1.5rem', color: '#0A0F1E', marginBottom: '32px', fontFamily: "'Inter', sans-serif", fontWeight: '700' }}>
+          <h3 style={{ fontSize: '1.5rem', color: '#0A0F1E', marginBottom: '32px', fontFamily: 'var(--font-body)', fontWeight: '700' }}>
             Also Explore
           </h3>
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -373,7 +381,7 @@ export default function DestinationDetail() {
                     display: 'flex', alignItems: 'center', gap: '12px',
                     padding: '14px 20px', background: 'white',
                     borderRadius: '12px', border: '1px solid #E5E7EB',
-                    transition: 'all 0.2s', color: '#1A1A2E', fontFamily: "'Inter', sans-serif",
+                    transition: 'all 0.2s', color: '#1A1A2E', fontFamily: 'var(--font-body)',
                     fontWeight: '600', fontSize: '14px',
                   }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = '#C8102E'; e.currentTarget.style.background = '#FFF5F6' }}

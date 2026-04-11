@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle, Award, Users, Globe, Heart } from 'lucide-react'
 
@@ -27,6 +28,15 @@ const values = [
 ]
 
 export default function About() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   return (
     <main>
       {/* Hero */}
@@ -46,9 +56,9 @@ export default function About() {
       </div>
 
       {/* Intro */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: 'white' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '28px' : '80px', alignItems: 'center' }}>
             <div>
               <span className="tag">Who We Are</span>
               <h2 className="section-heading">
@@ -60,7 +70,7 @@ export default function About() {
               <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: '1.8', marginBottom: '32px' }}>
                 Our tagline <em>"Fabulously Planned... Remembered Always"</em> isn't just marketing — it's a promise we make to every travel partner and every traveller who chooses to experience the world through us. We serve both the B2B trade community and discerning direct travellers who seek something beyond the ordinary.
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '36px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '14px', marginBottom: '30px' }}>
                 {[
                   { icon: <Award size={20} />, label: '20+ Years', sub: 'of Excellence' },
                   { icon: <Globe size={20} />, label: '5 Destinations', sub: 'across 4 countries' },
@@ -70,7 +80,7 @@ export default function About() {
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '16px', background: '#F8F7F4', borderRadius: '10px' }}>
                     <div style={{ color: '#C8102E', flexShrink: 0 }}>{item.icon}</div>
                     <div>
-                      <p style={{ fontWeight: '800', fontSize: '18px', color: '#1A1A2E', fontFamily: "'Inter', sans-serif" }}>{item.label}</p>
+                      <p style={{ fontWeight: '800', fontSize: '18px', color: '#1A1A2E', fontFamily: 'var(--font-body)' }}>{item.label}</p>
                       <p style={{ fontSize: '12px', color: '#6B7280' }}>{item.sub}</p>
                     </div>
                   </div>
@@ -83,7 +93,7 @@ export default function About() {
 
             <div style={{ position: 'relative' }}>
               <div style={{
-                height: '500px',
+                height: isMobile ? '340px' : '500px',
                 backgroundImage: 'url(https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -92,14 +102,17 @@ export default function About() {
               }} />
               {/* Floating card */}
               <div style={{
-                position: 'absolute', bottom: '-24px', left: '-24px',
+                position: isMobile ? 'relative' : 'absolute',
+                bottom: isMobile ? 'auto' : '-24px',
+                left: isMobile ? 'auto' : '-24px',
+                marginTop: isMobile ? '14px' : 0,
                 background: '#C8102E',
-                padding: '24px 28px',
+                padding: isMobile ? '18px 20px' : '24px 28px',
                 borderRadius: '16px',
                 color: 'white',
                 boxShadow: '0 20px 50px rgba(200,16,46,0.35)',
               }}>
-                <p style={{ fontSize: '36px', fontWeight: '900', fontFamily: "'Inter', sans-serif", lineHeight: 1 }}>20+</p>
+                <p style={{ fontSize: '36px', fontWeight: '900', fontFamily: 'var(--font-body)', lineHeight: 1 }}>20+</p>
                 <p style={{ fontSize: '14px', opacity: 0.85, marginTop: '4px' }}>Years of Expertise</p>
               </div>
             </div>
@@ -108,7 +121,7 @@ export default function About() {
       </section>
 
       {/* Values */}
-      <section style={{ padding: '100px 0', background: '#F8F7F4' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: '#F8F7F4' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: '56px' }}>
             <span className="tag">Our Values</span>
@@ -131,7 +144,7 @@ export default function About() {
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)' }}
               >
                 <div style={{ fontSize: '36px', marginBottom: '16px' }}>{v.icon}</div>
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', marginBottom: '10px', fontFamily: "'Inter', sans-serif" }}>{v.title}</h3>
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', marginBottom: '10px', fontFamily: 'var(--font-body)' }}>{v.title}</h3>
                 <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.7' }}>{v.desc}</p>
               </div>
             ))}
@@ -140,7 +153,7 @@ export default function About() {
       </section>
 
       {/* Timeline */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: 'white' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: '56px' }}>
             <span className="tag">Our Journey</span>
@@ -148,14 +161,14 @@ export default function About() {
           </div>
           <div style={{ position: 'relative', maxWidth: '800px', margin: '0 auto' }}>
             {/* Line */}
-            <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px', background: '#E5E7EB', transform: 'translateX(-50%)' }} />
+            {!isMobile && <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px', background: '#E5E7EB', transform: 'translateX(-50%)' }} />}
             {milestones.map((m, i) => (
               <div key={i} style={{
-                display: 'flex', gap: '40px', marginBottom: '48px',
-                flexDirection: i % 2 === 0 ? 'row' : 'row-reverse',
+                display: 'flex', gap: isMobile ? '12px' : '40px', marginBottom: isMobile ? '28px' : '48px',
+                flexDirection: isMobile ? 'row' : (i % 2 === 0 ? 'row' : 'row-reverse'),
                 alignItems: 'flex-start',
               }}>
-                <div style={{ flex: 1, textAlign: i % 2 === 0 ? 'right' : 'left', paddingTop: '4px' }}>
+                <div style={{ flex: 1, textAlign: isMobile ? 'left' : (i % 2 === 0 ? 'right' : 'left'), paddingTop: '4px' }}>
                   <p style={{ fontSize: '14px', color: '#374151', lineHeight: '1.7' }}>{m.event}</p>
                 </div>
                 <div style={{ position: 'relative', zIndex: 1, flexShrink: 0 }}>
@@ -164,16 +177,16 @@ export default function About() {
                     background: 'linear-gradient(135deg, #C8102E, #1D3461)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: 'white', fontWeight: '800', fontSize: '11px',
-                    fontFamily: "'Inter', sans-serif", boxShadow: '0 4px 16px rgba(200,16,46,0.35)',
+                    fontFamily: 'var(--font-body)', boxShadow: '0 4px 16px rgba(200,16,46,0.35)',
                   }}>
                     {m.year.slice(2)}
                   </div>
                 </div>
-                <div style={{ flex: 1, paddingTop: '4px' }}>
-                  <span style={{ fontSize: '28px', fontWeight: '900', color: '#C8102E', fontFamily: "'Inter', sans-serif", opacity: i % 2 === 1 ? 1 : 0 }}>
+                <div style={{ flex: 1, paddingTop: '4px', display: isMobile ? 'none' : 'block' }}>
+                  <span style={{ fontSize: '28px', fontWeight: '900', color: '#C8102E', fontFamily: 'var(--font-body)', opacity: i % 2 === 1 ? 1 : 0 }}>
                     {i % 2 === 1 ? m.year : ''}
                   </span>
-                  {i % 2 === 0 && <span style={{ fontSize: '28px', fontWeight: '900', color: '#C8102E', fontFamily: "'Inter', sans-serif" }}>{m.year}</span>}
+                  {i % 2 === 0 && <span style={{ fontSize: '28px', fontWeight: '900', color: '#C8102E', fontFamily: 'var(--font-body)' }}>{m.year}</span>}
                 </div>
               </div>
             ))}
@@ -182,7 +195,7 @@ export default function About() {
       </section>
 
       {/* Team */}
-      <section style={{ padding: '100px 0', background: '#F8F7F4' }}>
+      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: '#F8F7F4' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: '56px' }}>
             <span className="tag">Our People</span>
@@ -208,7 +221,7 @@ export default function About() {
                 </div>
                 <div style={{ padding: '24px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', marginBottom: '4px' }}>{member.name}</h3>
-                  <p style={{ fontSize: '12px', fontWeight: '700', color: '#C8102E', letterSpacing: '0.5px', marginBottom: '12px', fontFamily: "'Inter', sans-serif" }}>{member.role}</p>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: '#C8102E', letterSpacing: '0.5px', marginBottom: '12px', fontFamily: 'var(--font-body)' }}>{member.role}</p>
                   <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: '1.65' }}>{member.bio}</p>
                 </div>
               </div>
@@ -223,7 +236,7 @@ export default function About() {
           <h2 style={{ color: 'white', fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', marginBottom: '16px' }}>
             Ready to Experience the Anjna Difference?
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '17px', marginBottom: '32px', fontFamily: "'Inter', sans-serif" }}>
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '17px', marginBottom: '32px', fontFamily: 'var(--font-body)' }}>
             Partner with us or plan your next journey — we're ready when you are.
           </p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>

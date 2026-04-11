@@ -2,55 +2,64 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, MapPin, Clock, Star, Users, Award, Headphones,
-  ChevronRight, Play, CheckCircle, Globe, TrendingUp
+  ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart,
 } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { packages } from '../data/packages'
+import heroImgDubai from '../assets/Dubai.jpg'
+import heroImgBali from '../assets/Bali.jpg'
+import heroImgSingapore from '../assets/singapore.jpg'
+import heroImgBaku from '../assets/baku.jpg'
+import heroImgKualaLumpur from '../assets/Kualalumpur.jpg'
+import './Home.css'
 
-/* ── Hero slides ──────────────────────────────── */
+const heroImgBaliFresh = `${heroImgBali}?v=2`
+
 const heroSlides = [
-  {
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&q=80',
-    dest: 'Dubai, UAE',
-    tag: 'Middle East',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1920&q=80',
-    dest: 'Bali, Indonesia',
-    tag: 'Southeast Asia',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1920&q=80',
-    dest: 'Singapore',
-    tag: 'City State',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1570214476695-8f09e2e1cc87?w=1920&q=80',
-    dest: 'Baku, Azerbaijan',
-    tag: 'Land of Fire',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1920&q=80',
-    dest: 'Kuala Lumpur, Malaysia',
-    tag: 'Truly Asia',
-  },
+  { image: heroImgDubai, dest: 'Dubai, UAE', tag: 'Middle East' },
+  { image: heroImgBaliFresh, dest: 'Bali, Indonesia', tag: 'Southeast Asia' },
+  { image: heroImgSingapore, dest: 'Singapore', tag: 'City State' },
+  { image: heroImgBaku, dest: 'Baku, Azerbaijan', tag: 'Land of Fire' },
+  { image: heroImgKualaLumpur, dest: 'Kuala Lumpur, Malaysia', tag: 'Truly Asia' },
 ]
 
 const stats = [
-  { value: '20+', label: 'Years of Excellence', icon: <Award size={22} /> },
-  { value: '5', label: 'Exotic Destinations', icon: <Globe size={22} /> },
-  { value: '500+', label: 'Travel Partners', icon: <Users size={22} /> },
-  { value: '50K+', label: 'Happy Travellers', icon: <Star size={22} /> },
-  { value: '24/7', label: 'Dedicated Support', icon: <Headphones size={22} /> },
+  { value: '20+', label: 'Years of excellence', icon: <Award size={20} strokeWidth={1.75} /> },
+  { value: '5', label: 'Signature destinations', icon: <Globe size={20} strokeWidth={1.75} /> },
+  { value: '500+', label: 'Travel partners', icon: <Users size={20} strokeWidth={1.75} /> },
+  { value: '24/7', label: 'Dedicated support', icon: <Headphones size={20} strokeWidth={1.75} /> },
 ]
 
-const featuredPackages = packages.slice(0, 4)
+const servicePillars = [
+  {
+    icon: <Plane size={20} strokeWidth={1.75} />,
+    title: 'FIT & bespoke trips',
+    desc: 'Tailored itineraries for individuals, couples, and private groups.',
+  },
+  {
+    icon: <Building2 size={20} strokeWidth={1.75} />,
+    title: 'Groups & MICE',
+    desc: 'Seamless logistics for incentives, conferences, and large movements.',
+  },
+  {
+    icon: <Heart size={20} strokeWidth={1.75} />,
+    title: 'Celebrations',
+    desc: 'Honeymoons and milestone journeys with end-to-end care.',
+  },
+]
+
+const serviceChecks = [
+  'Visa assistance & documentation',
+  'Premium transfers & luxury coaches',
+  'On-ground teams across every destination',
+  'Net rates for trade partners',
+]
 
 const testimonials = [
   {
     name: 'Priya Sharma',
     role: 'Travel Agent, Mumbai',
-    text: 'Anjna Global has been our go-to DMC partner for Dubai for the last 8 years. Their response time is unmatched and their on-ground team is exceptional.',
+    text: 'Our go-to DMC for Dubai — response time is unmatched and the on-ground team is exceptional.',
     rating: 5,
     avatar: 'PS',
     dest: 'Dubai',
@@ -58,56 +67,46 @@ const testimonials = [
   {
     name: 'Rahul Mehta',
     role: 'Operations Head, Delhi Travels',
-    text: 'The MICE program they put together for our corporate client in Singapore was absolutely flawless — from transfers to the gala dinner setup.',
+    text: 'A flawless MICE programme in Singapore — from transfers to the gala. Truly professional.',
     rating: 5,
     avatar: 'RM',
     dest: 'Singapore',
   },
-  {
-    name: 'Sunita & Vikram Patel',
-    role: 'Honeymooners, Ahmedabad',
-    text: 'Our Bali honeymoon was pure magic. Every little detail was perfect — the pool villa, the candle dinner by the rice terraces... truly unforgettable.',
-    rating: 5,
-    avatar: 'VP',
-    dest: 'Bali',
-  },
 ]
 
-/* ── Hooks ────────────────────────────────────── */
-function useCounter(target, isVisible) {
+function useCounter(target, enabled, isVisible) {
   const [count, setCount] = useState(0)
   useEffect(() => {
-    if (!isVisible) return
-    const num = parseInt(target.replace(/\D/g, ''))
-    if (!num) { setCount(target); return }
+    if (!enabled || !isVisible) return
+    const head = String(target).match(/^(\d+)/)
+    const num = head ? parseInt(head[1], 10) : 0
+    if (!num) return
     let start = 0
-    const duration = 1800
-    const step = duration / num
     const timer = setInterval(() => {
-      start += Math.ceil(num / (duration / 30))
-      if (start >= num) { setCount(num); clearInterval(timer) }
-      else setCount(start)
+      start += Math.ceil(num / (1800 / 30))
+      if (start >= num) {
+        setCount(num)
+        clearInterval(timer)
+      } else {
+        setCount(start)
+      }
     }, 30)
     return () => clearInterval(timer)
-  }, [isVisible, target])
+  }, [enabled, isVisible, target])
   return count
 }
 
 function StatItem({ stat, isVisible }) {
-  const num = parseInt(stat.value.replace(/\D/g, ''))
-  const count = useCounter(stat.value, isVisible)
-  const suffix = stat.value.replace(/[0-9]/g, '')
-  const display = num ? `${count}${suffix}` : stat.value
+  const suffix = stat.value.replace(/^\d+/, '')
+  const shouldAnimate = /^\d+/.test(stat.value) && !stat.value.includes('/')
+  const count = useCounter(stat.value, shouldAnimate, isVisible)
+  const display = shouldAnimate ? `${count}${suffix}` : stat.value
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '0 24px', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
-      <div style={{ color: '#C8102E' }}>{stat.icon}</div>
-      <div style={{ fontSize: '2.2rem', fontWeight: '800', color: 'white', lineHeight: 1, fontFamily: "'Inter', sans-serif" }}>
-        {display}
-      </div>
-      <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', letterSpacing: '1px', textTransform: 'uppercase', textAlign: 'center' }}>
-        {stat.label}
-      </div>
+    <div className="home-stat">
+      <div className="home-stat__icon">{stat.icon}</div>
+      <div className="home-stat__value">{display}</div>
+      <div className="home-stat__label">{stat.label}</div>
     </div>
   )
 }
@@ -118,19 +117,19 @@ export default function Home() {
   const statsRef = useRef(null)
   const intervalRef = useRef(null)
 
-  /* Auto-advance hero */
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setCurrentSlide(s => (s + 1) % heroSlides.length)
-    }, 5000)
+    }, 6000)
     return () => clearInterval(intervalRef.current)
   }, [])
 
-  /* Stats intersection */
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true) },
-      { threshold: 0.3 }
+      ([entry]) => {
+        if (entry.isIntersecting) setStatsVisible(true)
+      },
+      { threshold: 0.25 }
     )
     if (statsRef.current) observer.observe(statsRef.current)
     return () => observer.disconnect()
@@ -139,273 +138,141 @@ export default function Home() {
   const goToSlide = (i) => {
     setCurrentSlide(i)
     clearInterval(intervalRef.current)
-    intervalRef.current = setInterval(() => setCurrentSlide(s => (s + 1) % heroSlides.length), 5000)
+    intervalRef.current = setInterval(() => setCurrentSlide(s => (s + 1) % heroSlides.length), 6000)
   }
 
+  const featuredPackages = packages.slice(0, 3)
+
   return (
-    <main>
-      {/* ════════════════════════════════════════
-          HERO
-      ════════════════════════════════════════ */}
-      <section style={{ position: 'relative', height: '100vh', minHeight: '700px', overflow: 'hidden' }}>
-        {/* Slides */}
+    <main className="home">
+      <section className="home-hero">
         {heroSlides.map((slide, i) => (
           <div
-            key={i}
+            key={slide.image}
+            className="home-hero__slide"
             style={{
-              position: 'absolute', inset: 0,
-              background: `url(${slide.image}) center/cover no-repeat`,
+              backgroundImage: `url(${slide.image})`,
               opacity: i === currentSlide ? 1 : 0,
-              transition: 'opacity 1.2s ease',
-              transform: i === currentSlide ? 'scale(1.04)' : 'scale(1)',
-              transitionProperty: 'opacity, transform',
-              transitionDuration: '1.2s, 8s',
+              transform: i === currentSlide ? 'scale(1.03)' : 'scale(1)',
+              pointerEvents: 'none',
             }}
           />
         ))}
+        <div className="home-hero__overlay" />
+        <div className="home-hero__fade" />
 
-        {/* Overlay */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to right, rgba(10,15,30,0.85) 0%, rgba(10,15,30,0.4) 60%, rgba(10,15,30,0.2) 100%)',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
-          background: 'linear-gradient(to top, rgba(10,15,30,0.6), transparent)',
-        }} />
-
-        {/* Content */}
-        <div className="container" style={{
-          position: 'relative', zIndex: 2,
-          height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          paddingTop: '100px',
-        }}>
-          <div style={{ maxWidth: '680px' }}>
-            {/* Current dest tag */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'rgba(200,16,46,0.2)',
-              border: '1px solid rgba(200,16,46,0.4)',
-              borderRadius: '100px',
-              padding: '6px 16px', marginBottom: '24px',
-              animation: 'fadeInUp 0.6s ease',
-            }}>
-              <MapPin size={12} color="#C8102E" />
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                {heroSlides[currentSlide].tag} — {heroSlides[currentSlide].dest}
+        <div className="container home-hero__inner">
+          <div style={{ maxWidth: '44rem' }}>
+            <div className="home-hero__badge">
+              <MapPin size={13} color="#C8102E" aria-hidden />
+              <span>
+                {heroSlides[currentSlide].tag} · {heroSlides[currentSlide].dest}
               </span>
             </div>
 
-            <h1 style={{
-              fontSize: 'clamp(2.8rem, 6vw, 5rem)',
-              color: 'white',
-              fontWeight: '900',
-              lineHeight: '1.08',
-              marginBottom: '24px',
-              animation: 'fadeInUp 0.7s ease',
-            }}>
-              Beyond Destinations.
+            <h1 className="home-hero__title">
+              Beyond destinations.
               <br />
-              <span style={{ color: '#C8102E' }}>Exceptional</span> Experiences.
+              <span className="home-hero__title-accent">Exceptional</span> experiences.
             </h1>
 
-            <p style={{
-              fontSize: '18px', color: 'rgba(255,255,255,0.75)',
-              lineHeight: '1.7', marginBottom: '36px',
-              fontFamily: "'Inter', sans-serif",
-              animation: 'fadeInUp 0.8s ease',
-              maxWidth: '520px',
-            }}>
-              Your trusted DMC partner across the Middle East & Asia. Serving travel professionals and discerning travellers since 2003 — with unforgettable experiences across Dubai, Singapore, Malaysia, Bali & Azerbaijan.
+            <p className="home-hero__lead">
+              Trusted DMC across the Middle East & Asia since 2003 — for travel professionals and
+              travellers who expect precision, warmth, and depth.
             </p>
 
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', animation: 'fadeInUp 0.9s ease' }}>
-              <Link to="/destinations" className="btn-primary" style={{ fontSize: '13px', padding: '15px 34px' }}>
-                Explore Destinations <ArrowRight size={16} />
+            <div className="home-hero__actions">
+              <Link to="/destinations" className="btn-primary">
+                Explore destinations <ArrowRight size={16} aria-hidden />
               </Link>
-              <Link to="/b2b" className="btn-outline-white" style={{ fontSize: '13px', padding: '14px 34px' }}>
-                Trade Partners
+              <Link to="/b2b" className="btn-outline-white">
+                Partner with us
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Slide indicators */}
-        <div style={{
-          position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
-          display: 'flex', gap: '8px', zIndex: 3,
-        }}>
+        <div className="home-hero__dots" role="tablist" aria-label="Hero slides">
           {heroSlides.map((_, i) => (
             <button
               key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === currentSlide}
+              className={`home-hero__dot${i === currentSlide ? ' is-active' : ''}`}
               onClick={() => goToSlide(i)}
-              style={{
-                width: i === currentSlide ? '32px' : '8px',
-                height: '8px',
-                borderRadius: '4px',
-                background: i === currentSlide ? '#C8102E' : 'rgba(255,255,255,0.4)',
-                border: 'none', cursor: 'pointer',
-                transition: 'all 0.4s ease',
-                padding: 0,
-              }}
             />
-          ))}
-        </div>
-
-        {/* Destination quick-jump */}
-        <div style={{
-          position: 'absolute', right: '40px', top: '50%', transform: 'translateY(-50%)',
-          display: 'flex', flexDirection: 'column', gap: '8px', zIndex: 3,
-        }}>
-          {heroSlides.map((slide, i) => (
-            <button
-              key={i}
-              onClick={() => goToSlide(i)}
-              style={{
-                background: i === currentSlide ? '#C8102E' : 'rgba(255,255,255,0.15)',
-                border: i === currentSlide ? '1px solid #C8102E' : '1px solid rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(8px)',
-                borderRadius: '100px',
-                padding: '6px 14px',
-                color: 'white',
-                fontSize: '11px',
-                fontWeight: '600',
-                letterSpacing: '0.5px',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {slide.dest.split(',')[0]}
-            </button>
           ))}
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          STATS BAR
-      ════════════════════════════════════════ */}
-      <section ref={statsRef} style={{ background: '#0A0F1E', padding: '36px 0' }}>
+      <section ref={statsRef} className="home-stats">
         <div className="container">
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-around',
-            flexWrap: 'wrap', gap: '24px',
-          }}>
-            {stats.map((stat, i) => (
-              <StatItem key={i} stat={stat} isVisible={statsVisible} />
+          <div className="home-stats__grid">
+            {stats.map(s => (
+              <StatItem key={s.label} stat={s} isVisible={statsVisible} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          DESTINATIONS
-      ════════════════════════════════════════ */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section className="home-section" style={{ background: '#fff' }}>
         <div className="container">
-          <div style={{ marginBottom: '56px' }}>
-            <span className="tag">Our Destinations</span>
-            <h2 className="section-heading" style={{ maxWidth: '520px' }}>
-              Five Extraordinary Worlds Await You
-            </h2>
+          <header className="home-section__head">
+            <span className="tag">Destinations</span>
+            <h2 className="section-heading">Where we excel</h2>
             <p className="section-sub">
-              From the golden dunes of Dubai to the emerald rice fields of Bali — every destination we offer is a masterpiece waiting to be explored.
+              Five hand-picked regions — each with dedicated teams, vetted suppliers, and itineraries
+              refined over years of operation.
             </p>
-          </div>
+          </header>
 
-          {/* Featured (big) card + grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            {/* Big card */}
-            <DestCard dest={destinations[0]} big />
-
-            {/* Right grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              {destinations.slice(1).map(dest => (
-                <DestCard key={dest.id} dest={dest} />
+          <div className="home-dest-grid">
+            <DestCardLarge dest={destinations[0]} />
+            <div className="home-dest-grid__small">
+              {destinations.slice(1).map(d => (
+                <DestCardSmall key={d.id} dest={d} />
               ))}
             </div>
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '48px' }}>
+          <div className="home-dest-cta">
             <Link to="/destinations" className="btn-primary">
-              View All Destinations <ArrowRight size={16} />
+              View all destinations <ArrowRight size={16} aria-hidden />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          SERVICES
-      ════════════════════════════════════════ */}
-      <section style={{ padding: '100px 0', background: '#F8F7F4' }}>
+      <section className="home-section home-section--surface">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
-            {/* Left text */}
+          <div className="home-services">
             <div>
-              <span className="tag">What We Do</span>
-              <h2 className="section-heading">
-                Complete Travel Solutions for Every Need
-              </h2>
-              <p className="section-sub" style={{ marginBottom: '32px' }}>
-                Whether you're a travel agent building packages for your clients, or a corporate looking for a seamless incentive trip — we have you covered from start to finish.
+              <span className="tag">Services</span>
+              <h2 className="section-heading">Everything in one place</h2>
+              <p className="section-sub" style={{ marginBottom: 0 }}>
+                From first quote to last transfer — one partner, one workflow, clear ownership at
+                every step.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '36px' }}>
-                {[
-                  'FIT & Customised Itineraries',
-                  'Group Tours (10 – 500+ pax)',
-                  'MICE & Corporate Events',
-                  'Honeymoon & Romance Packages',
-                  'Visa Assistance & Documentation',
-                  'Premium Transfers & Luxury Coaches',
-                ].map(item => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <CheckCircle size={18} color="#C8102E" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '15px', color: '#374151', fontWeight: '500' }}>{item}</span>
+              <div className="home-services__checks">
+                {serviceChecks.map(line => (
+                  <div key={line} className="home-services__check">
+                    <CheckCircle size={18} color="#C8102E" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden />
+                    <span>{line}</span>
                   </div>
                 ))}
               </div>
               <Link to="/services" className="btn-primary">
-                Explore All Services <ArrowRight size={16} />
+                All services <ArrowRight size={16} aria-hidden />
               </Link>
             </div>
 
-            {/* Right: service cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              {[
-                { icon: '✈️', title: 'FIT Packages', desc: 'Tailored individual & couple itineraries' },
-                { icon: '👥', title: 'Group Tours', desc: 'Seamless experiences for groups of 10–500+' },
-                { icon: '💼', title: 'MICE', desc: 'World-class meetings, conferences & events' },
-                { icon: '💍', title: 'Honeymoons', desc: 'Romantic escapes crafted to perfection' },
-                { icon: '📄', title: 'Visa Support', desc: 'Complete documentation & processing' },
-                { icon: '🚗', title: 'Transfers', desc: 'Luxury transport across all destinations' },
-              ].map((s, i) => (
-                <div
-                  key={i}
-                  style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '24px 20px',
-                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-                    border: '1px solid rgba(0,0,0,0.04)',
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-4px)'
-                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.12)'
-                    e.currentTarget.style.borderColor = 'rgba(200,16,46,0.2)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'
-                    e.currentTarget.style.borderColor = 'rgba(0,0,0,0.04)'
-                  }}
-                >
-                  <div style={{ fontSize: '28px', marginBottom: '10px' }}>{s.icon}</div>
-                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#1A1A2E', marginBottom: '6px', fontFamily: "'Inter', sans-serif" }}>
-                    {s.title}
-                  </h4>
-                  <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: '1.5' }}>{s.desc}</p>
+            <div className="home-services__pillars">
+              {servicePillars.map(p => (
+                <div key={p.title} className="home-pillar">
+                  <div className="home-pillar__icon">{p.icon}</div>
+                  <h3 className="home-pillar__title">{p.title}</h3>
+                  <p className="home-pillar__desc">{p.desc}</p>
                 </div>
               ))}
             </div>
@@ -413,120 +280,85 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          B2B SECTION
-      ════════════════════════════════════════ */}
-      <section style={{
-        padding: '100px 0',
-        background: 'linear-gradient(135deg, #0A0F1E 0%, #1D3461 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        {/* BG pattern */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(200,16,46,0.12) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(184,150,62,0.08) 0%, transparent 50%)',
-          pointerEvents: 'none',
-        }} />
-
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+      <section className="home-section home-b2b">
+        <div className="home-b2b__bg" aria-hidden />
+        <div className="container">
+          <div className="home-b2b__grid">
             <div>
-              <span className="tag tag-light">For Travel Professionals</span>
-              <h2 className="section-heading section-heading-light" style={{ marginBottom: '20px' }}>
-                Your Trusted DMC Partner in the Field
+              <span className="tag tag-light">For travel professionals</span>
+              <h2 className="section-heading section-heading-light" style={{ marginBottom: '14px' }}>
+                Built for agencies & operators
               </h2>
-              <p className="section-sub section-sub-light" style={{ marginBottom: '36px' }}>
-                Join 500+ travel agencies, tour operators, and corporate travel managers who rely on Anjna Global for seamless operations, competitive net rates, and on-ground excellence.
+              <p className="section-sub section-sub-light" style={{ marginBottom: 0 }}>
+                Competitive net rates, fast quotes, and reliable execution — so you can sell with
+                confidence.
               </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '40px' }}>
+              <div className="home-b2b__list">
                 {[
-                  { icon: <TrendingUp size={18} />, label: 'Best Net Rates', desc: 'Direct hotel & supplier contracts' },
-                  { icon: <Headphones size={18} />, label: 'Dedicated BDM', desc: 'Personal business development manager' },
-                  { icon: <Clock size={18} />, label: '2-Hour Response', desc: 'Fast quotes, every time' },
-                  { icon: <Star size={18} />, label: 'Priority Access', desc: 'Pre-allocated inventory & early releases' },
-                ].map((b, i) => (
-                  <div key={i} style={{
-                    padding: '20px',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '10px',
-                    backdropFilter: 'blur(10px)',
-                  }}>
-                    <div style={{ color: '#C8102E', marginBottom: '8px' }}>{b.icon}</div>
-                    <p style={{ color: 'white', fontWeight: '700', fontSize: '14px', marginBottom: '4px', fontFamily: "'Inter', sans-serif" }}>{b.label}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>{b.desc}</p>
+                  { icon: <TrendingUp size={18} />, t: 'Strong net rates', d: 'Direct hotel & supplier relationships.' },
+                  { icon: <Headphones size={18} />, t: 'Dedicated BDM', d: 'A single point of contact for your desk.' },
+                  { icon: <Clock size={18} />, t: 'Rapid turnaround', d: 'Quotes and revisions without the wait.' },
+                ].map(item => (
+                  <div key={item.t} className="home-b2b__list-item">
+                    {item.icon}
+                    <div>
+                      <strong>{item.t}</strong>
+                      <span>{item.d}</span>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                 <Link to="/b2b" className="btn-primary">
-                  Become a Partner <ArrowRight size={16} />
+                  B2B overview <ArrowRight size={16} aria-hidden />
                 </Link>
                 <Link to="/contact" className="btn-outline-white">
-                  Get Trade Rates
+                  Request trade rates
                 </Link>
               </div>
             </div>
 
-            {/* Right: partner card */}
-            <div style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '20px',
-              padding: '40px',
-              backdropFilter: 'blur(10px)',
-            }}>
-              <h3 style={{ color: 'white', fontSize: '20px', marginBottom: '24px', fontFamily: "'Playfair Display', serif" }}>
-                Why Partners Choose Us
-              </h3>
+            <aside className="home-b2b__panel">
+              <h3>At a glance</h3>
               {[
-                { pct: '98%', label: 'Partner Satisfaction Rate' },
-                { pct: '2hr', label: 'Average Quote Response Time' },
-                { pct: '500+', label: 'Active Travel Partners' },
-                { pct: '5★', label: 'Average Destination Rating' },
-                { pct: '20+', label: 'Years of Industry Trust' },
-              ].map((item, i) => (
-                <div key={i} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '16px 0',
-                  borderBottom: i < 4 ? '1px solid rgba(255,255,255,0.06)' : 'none',
-                }}>
-                  <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: '14px' }}>{item.label}</span>
-                  <span style={{ color: '#C8102E', fontWeight: '800', fontSize: '20px', fontFamily: "'Inter', sans-serif" }}>{item.pct}</span>
+                { label: 'Partner satisfaction', val: '98%' },
+                { label: 'Avg. quote response', val: '2h' },
+                { label: 'Active partners', val: '500+' },
+              ].map(row => (
+                <div key={row.label} className="home-b2b__metric">
+                  <span>{row.label}</span>
+                  <span>{row.val}</span>
                 </div>
               ))}
-
-              <div style={{ marginTop: '28px', padding: '20px', background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)', borderRadius: '12px' }}>
-                <p style={{ color: 'white', fontSize: '14px', lineHeight: '1.6' }}>
-                  🏆 <strong>IATA Accredited · TAAI Member</strong><br />
-                  <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>Ministry of Tourism (India) Recognised DMC</span>
+              <div className="home-b2b__badge">
+                <p>
+                  <strong>IATA · TAAI</strong> — Ministry of Tourism (India) recognised DMC
                 </p>
+                <small>Credentials you can share with confidence.</small>
               </div>
-            </div>
+            </aside>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          FEATURED PACKAGES
-      ════════════════════════════════════════ */}
-      <section style={{ padding: '100px 0', background: 'white' }}>
+      <section className="home-section" style={{ background: '#fff' }}>
         <div className="container">
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '56px', flexWrap: 'wrap', gap: '20px' }}>
+          <header className="home-section__head home-section__head--row">
             <div>
-              <span className="tag">Popular Packages</span>
-              <h2 className="section-heading">Handpicked Experiences</h2>
-              <p className="section-sub">Our most loved tour packages — crafted to deliver maximum value and unforgettable memories.</p>
+              <span className="tag">Packages</span>
+              <h2 className="section-heading">Popular journeys</h2>
+              <p className="section-sub" style={{ marginBottom: 0 }}>
+                A sample of itineraries travellers book most often — fully customisable.
+              </p>
             </div>
-            <Link to="/packages" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#C8102E', fontWeight: '700', fontSize: '14px', letterSpacing: '0.5px', flexShrink: 0 }}>
-              View All Packages <ArrowRight size={16} />
+            <Link to="/packages" className="home-section__link">
+              View all packages <ArrowRight size={16} aria-hidden />
             </Link>
-          </div>
+          </header>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+          <div className="home-packages-grid">
             {featuredPackages.map(pkg => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
@@ -534,99 +366,76 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          TESTIMONIALS
-      ════════════════════════════════════════ */}
-      <section style={{ padding: '100px 0', background: '#F8F7F4' }}>
+      <section className="home-section home-section--light">
         <div className="container">
-          <div className="text-center" style={{ marginBottom: '56px' }}>
-            <span className="tag">Client Stories</span>
-            <h2 className="section-heading">What Our Partners & Travellers Say</h2>
+          <header className="home-section__head text-center" style={{ marginBottom: 'clamp(2rem,4vw,2.75rem)' }}>
+            <span className="tag">Testimonials</span>
+            <h2 className="section-heading" style={{ margin: '0 auto 10px' }}>
+              Trusted by partners
+            </h2>
             <p className="section-sub" style={{ margin: '0 auto' }}>
-              Thousands of satisfied partners and travellers trust Anjna Global for their most important journeys.
+              A snapshot of what trade and leisure clients say about working with us.
             </p>
-          </div>
+          </header>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                style={{
-                  background: 'white', borderRadius: '16px', padding: '36px 32px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-                  border: '1px solid rgba(0,0,0,0.04)',
-                  transition: 'box-shadow 0.3s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.12)'}
-                onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'}
-              >
-                {/* Stars */}
-                <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+          <div className="home-quote-grid">
+            {testimonials.map(t => (
+              <article key={t.name} className="home-quote">
+                <div style={{ display: 'flex', gap: 4 }} aria-label={`${t.rating} out of 5 stars`}>
                   {[...Array(t.rating)].map((_, s) => (
-                    <Star key={s} size={15} fill="#B8963E" color="#B8963E" />
+                    <Star key={s} size={15} fill="#B8963E" color="#B8963E" aria-hidden />
                   ))}
                 </div>
-                <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.75', marginBottom: '28px', fontStyle: 'italic' }}>
-                  "{t.text}"
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{
-                    width: '44px', height: '44px', borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #C8102E, #1D3461)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontWeight: '700', fontSize: '14px', flexShrink: 0,
-                    fontFamily: "'Inter', sans-serif",
-                  }}>
-                    {t.avatar}
+                <p className="home-quote__text">&ldquo;{t.text}&rdquo;</p>
+                <div className="home-quote__footer">
+                  <div className="home-quote__avatar">{t.avatar}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, fontSize: 14, color: '#1A1A2E', marginBottom: 2 }}>{t.name}</p>
+                    <p style={{ fontSize: 12, color: '#6B7280' }}>{t.role}</p>
                   </div>
-                  <div>
-                    <p style={{ fontWeight: '700', fontSize: '14px', color: '#1A1A2E', fontFamily: "'Inter', sans-serif" }}>{t.name}</p>
-                    <p style={{ fontSize: '12px', color: '#6B7280' }}>{t.role}</p>
-                  </div>
-                  <div style={{ marginLeft: 'auto', padding: '4px 10px', background: '#F8F7F4', borderRadius: '100px', fontSize: '12px', color: '#6B7280', fontWeight: '600' }}>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: '#6B7280',
+                      padding: '4px 10px',
+                      background: '#F3F4F6',
+                      borderRadius: 999,
+                    }}
+                  >
                     {t.dest}
-                  </div>
+                  </span>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          CTA BANNER
-      ════════════════════════════════════════ */}
-      <section style={{
-        position: 'relative', padding: '120px 0',
-        background: 'url(https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1920&q=80) center/cover no-repeat',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(135deg, rgba(10,15,30,0.9) 0%, rgba(29,52,97,0.85) 100%)',
-        }} />
-        <div className="container" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <span className="tag tag-light" style={{ marginBottom: '16px' }}>Start Planning Today</span>
-          <h2 style={{
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            color: 'white', fontWeight: '900',
-            marginBottom: '20px', maxWidth: '700px', margin: '0 auto 20px',
-          }}>
-            Let's Build Something <span style={{ color: '#C8102E' }}>Extraordinary</span> Together
+      <section className="home-cta">
+        <div
+          className="home-cta__bg"
+          style={{
+            backgroundImage:
+              'url(https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1920&q=80)',
+          }}
+        />
+        <div className="home-cta__overlay" />
+        <div className="container home-cta__inner">
+          <span className="tag tag-light" style={{ marginBottom: 12 }}>Get started</span>
+          <h2>
+            Plan something <span style={{ color: '#C8102E' }}>memorable</span>
           </h2>
-          <p style={{
-            fontSize: '17px', color: 'rgba(255,255,255,0.7)',
-            maxWidth: '520px', margin: '0 auto 40px',
-            lineHeight: '1.75', fontFamily: "'Inter', sans-serif",
-          }}>
-            Whether you need a tailor-made itinerary or a full MICE event — our team is ready to make it happen.
+          <p>
+            Tell us your brief — FIT, group, or corporate — and we&apos;ll respond with a clear,
+            actionable proposal.
           </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/contact" className="btn-primary" style={{ padding: '16px 40px', fontSize: '14px' }}>
-              Get a Free Quote <ArrowRight size={16} />
+          <div className="home-cta__actions">
+            <Link to="/contact" className="btn-primary" style={{ padding: '15px 32px' }}>
+              Request a quote <ArrowRight size={16} aria-hidden />
             </Link>
-            <Link to="/packages" className="btn-outline-white" style={{ padding: '15px 40px', fontSize: '14px' }}>
-              Browse Packages
+            <Link to="/packages" className="btn-outline-white" style={{ padding: '14px 32px' }}>
+              Browse packages
             </Link>
           </div>
         </div>
@@ -635,162 +444,74 @@ export default function Home() {
   )
 }
 
-/* ── Sub-components ────────────────────────────── */
-
-function DestCard({ dest, big }) {
-  const [hovered, setHovered] = useState(false)
-
+function DestCardLarge({ dest }) {
   return (
-    <Link
-      to={`/destinations/${dest.id}`}
-      style={{
-        position: 'relative',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        display: 'block',
-        height: big ? '480px' : '220px',
-        cursor: 'pointer',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Image */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: `url(${dest.image}) center/cover no-repeat`,
-        transform: hovered ? 'scale(1.07)' : 'scale(1)',
-        transition: 'transform 0.6s ease',
-      }} />
-
-      {/* Gradient */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to top, rgba(10,15,30,0.88) 0%, rgba(10,15,30,0.1) 60%)',
-      }} />
-
-      {/* Packages badge */}
-      <div style={{
-        position: 'absolute', top: '16px', right: '16px',
-        background: 'rgba(200,16,46,0.9)',
-        backdropFilter: 'blur(8px)',
-        borderRadius: '100px',
-        padding: '5px 12px',
-        fontSize: '11px', fontWeight: '700', color: 'white', letterSpacing: '0.5px',
-        fontFamily: "'Inter', sans-serif",
-      }}>
-        {dest.packages} Packages
+    <Link to={`/destinations/${dest.id}`} className="home-card-dest home-card-dest--lg">
+      <div className="home-card-dest__img" style={{ backgroundImage: `url(${dest.image})` }} />
+      <div className="home-card-dest__grad" />
+      <span className="home-card-dest__badge">{dest.packages} packages</span>
+      <div className="home-card-dest__body">
+        <div className="home-card-dest__flag">{dest.flag}</div>
+        <h3>{dest.name}</h3>
+        <p>{dest.shortDesc}</p>
+        <span className="home-card-dest__cta">
+          Explore <ArrowRight size={14} aria-hidden />
+        </span>
       </div>
+    </Link>
+  )
+}
 
-      {/* Content */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: big ? '28px' : '16px' }}>
-        <div style={{ fontSize: big ? '22px' : '16px', marginBottom: '4px' }}>{dest.flag}</div>
-        <h3 style={{
-          color: 'white', fontWeight: '700',
-          fontSize: big ? '26px' : '18px',
-          marginBottom: '4px',
-        }}>
-          {dest.name}
-        </h3>
-        <p style={{
-          color: 'rgba(255,255,255,0.6)',
-          fontSize: big ? '14px' : '12px',
-          marginBottom: big ? '16px' : '0',
-          lineHeight: '1.5',
-          display: big ? 'block' : hovered ? 'block' : 'none',
-          transition: 'all 0.3s',
-        }}>
-          {dest.shortDesc}
-        </p>
-        {big && (
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: '#C8102E', color: 'white', padding: '8px 18px',
-            borderRadius: '4px', fontSize: '12px', fontWeight: '700', letterSpacing: '1px',
-            textTransform: 'uppercase', opacity: hovered ? 1 : 0,
-            transform: hovered ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'all 0.3s ease',
-            fontFamily: "'Inter', sans-serif",
-          }}>
-            Explore <ArrowRight size={12} />
-          </div>
-        )}
+function DestCardSmall({ dest }) {
+  return (
+    <Link to={`/destinations/${dest.id}`} className="home-card-dest home-card-dest--sm">
+      <div className="home-card-dest__img" style={{ backgroundImage: `url(${dest.image})` }} />
+      <div className="home-card-dest__grad" />
+      <span className="home-card-dest__badge">{dest.packages} pkgs</span>
+      <div className="home-card-dest__body">
+        <div className="home-card-dest__flag">{dest.flag}</div>
+        <h3>{dest.name}</h3>
       </div>
     </Link>
   )
 }
 
 function PackageCard({ pkg }) {
-  const [hovered, setHovered] = useState(false)
-
   return (
-    <div
-      style={{
-        borderRadius: '16px',
-        overflow: 'hidden',
-        background: 'white',
-        boxShadow: hovered ? '0 20px 50px rgba(0,0,0,0.14)' : '0 4px 16px rgba(0,0,0,0.08)',
-        border: '1px solid rgba(0,0,0,0.05)',
-        transition: 'box-shadow 0.3s ease, transform 0.3s ease',
-        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
-        cursor: 'pointer',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Image */}
-      <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: `url(${pkg.image}) center/cover`,
-          transform: hovered ? 'scale(1.06)' : 'scale(1)',
-          transition: 'transform 0.6s ease',
-        }} />
+    <div className="home-card-pkg">
+      <div className="home-card-pkg__img">
+        <div className="home-card-pkg__img-inner" style={{ backgroundImage: `url(${pkg.image})` }} />
         {pkg.tag && (
-          <div style={{
-            position: 'absolute', top: '14px', left: '14px',
-            background: pkg.tagColor || '#C8102E',
-            color: 'white', padding: '4px 12px',
-            borderRadius: '100px', fontSize: '11px', fontWeight: '700',
-            letterSpacing: '0.5px', fontFamily: "'Inter', sans-serif",
-          }}>
+          <span className="home-card-pkg__tag" style={{ background: pkg.tagColor || '#C8102E' }}>
             {pkg.tag}
-          </div>
+          </span>
         )}
       </div>
-
-      {/* Content */}
-      <div style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <MapPin size={13} color="#6B7280" />
-          <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: '600', letterSpacing: '0.5px' }}>
-            {pkg.destinationName}
-          </span>
-          <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6B7280' }}>
-            <Clock size={12} /> {pkg.duration}
+      <div className="home-card-pkg__body">
+        <div className="home-card-pkg__meta">
+          <MapPin size={13} color="#6B7280" aria-hidden />
+          <span style={{ fontWeight: 600 }}>{pkg.destinationName}</span>
+          <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <Clock size={12} aria-hidden /> {pkg.duration}
           </span>
         </div>
-
-        <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1A1A2E', marginBottom: '16px' }}>
-          {pkg.title}
-        </h3>
-
-        <div style={{ marginBottom: '20px' }}>
+        <h3>{pkg.title}</h3>
+        <div className="home-card-pkg__highlights">
           {pkg.highlights.slice(0, 3).map(h => (
-            <div key={h} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <CheckCircle size={13} color="#10B981" style={{ flexShrink: 0 }} />
-              <span style={{ fontSize: '13px', color: '#4B5563' }}>{h}</span>
+            <div key={h}>
+              <CheckCircle size={13} color="#10B981" aria-hidden />
+              <span>{h}</span>
             </div>
           ))}
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
+        <div className="home-card-pkg__foot">
           <div>
-            <p style={{ fontSize: '11px', color: '#9CA3AF', marginBottom: '2px' }}>Starting from</p>
-            <p style={{ fontSize: '22px', fontWeight: '800', color: '#C8102E', fontFamily: "'Inter', sans-serif" }}>{pkg.price}</p>
-            <p style={{ fontSize: '11px', color: '#9CA3AF' }}>{pkg.priceNote}</p>
+            <div className="home-card-pkg__price-label">From</div>
+            <div className="home-card-pkg__price">{pkg.price}</div>
+            <div className="home-card-pkg__note">{pkg.priceNote}</div>
           </div>
-          <Link to="/contact" className="btn-primary" style={{ padding: '10px 20px', fontSize: '12px' }}>
-            Enquire <ChevronRight size={13} />
+          <Link to="/contact" className="btn-primary" style={{ padding: '10px 18px', fontSize: 13 }}>
+            Enquire <ChevronRight size={14} aria-hidden />
           </Link>
         </div>
       </div>

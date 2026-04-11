@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, ArrowRight } from 'lucide-react'
 
@@ -23,7 +24,6 @@ const SocialIcons = {
     </svg>
   ),
 }
-import logoWhite from '../assets/white logo.png'
 import logoColor from '../assets/Anjna Global Logo final.png'
 
 const destinations = [
@@ -53,50 +53,60 @@ const services = [
 ]
 
 export default function Footer() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   return (
-    <footer style={{ background: '#060D1F', color: 'rgba(255,255,255,0.65)', fontFamily: "'Inter', sans-serif" }}>
+    <footer style={{ background: '#060D1F', color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-body)' }}>
       {/* Top CTA strip */}
       <div style={{
-        background: 'linear-gradient(135deg, #C8102E 0%, #8B0A1F 100%)',
-        padding: '28px 0',
+        background: 'linear-gradient(135deg, #0F1C3A 0%, #1D3461 50%, #152a4a 100%)',
+        padding: '22px 0',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ fontSize: '22px', fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: '700', marginBottom: '4px' }}>
-              Ready to Plan Your Next Trip?
+            <p style={{ fontSize: '18px', fontFamily: 'var(--font-body)', color: 'white', fontWeight: '600', marginBottom: '6px', letterSpacing: '-0.02em' }}>
+              Ready to plan your next trip?
             </p>
-            <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.75)' }}>
-              Talk to our travel experts today — no obligation, just inspiration.
+            <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.5 }}>
+              Our team replies within one business day.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <Link to="/contact" style={{
-              padding: '12px 28px', background: 'white', color: '#C8102E',
-              borderRadius: '4px', fontSize: '13px', fontWeight: '700',
-              letterSpacing: '1px', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '6px',
+              padding: '11px 22px', background: '#C8102E', color: 'white',
+              borderRadius: '8px', fontSize: '14px', fontWeight: '600',
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
             }}>
-              Contact Us <ArrowRight size={14} />
+              Contact <ArrowRight size={14} />
             </Link>
             <a
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
               style={{
-                padding: '12px 28px', background: 'rgba(255,255,255,0.15)',
-                color: 'white', borderRadius: '4px', fontSize: '13px', fontWeight: '700',
-                letterSpacing: '1px', textTransform: 'uppercase', border: '2px solid rgba(255,255,255,0.4)',
+                padding: '11px 22px', background: 'rgba(255,255,255,0.1)',
+                color: 'white', borderRadius: '8px', fontSize: '14px', fontWeight: '600',
+                border: '1px solid rgba(255,255,255,0.2)',
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
               }}
             >
-              WhatsApp Us
+              WhatsApp
             </a>
           </div>
         </div>
       </div>
 
       {/* Main footer */}
-      <div className="container" style={{ padding: '72px 32px 48px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '48px' }}>
+      <div className="container" style={{ padding: isMobile ? '42px 0 30px' : '56px 32px 40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: isMobile ? '28px 20px' : '40px 32px' }}>
           {/* Brand column */}
           <div style={{ gridColumn: 'span 1' }}>
             <img
@@ -151,7 +161,7 @@ export default function Footer() {
 
           {/* Destinations */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
               Destinations
             </h4>
             <ul style={{ listStyle: 'none' }}>
@@ -173,7 +183,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
               Quick Links
             </h4>
             <ul style={{ listStyle: 'none' }}>
@@ -195,7 +205,7 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
               Our Services
             </h4>
             <ul style={{ listStyle: 'none' }}>
@@ -210,7 +220,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+            <h4 style={{ color: 'white', fontSize: '14px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: 'var(--font-body)' }}>
               Contact Us
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -262,12 +272,12 @@ export default function Footer() {
         borderTop: '1px solid rgba(255,255,255,0.06)',
         padding: '20px 0',
       }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'space-between', flexWrap: 'wrap', gap: '12px', textAlign: isMobile ? 'center' : 'left' }}>
           <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)' }}>
             © {new Date().getFullYear()} Anjna Global. All rights reserved. |{' '}
             <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.25)' }}>Fabulously Planned... Remembered Always</span>
           </p>
-          <div style={{ display: 'flex', gap: '20px' }}>
+          <div style={{ display: 'flex', gap: isMobile ? '12px' : '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
             {['Privacy Policy', 'Terms of Service', 'Sitemap'].map(item => (
               <Link
                 key={item}

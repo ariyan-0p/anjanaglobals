@@ -1,12 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { X, MessageCircle } from 'lucide-react'
 
 export default function WhatsAppFloat() {
   const [show, setShow] = useState(false)
   const [tooltip, setTooltip] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   return (
-    <div style={{ position: 'fixed', bottom: '28px', right: '28px', zIndex: 900, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
+    <div style={{ position: 'fixed', bottom: isMobile ? '18px' : '28px', right: isMobile ? '16px' : '28px', zIndex: 900, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
       {/* Tooltip bubble */}
       {tooltip && !show && (
         <div style={{
@@ -42,7 +50,7 @@ export default function WhatsAppFloat() {
           background: 'white',
           borderRadius: '16px',
           boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
-          width: '300px',
+          width: isMobile ? 'min(88vw, 300px)' : '300px',
           overflow: 'hidden',
           animation: 'slideDown 0.2s ease',
         }}>
@@ -87,7 +95,7 @@ export default function WhatsAppFloat() {
       <button
         onClick={() => { setShow(o => !o); setTooltip(false) }}
         style={{
-          width: '58px', height: '58px',
+          width: isMobile ? '54px' : '58px', height: isMobile ? '54px' : '58px',
           background: '#25D366',
           border: 'none', borderRadius: '50%',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
