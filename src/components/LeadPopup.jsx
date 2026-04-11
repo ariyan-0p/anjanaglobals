@@ -14,7 +14,7 @@ export default function LeadPopup() {
       setOpen(true)
     }
 
-    const firstTimer = window.setTimeout(openPopup, 1400)
+    const firstTimer = window.setTimeout(openPopup, REOPEN_INTERVAL_MS)
     const interval = window.setInterval(openPopup, REOPEN_INTERVAL_MS)
 
     return () => {
