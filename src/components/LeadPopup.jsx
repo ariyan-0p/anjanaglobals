@@ -2,33 +2,34 @@ import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import './LeadPopup.css'
 
-const SESSION_KEY = 'anjna_query_popup_seen'
+const REOPEN_INTERVAL_MS = 30000
 
 export default function LeadPopup() {
   const [open, setOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (sessionStorage.getItem(SESSION_KEY) === '1') return
+    const openPopup = () => {
+      setSubmitted(false)
+      setOpen(true)
+    }
 
-    const timer = window.setTimeout(() => setOpen(true), 1400)
-    return () => window.clearTimeout(timer)
+    const firstTimer = window.setTimeout(openPopup, 1400)
+    const interval = window.setInterval(openPopup, REOPEN_INTERVAL_MS)
+
+    return () => {
+      window.clearTimeout(firstTimer)
+      window.clearInterval(interval)
+    }
   }, [])
 
   const closePopup = () => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem(SESSION_KEY, '1')
-    }
     setOpen(false)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setSubmitted(true)
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem(SESSION_KEY, '1')
-    }
     window.setTimeout(() => setOpen(false), 1300)
   }
 
