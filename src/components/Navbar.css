@@ -310,6 +310,16 @@
   .site-nav__inner {
     grid-template-columns: auto 1fr auto;
   }
+
+  .site-nav__brand {
+    max-width: min(72vw, 360px);
+  }
+}
+
+@media (max-width: 768px) {
+  .site-nav__brand {
+    max-width: min(78vw, 360px);
+  }
 }
 
 .site-nav__mobile-toggle {
