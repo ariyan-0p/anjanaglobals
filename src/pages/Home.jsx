@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, MapPin, Clock, Star, Users, Award, Headphones,
-  ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart,
+  ChevronLeft, ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart,
 } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { packages } from '../data/packages'
@@ -60,6 +60,15 @@ const stats = [
   { value: '24/7', label: 'Dedicated support', icon: <Headphones size={20} strokeWidth={1.75} /> },
 ]
 
+const trustSignals = [
+  'Trusted Since 2003',
+  '500+ Partner Agencies',
+  '24/7 Operational Support',
+  'Dedicated On-ground Teams',
+  'Transparent Net Rates',
+  'Fast Turnaround Quotations',
+]
+
 const servicePillars = [
   {
     icon: <Plane size={20} strokeWidth={1.75} />,
@@ -85,24 +94,61 @@ const serviceChecks = [
   'Net rates for trade partners',
 ]
 
-const testimonials = [
+const testimonialImageModules = import.meta.glob('../assets/testimonials/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', {
+  eager: true,
+  import: 'default',
+})
+
+const testimonialImages = Object.entries(testimonialImageModules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, src]) => src)
+
+const testimonialBase = [
   {
-    name: 'Priya Sharma',
-    role: 'Travel Agent, Mumbai',
-    text: 'Our go-to DMC for Dubai — response time is unmatched and the on-ground team is exceptional.',
+    name: 'Vikrant Sawant',
+    role: 'Founder, Sawant Yoga Foundation',
+    text: 'The planning quality and support were outstanding. Our entire group had a smooth, memorable journey.',
     rating: 5,
-    avatar: 'PS',
     dest: 'Dubai',
   },
   {
-    name: 'Rahul Mehta',
-    role: 'Operations Head, Delhi Travels',
-    text: 'A flawless MICE programme in Singapore — from transfers to the gala. Truly professional.',
+    name: 'Chandru',
+    role: 'Co-Founder, Wellness Brand',
+    text: 'Fast responses, transparent pricing, and flawless ground execution. We confidently recommend Anjna Global.',
     rating: 5,
-    avatar: 'RM',
     dest: 'Singapore',
   },
+  {
+    name: 'Shubham',
+    role: 'Senior Insurance Consultant',
+    text: 'From hotel coordination to transfers, every touchpoint was handled professionally and on time.',
+    rating: 5,
+    dest: 'Bali',
+  },
+  {
+    name: 'Piyush Pattnaik',
+    role: 'Operations Manager',
+    text: 'Excellent communication and dependable delivery. Their team made our itinerary stress-free and efficient.',
+    rating: 5,
+    dest: 'Malaysia',
+  },
+  {
+    name: 'Deepak Kumar Pradhan',
+    role: 'Associate Sales Executive',
+    text: 'Clear documentation, quick quote turnaround, and strong on-ground support throughout the trip.',
+    rating: 5,
+    dest: 'Azerbaijan',
+  },
 ]
+
+const testimonials = testimonialImages.map((image, idx) => {
+  const base = testimonialBase[idx % testimonialBase.length]
+  return {
+    ...base,
+    id: `t-${idx + 1}`,
+    image,
+  }
+})
 
 function useCounter(target, enabled, isVisible) {
   const [count, setCount] = useState(0)
@@ -144,8 +190,10 @@ function StatItem({ stat, isVisible }) {
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [statsVisible, setStatsVisible] = useState(false)
+  const [testimonialIndex, setTestimonialIndex] = useState(0)
   const statsRef = useRef(null)
   const intervalRef = useRef(null)
+  const testimonialIntervalRef = useRef(null)
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -173,6 +221,21 @@ export default function Home() {
 
   const featuredPackages = packages.slice(0, 3)
 
+  useEffect(() => {
+    testimonialIntervalRef.current = setInterval(() => {
+      setTestimonialIndex((s) => (s + 1) % testimonials.length)
+    }, 3800)
+    return () => clearInterval(testimonialIntervalRef.current)
+  }, [])
+
+  const goToTestimonial = (idx) => {
+    setTestimonialIndex(idx)
+    clearInterval(testimonialIntervalRef.current)
+    testimonialIntervalRef.current = setInterval(() => {
+      setTestimonialIndex((s) => (s + 1) % testimonials.length)
+    }, 3800)
+  }
+
   return (
     <main className="home">
       <section className="home-hero">
@@ -192,7 +255,7 @@ export default function Home() {
         <div className="home-hero__fade" />
 
         <div className="container home-hero__inner">
-          <div style={{ maxWidth: '44rem' }}>
+          <div key={currentSlide} className="home-hero__content" style={{ maxWidth: '44rem' }}>
             <div className="home-hero__badge">
               <MapPin size={13} color="#C8102E" aria-hidden />
               <span>
@@ -227,6 +290,17 @@ export default function Home() {
               className={`home-hero__dot${i === currentSlide ? ' is-active' : ''}`}
               onClick={() => goToSlide(i)}
             />
+          ))}
+        </div>
+      </section>
+
+      <section className="home-trust-strip" aria-label="Trust highlights">
+        <div className="home-trust-strip__track">
+          {[...trustSignals, ...trustSignals].map((signal, i) => (
+            <div key={`${signal}-${i}`} className="home-trust-strip__item">
+              <Star size={14} aria-hidden />
+              <span>{signal}</span>
+            </div>
           ))}
         </div>
       </section>
@@ -396,42 +470,55 @@ export default function Home() {
           <header className="home-section__head text-center" style={{ marginBottom: 'clamp(2rem,4vw,2.75rem)' }}>
             <span className="tag">Testimonials</span>
             <h2 className="section-heading" style={{ margin: '0 auto 10px' }}>
-              Trusted by partners
+              Client moments
             </h2>
             <p className="section-sub" style={{ margin: '0 auto' }}>
-              A snapshot of what trade and leisure clients say about working with us.
+              Real photos from journeys delivered by our team.
             </p>
           </header>
 
-          <div className="home-quote-grid">
-            {testimonials.map(t => (
-              <article key={t.name} className="home-quote">
-                <div style={{ display: 'flex', gap: 4 }} aria-label={`${t.rating} out of 5 stars`}>
-                  {[...Array(t.rating)].map((_, s) => (
-                    <Star key={s} size={15} fill="#B8963E" color="#B8963E" aria-hidden />
-                  ))}
-                </div>
-                <p className="home-quote__text">&ldquo;{t.text}&rdquo;</p>
-                <div className="home-quote__footer">
-                  <div className="home-quote__avatar">{t.avatar}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontWeight: 600, fontSize: 14, color: '#1A1A2E', marginBottom: 2 }}>{t.name}</p>
-                    <p style={{ fontSize: 12, color: '#6B7280' }}>{t.role}</p>
-                  </div>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: '#6B7280',
-                      padding: '4px 10px',
-                      background: '#F3F4F6',
-                      borderRadius: 999,
-                    }}
-                  >
-                    {t.dest}
-                  </span>
-                </div>
-              </article>
+          <div className="home-testi-slider">
+            <button
+              type="button"
+              className="home-testi-slider__nav"
+              onClick={() => goToTestimonial((testimonialIndex - 1 + testimonials.length) % testimonials.length)}
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft size={18} />
+            </button>
+
+            <div className="home-testi-slider__viewport">
+              <div
+                className="home-testi-slider__track"
+                style={{ transform: `translateX(-${testimonialIndex * 100}%)` }}
+              >
+                {testimonials.map((t) => (
+                  <figure key={t.id} className="home-testi-slide">
+                    <img src={t.image} alt={`${t.name} testimonial`} loading="lazy" />
+                  </figure>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="home-testi-slider__nav"
+              onClick={() => goToTestimonial((testimonialIndex + 1) % testimonials.length)}
+              aria-label="Next testimonial"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+
+          <div className="home-testi-slider__dots">
+            {testimonials.map((t, i) => (
+              <button
+                key={`dot-${t.id}`}
+                type="button"
+                className={`home-testi-slider__dot${i === testimonialIndex ? ' is-active' : ''}`}
+                onClick={() => goToTestimonial(i)}
+                aria-label={`Go to testimonial ${i + 1}`}
+              />
             ))}
           </div>
         </div>

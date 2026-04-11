@@ -3,6 +3,9 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import WhatsAppFloat from './components/WhatsAppFloat'
 import ScrollToTop from './components/ScrollToTop'
+import SectionAnimator from './components/SectionAnimator'
+import LeadPopup from './components/LeadPopup'
+import SitePreloader from './components/SitePreloader'
 import Home from './pages/Home'
 import About from './pages/About'
 import Destinations from './pages/Destinations'
@@ -15,7 +18,10 @@ import Contact from './pages/Contact'
 function App() {
   return (
     <BrowserRouter>
+      <SitePreloader />
       <ScrollToTop />
+      <SectionAnimator />
+      <LeadPopup />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

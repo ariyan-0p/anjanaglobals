@@ -9,21 +9,21 @@
 :root {
   --red: #C8102E;
   --red-dark: #a00d25;
-  --navy: #1D3461;
-  --navy-dark: #0F1C3A;
+  --navy: #27406f;
+  --navy-dark: #16294a;
   --gold: #B8963E;
   --gold-light: #D4AF6A;
-  --dark: #0A0F1E;
-  --light: #F8F7F4;
-  --surface: #FAFAF9;
+  --dark: #0e1a30;
+  --light: #f6f8fc;
+  --surface: #fbfcff;
   --white: #FFFFFF;
-  --gray: #6B7280;
-  --gray-light: #E5E7EB;
-  --gray-mid: #9CA3AF;
+  --gray: #64748b;
+  --gray-light: #dde3ef;
+  --gray-mid: #94a3b8;
   --transition: all 0.3s ease;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 8px 30px rgba(0,0,0,0.08);
-  --shadow-lg: 0 24px 64px rgba(0,0,0,0.12);
+  --shadow: 0 6px 24px rgba(18, 35, 64, 0.07);
+  --shadow-md: 0 14px 40px rgba(18, 35, 64, 0.11);
+  --shadow-lg: 0 24px 72px rgba(18, 35, 64, 0.15);
   --radius: 12px;
   --radius-lg: 20px;
   --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -35,8 +35,8 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
-  color: #1A1A2E;
-  background: var(--white);
+  color: #16243b;
+  background: radial-gradient(1200px 700px at 10% -10%, #eef4ff 0%, transparent 55%), var(--light);
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -191,6 +191,43 @@ input, textarea, select { font-family: var(--font-body); }
   font-weight: 400;
 }
 .section-sub-light { color: rgba(255,255,255,0.7); }
+
+/* ── Motion: soft futuristic reveal ───────────────── */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(26px) scale(0.99);
+  filter: blur(6px);
+  transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
+  will-change: opacity, transform, filter;
+}
+
+.reveal-section.reveal-left {
+  transform: translateX(-36px) scale(0.995);
+}
+
+.reveal-section.reveal-right {
+  transform: translateX(36px) scale(0.995);
+}
+
+.reveal-section.reveal-up {
+  transform: translateY(28px) scale(0.99);
+}
+
+.reveal-section.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-section,
+  .reveal-section.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
 
 /* ── Page hero (inner pages) ─────────────────── */
 .page-hero {
