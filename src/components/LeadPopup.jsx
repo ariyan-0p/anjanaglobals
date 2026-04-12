@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import './LeadPopup.css'
 
-const REOPEN_INTERVAL_MS = 30000
+const REOPEN_INTERVAL_MS = 50000
 
 export default function LeadPopup() {
   const [open, setOpen] = useState(false)
@@ -58,6 +58,7 @@ export default function LeadPopup() {
             <form onSubmit={handleSubmit} className="lead-popup__form">
               <input type="text" placeholder="Full name *" required />
               <input type="tel" placeholder="Phone / WhatsApp *" required />
+              <input type="email" placeholder="Email ID *" required />
               <select defaultValue="">
                 <option value="" disabled>
                   Destination (optional)

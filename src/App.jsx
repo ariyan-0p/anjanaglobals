@@ -14,6 +14,7 @@ import Services from './pages/Services'
 import B2B from './pages/B2B'
 import Packages from './pages/Packages'
 import Contact from './pages/Contact'
+import Testimonials from './pages/Testimonials'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/b2b" element={<B2B />} />
         <Route path="/packages" element={<Packages />} />
+        <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
       <Footer />

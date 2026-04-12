@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, MapPin, Clock, Star, Users, Award, Headphones,
-  ChevronLeft, ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart,
+  ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart, Video, Sparkles, Play, X,
 } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { packages } from '../data/packages'
@@ -94,61 +94,41 @@ const serviceChecks = [
   'Net rates for trade partners',
 ]
 
-const testimonialImageModules = import.meta.glob('../assets/testimonials/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', {
-  eager: true,
-  import: 'default',
-})
-
-const testimonialImages = Object.entries(testimonialImageModules)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([, src]) => src)
-
-const testimonialBase = [
+const agentVoices = [
   {
-    name: 'Vikrant Sawant',
-    role: 'Founder, Sawant Yoga Foundation',
-    text: 'The planning quality and support were outstanding. Our entire group had a smooth, memorable journey.',
-    rating: 5,
-    dest: 'Dubai',
+    id: 'agent-1',
+    name: 'Riya Malhotra',
+    role: 'Senior Destination Specialist',
+    desk: 'Dubai Desk',
+    quote: 'Every journey we design is built for smooth on-ground execution and fast response times.',
+    src: '/agent-videos/agent-1.mp4',
   },
   {
-    name: 'Chandru',
-    role: 'Co-Founder, Wellness Brand',
-    text: 'Fast responses, transparent pricing, and flawless ground execution. We confidently recommend Anjna Global.',
-    rating: 5,
-    dest: 'Singapore',
+    id: 'agent-2',
+    name: 'Vikash Nair',
+    role: 'Group Operations Lead',
+    desk: 'Bali Desk',
+    quote: 'Our promise is simple: transparent planning, dependable operations, and measurable guest delight.',
+    src: '/agent-videos/agent-2.mp4',
   },
   {
-    name: 'Shubham',
-    role: 'Senior Insurance Consultant',
-    text: 'From hotel coordination to transfers, every touchpoint was handled professionally and on time.',
-    rating: 5,
-    dest: 'Bali',
-  },
-  {
-    name: 'Piyush Pattnaik',
-    role: 'Operations Manager',
-    text: 'Excellent communication and dependable delivery. Their team made our itinerary stress-free and efficient.',
-    rating: 5,
-    dest: 'Malaysia',
-  },
-  {
-    name: 'Deepak Kumar Pradhan',
-    role: 'Associate Sales Executive',
-    text: 'Clear documentation, quick quote turnaround, and strong on-ground support throughout the trip.',
-    rating: 5,
-    dest: 'Azerbaijan',
+    id: 'agent-3',
+    name: 'Ananya Shah',
+    role: 'Travel Experience Consultant',
+    desk: 'Singapore Desk',
+    quote: 'From first call to final transfer, we stay accountable for every detail of your itinerary.',
+    src: '/agent-videos/agent-3.mp4',
   },
 ]
 
-const testimonials = testimonialImages.map((image, idx) => {
-  const base = testimonialBase[idx % testimonialBase.length]
-  return {
-    ...base,
-    id: `t-${idx + 1}`,
-    image,
-  }
-})
+const homeMoments = destinations.map((dest) => ({
+  id: dest.id,
+  name: dest.name,
+  flag: dest.flag,
+  country: dest.country,
+  tagline: dest.tagline,
+  image: dest.galleryImages?.[0] || dest.image,
+}))
 
 function useCounter(target, enabled, isVisible) {
   const [count, setCount] = useState(0)
@@ -190,10 +170,13 @@ function StatItem({ stat, isVisible }) {
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [statsVisible, setStatsVisible] = useState(false)
-  const [testimonialIndex, setTestimonialIndex] = useState(0)
+  const [querySubmitted, setQuerySubmitted] = useState(false)
+  const [agentVideoErrors, setAgentVideoErrors] = useState({})
+  const [activeAgentId, setActiveAgentId] = useState(null)
   const statsRef = useRef(null)
   const intervalRef = useRef(null)
-  const testimonialIntervalRef = useRef(null)
+
+  const activeAgent = agentVoices.find((agent) => agent.id === activeAgentId) || null
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -221,20 +204,27 @@ export default function Home() {
 
   const featuredPackages = packages.slice(0, 3)
 
-  useEffect(() => {
-    testimonialIntervalRef.current = setInterval(() => {
-      setTestimonialIndex((s) => (s + 1) % testimonials.length)
-    }, 3800)
-    return () => clearInterval(testimonialIntervalRef.current)
-  }, [])
-
-  const goToTestimonial = (idx) => {
-    setTestimonialIndex(idx)
-    clearInterval(testimonialIntervalRef.current)
-    testimonialIntervalRef.current = setInterval(() => {
-      setTestimonialIndex((s) => (s + 1) % testimonials.length)
-    }, 3800)
+  const handleHomeQuerySubmit = (e) => {
+    e.preventDefault()
+    setQuerySubmitted(true)
   }
+
+  useEffect(() => {
+    if (!activeAgent) return
+
+    const previousOverflow = document.body.style.overflow
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setActiveAgentId(null)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [activeAgent])
 
   return (
     <main className="home">
@@ -315,7 +305,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-section" style={{ background: '#fff' }}>
+      <section className="home-section home-section--destinations" style={{ background: '#fff' }}>
         <div className="container">
           <header className="home-section__head">
             <span className="tag">Destinations</span>
@@ -343,7 +333,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-section home-section--surface">
+      <section className="home-section home-section--surface home-section--services">
         <div className="container">
           <div className="home-services">
             <div>
@@ -465,7 +455,106 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-section home-section--light">
+      <section className="home-section home-agent-voices">
+        <div className="container">
+          <header className="home-section__head text-center" style={{ marginBottom: 'clamp(1.5rem,4vw,2.4rem)' }}>
+            <span className="tag">Agent voices</span>
+            <h2 className="section-heading" style={{ margin: '0 auto 10px' }}>
+              What our agents say about us
+            </h2>
+            <p className="section-sub" style={{ margin: '0 auto' }}>
+              Real insights from our destination experts across operations, planning, and guest experience.
+            </p>
+          </header>
+
+          <div className="home-agent-voices__grid">
+            {agentVoices.map((agent) => (
+              <article key={agent.id} className="home-agent-card">
+                <div className="home-agent-card__media">
+                  {agentVideoErrors[agent.id] ? (
+                    <div className="home-agent-card__fallback" aria-label={`${agent.name} testimonial placeholder`}>
+                      <Video size={20} />
+                      <p>Add video file:</p>
+                      <code>{agent.src}</code>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="home-agent-card__trigger"
+                      onClick={() => setActiveAgentId(agent.id)}
+                      aria-label={`Play video from ${agent.name}`}
+                    >
+                      <span className="home-agent-card__play">
+                        <Play size={16} aria-hidden />
+                      </span>
+                      <span className="home-agent-card__trigger-text">Play agent video</span>
+                    </button>
+                  )}
+
+                  <span className="home-agent-card__desk">
+                    <Sparkles size={14} aria-hidden />
+                    {agent.desk}
+                  </span>
+                </div>
+
+                <div className="home-agent-card__body">
+                  <h3>{agent.name}</h3>
+                  <p className="home-agent-card__role">{agent.role}</p>
+                  <p className="home-agent-card__quote">"{agent.quote}"</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {activeAgent ? (
+            <div className="home-agent-modal" role="dialog" aria-modal="true" aria-label={`${activeAgent.name} video`}>
+              <button
+                type="button"
+                className="home-agent-modal__backdrop"
+                aria-label="Close video"
+                onClick={() => setActiveAgentId(null)}
+              />
+              <div className="home-agent-modal__panel">
+                <div className="home-agent-modal__head">
+                  <div>
+                    <h3>{activeAgent.name}</h3>
+                    <p>{activeAgent.role}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="home-agent-modal__close"
+                    onClick={() => setActiveAgentId(null)}
+                    aria-label="Close"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                {agentVideoErrors[activeAgent.id] ? (
+                  <div className="home-agent-modal__missing">
+                    <Video size={18} />
+                    <p>Video not found at {activeAgent.src}</p>
+                  </div>
+                ) : (
+                  <video
+                    key={activeAgent.id}
+                    className="home-agent-modal__video"
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                    onError={() => setAgentVideoErrors((prev) => ({ ...prev, [activeAgent.id]: true }))}
+                  >
+                    <source src={activeAgent.src} type="video/mp4" />
+                  </video>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="home-section home-section--light home-moments">
         <div className="container">
           <header className="home-section__head text-center" style={{ marginBottom: 'clamp(2rem,4vw,2.75rem)' }}>
             <span className="tag">Testimonials</span>
@@ -473,53 +562,101 @@ export default function Home() {
               Client moments
             </h2>
             <p className="section-sub" style={{ margin: '0 auto' }}>
-              Real photos from journeys delivered by our team.
+              Explore photo stories from all five destinations and jump directly to any location.
             </p>
+            <div style={{ marginTop: '14px' }}>
+              <Link to="/testimonials" className="home-section__link" style={{ justifyContent: 'center' }}>
+                Explore all destination moments <ArrowRight size={16} aria-hidden />
+              </Link>
+            </div>
           </header>
 
-          <div className="home-testi-slider">
-            <button
-              type="button"
-              className="home-testi-slider__nav"
-              onClick={() => goToTestimonial((testimonialIndex - 1 + testimonials.length) % testimonials.length)}
-              aria-label="Previous testimonial"
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            <div className="home-testi-slider__viewport">
-              <div
-                className="home-testi-slider__track"
-                style={{ transform: `translateX(-${testimonialIndex * 100}%)` }}
-              >
-                {testimonials.map((t) => (
-                  <figure key={t.id} className="home-testi-slide">
-                    <img src={t.image} alt={`${t.name} testimonial`} loading="lazy" />
-                  </figure>
-                ))}
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="home-testi-slider__nav"
-              onClick={() => goToTestimonial((testimonialIndex + 1) % testimonials.length)}
-              aria-label="Next testimonial"
-            >
-              <ChevronRight size={18} />
-            </button>
+          <div className="home-moments__tabs">
+            {homeMoments.map((dest) => (
+              <Link key={`tab-${dest.id}`} to={`/destinations/${dest.id}`} className="home-moments__tab">
+                <span>{dest.flag}</span>
+                {dest.name}
+              </Link>
+            ))}
           </div>
 
-          <div className="home-testi-slider__dots">
-            {testimonials.map((t, i) => (
-              <button
-                key={`dot-${t.id}`}
-                type="button"
-                className={`home-testi-slider__dot${i === testimonialIndex ? ' is-active' : ''}`}
-                onClick={() => goToTestimonial(i)}
-                aria-label={`Go to testimonial ${i + 1}`}
-              />
+          <div className="home-moments__grid">
+            {homeMoments.map((dest) => (
+              <Link key={dest.id} to={`/testimonials#${dest.id}`} className="home-moment-card">
+                <div className="home-moment-card__img" style={{ backgroundImage: `url(${dest.image})` }} />
+                <div className="home-moment-card__overlay" />
+                <div className="home-moment-card__body">
+                  <p className="home-moment-card__meta">{dest.flag} {dest.name}, {dest.country}</p>
+                  <h3>{dest.tagline}</h3>
+                  <span className="home-moment-card__cta">
+                    View gallery <ArrowRight size={14} aria-hidden />
+                  </span>
+                </div>
+              </Link>
             ))}
+          </div>
+
+          <div className="home-moments__footer">
+            <Link to="/testimonials" className="btn-primary">
+              Open full testimonials page <ArrowRight size={16} aria-hidden />
+            </Link>
+            <div className="home-moments__dest-links">
+              {homeMoments.map((dest) => (
+                <Link key={`quick-${dest.id}`} to={`/destinations/${dest.id}`}>
+                  {dest.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-section home-query">
+        <div className="container">
+          <div className="home-query__wrap">
+            <div>
+              <span className="tag">Quick query</span>
+              <h2 className="section-heading">Tell us your plan, we will call you back</h2>
+              <p className="section-sub" style={{ marginBottom: 0 }}>
+                Share your details and travel requirement. Our team will get in touch shortly with
+                options tailored for you.
+              </p>
+            </div>
+
+            {querySubmitted ? (
+              <div className="home-query__success">
+                <h3>Thanks! Query received.</h3>
+                <p>Our team will contact you shortly.</p>
+                <button type="button" className="btn-primary" onClick={() => setQuerySubmitted(false)}>
+                  Submit another query
+                </button>
+              </div>
+            ) : (
+              <form className="home-query__form" onSubmit={handleHomeQuerySubmit}>
+                <div className="home-query__grid">
+                  <input type="text" placeholder="Full name *" required />
+                  <input type="tel" placeholder="Phone / WhatsApp *" required />
+                </div>
+                <div className="home-query__grid">
+                  <input type="email" placeholder="Email ID *" required />
+                  <select defaultValue="">
+                    <option value="" disabled>
+                      Destination (optional)
+                    </option>
+                    <option>Dubai</option>
+                    <option>Azerbaijan</option>
+                    <option>Singapore</option>
+                    <option>Malaysia</option>
+                    <option>Bali</option>
+                    <option>Not sure yet</option>
+                  </select>
+                </div>
+                <textarea rows={4} placeholder="Travel dates / requirements (optional)" />
+                <button type="submit" className="btn-primary home-query__submit">
+                  Submit query
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </section>

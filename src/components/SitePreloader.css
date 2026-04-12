@@ -4,10 +4,7 @@
   z-index: 1500;
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(200, 16, 46, 0.18), transparent 48%),
-    radial-gradient(circle at 85% 90%, rgba(39, 64, 111, 0.26), transparent 52%),
-    linear-gradient(145deg, #0c162b 0%, #14284a 52%, #1d3562 100%);
+  background: linear-gradient(155deg, #0f172a 0%, #111827 100%);
   animation: preloaderFadeIn 0.35s ease;
 }
 
@@ -30,9 +27,9 @@
   inset: 0;
   border-radius: 50%;
   background:
-    radial-gradient(circle at center, transparent 64%, rgba(255, 255, 255, 0.14) 65% 69%, transparent 70%),
-    conic-gradient(from -90deg, #c8102e 0, #3b6ec1 var(--progress, 0%), rgba(255, 255, 255, 0.12) 0);
-  filter: drop-shadow(0 0 24px rgba(20, 56, 110, 0.35));
+    radial-gradient(circle at center, transparent 64%, rgba(255, 255, 255, 0.1) 65% 69%, transparent 70%),
+    conic-gradient(from -90deg, #e5e7eb 0, #9ca3af var(--progress, 0%), rgba(255, 255, 255, 0.08) 0);
+  filter: drop-shadow(0 0 18px rgba(15, 23, 42, 0.35));
   animation: ringSpin 2.8s linear infinite;
 }
 
@@ -41,12 +38,12 @@
   z-index: 1;
   width: min(60vw, 250px);
   margin: 0 auto;
-  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.28));
   animation: preloaderPulse 1.35s ease-in-out infinite;
 }
 
 .site-preloader__status {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(226, 232, 240, 0.62);
   font-size: 10px;
   letter-spacing: 0.24em;
   font-weight: 600;
@@ -58,7 +55,7 @@
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: rgba(255, 255, 255, 0.13);
+  color: rgba(226, 232, 240, 0.18);
   margin-bottom: 8px;
   user-select: none;
 }

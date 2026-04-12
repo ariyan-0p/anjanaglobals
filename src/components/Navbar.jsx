@@ -20,6 +20,7 @@ const navLinks = [
   },
   { label: 'Services', path: '/services' },
   { label: 'Packages', path: '/packages' },
+  { label: 'Testimonials', path: '/testimonials' },
   { label: 'B2B', path: '/b2b', title: 'B2B Partners' },
   { label: 'Contact', path: '/contact' },
 ]
