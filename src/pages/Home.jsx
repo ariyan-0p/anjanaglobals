@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, MapPin, Clock, Star, Users, Award, Headphones,
-  ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart, Video, Sparkles, Play, X,
+  ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart, Video, Sparkles, Play,
 } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { packages } from '../data/packages'
@@ -11,6 +11,8 @@ import heroImgBali from '../assets/Bali.jpg'
 import heroImgSingapore from '../assets/singapore.jpg'
 import heroImgBaku from '../assets/baku.jpg'
 import heroImgKualaLumpur from '../assets/Kualalumpur.jpg'
+import agentVideo1 from '../assets/WhatsApp Video 2026-04-13 at 10.52.42 AM.mp4'
+import agentVideo2 from '../assets/WhatsApp Video 2026-04-13 at 10.54.40 AM.mp4'
 import './Home.css'
 
 const heroImgBaliFresh = `${heroImgBali}?v=2`
@@ -101,7 +103,7 @@ const agentVoices = [
     role: 'Senior Destination Specialist',
     desk: 'Dubai Desk',
     quote: 'Every journey we design is built for smooth on-ground execution and fast response times.',
-    src: '/agent-videos/agent-1.mp4',
+    src: agentVideo1,
   },
   {
     id: 'agent-2',
@@ -109,15 +111,7 @@ const agentVoices = [
     role: 'Group Operations Lead',
     desk: 'Bali Desk',
     quote: 'Our promise is simple: transparent planning, dependable operations, and measurable guest delight.',
-    src: '/agent-videos/agent-2.mp4',
-  },
-  {
-    id: 'agent-3',
-    name: 'Ananya Shah',
-    role: 'Travel Experience Consultant',
-    desk: 'Singapore Desk',
-    quote: 'From first call to final transfer, we stay accountable for every detail of your itinerary.',
-    src: '/agent-videos/agent-3.mp4',
+    src: agentVideo2,
   },
 ]
 
@@ -172,11 +166,27 @@ export default function Home() {
   const [statsVisible, setStatsVisible] = useState(false)
   const [querySubmitted, setQuerySubmitted] = useState(false)
   const [agentVideoErrors, setAgentVideoErrors] = useState({})
-  const [activeAgentId, setActiveAgentId] = useState(null)
+  const [playingAgentId, setPlayingAgentId] = useState(null)
+  const agentVideoRefs = useRef({})
   const statsRef = useRef(null)
   const intervalRef = useRef(null)
 
-  const activeAgent = agentVoices.find((agent) => agent.id === activeAgentId) || null
+  const handleAgentPlay = (id) => {
+    setPlayingAgentId(id)
+    Object.entries(agentVideoRefs.current).forEach(([key, node]) => {
+      if (!node) return
+      if (key === id) {
+        node.play().catch(() => {})
+      } else {
+        node.pause()
+        try { node.currentTime = 0 } catch { /* noop */ }
+      }
+    })
+  }
+
+  const handleAgentPause = (id) => {
+    if (playingAgentId === id) setPlayingAgentId(null)
+  }
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -209,22 +219,6 @@ export default function Home() {
     setQuerySubmitted(true)
   }
 
-  useEffect(() => {
-    if (!activeAgent) return
-
-    const previousOverflow = document.body.style.overflow
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') setActiveAgentId(null)
-    }
-
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', onKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [activeAgent])
 
   return (
     <main className="home">
@@ -467,90 +461,74 @@ export default function Home() {
             </p>
           </header>
 
-          <div className="home-agent-voices__grid">
-            {agentVoices.map((agent) => (
-              <article key={agent.id} className="home-agent-card">
-                <div className="home-agent-card__media">
-                  {agentVideoErrors[agent.id] ? (
-                    <div className="home-agent-card__fallback" aria-label={`${agent.name} testimonial placeholder`}>
-                      <Video size={20} />
-                      <p>Add video file:</p>
-                      <code>{agent.src}</code>
+          <div className="home-agent-voices__stage">
+            {agentVoices.map((agent, index) => {
+              const isPlaying = playingAgentId === agent.id
+              const hasError = agentVideoErrors[agent.id]
+              return (
+                <article
+                  key={agent.id}
+                  className={`home-agent-tile${isPlaying ? ' is-playing' : ''}`}
+                  style={{ '--tile-index': index }}
+                >
+                  <div className="home-agent-tile__frame">
+                    <span className="home-agent-tile__index">0{index + 1}</span>
+                    <span className="home-agent-tile__desk">
+                      <Sparkles size={13} aria-hidden />
+                      {agent.desk}
+                    </span>
+
+                    {hasError ? (
+                      <div className="home-agent-tile__fallback">
+                        <Video size={22} />
+                        <p>Video unavailable</p>
+                      </div>
+                    ) : (
+                      <video
+                        ref={(node) => { agentVideoRefs.current[agent.id] = node }}
+                        className="home-agent-tile__video"
+                        playsInline
+                        preload="metadata"
+                        controls={isPlaying}
+                        onPlay={() => setPlayingAgentId(agent.id)}
+                        onPause={() => handleAgentPause(agent.id)}
+                        onEnded={() => handleAgentPause(agent.id)}
+                        onError={() => setAgentVideoErrors((prev) => ({ ...prev, [agent.id]: true }))}
+                      >
+                        <source src={agent.src} type="video/mp4" />
+                      </video>
+                    )}
+
+                    {!isPlaying && !hasError ? (
+                      <button
+                        type="button"
+                        className="home-agent-tile__cover"
+                        onClick={() => handleAgentPlay(agent.id)}
+                        aria-label={`Play video from ${agent.name}`}
+                      >
+                        <span className="home-agent-tile__play">
+                          <Play size={20} aria-hidden />
+                        </span>
+                        <span className="home-agent-tile__cover-label">Watch testimonial</span>
+                      </button>
+                    ) : null}
+                  </div>
+
+                  <div className="home-agent-tile__panel">
+                    <div className="home-agent-tile__panel-head">
+                      <div>
+                        <h3>{agent.name}</h3>
+                        <p>{agent.role}</p>
+                      </div>
                     </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="home-agent-card__trigger"
-                      onClick={() => setActiveAgentId(agent.id)}
-                      aria-label={`Play video from ${agent.name}`}
-                    >
-                      <span className="home-agent-card__play">
-                        <Play size={16} aria-hidden />
-                      </span>
-                      <span className="home-agent-card__trigger-text">Play agent video</span>
-                    </button>
-                  )}
-
-                  <span className="home-agent-card__desk">
-                    <Sparkles size={14} aria-hidden />
-                    {agent.desk}
-                  </span>
-                </div>
-
-                <div className="home-agent-card__body">
-                  <h3>{agent.name}</h3>
-                  <p className="home-agent-card__role">{agent.role}</p>
-                  <p className="home-agent-card__quote">"{agent.quote}"</p>
-                </div>
-              </article>
-            ))}
+                    <p className="home-agent-tile__quote">
+                      <span aria-hidden>"</span>{agent.quote}<span aria-hidden>"</span>
+                    </p>
+                  </div>
+                </article>
+              )
+            })}
           </div>
-
-          {activeAgent ? (
-            <div className="home-agent-modal" role="dialog" aria-modal="true" aria-label={`${activeAgent.name} video`}>
-              <button
-                type="button"
-                className="home-agent-modal__backdrop"
-                aria-label="Close video"
-                onClick={() => setActiveAgentId(null)}
-              />
-              <div className="home-agent-modal__panel">
-                <div className="home-agent-modal__head">
-                  <div>
-                    <h3>{activeAgent.name}</h3>
-                    <p>{activeAgent.role}</p>
-                  </div>
-                  <button
-                    type="button"
-                    className="home-agent-modal__close"
-                    onClick={() => setActiveAgentId(null)}
-                    aria-label="Close"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-
-                {agentVideoErrors[activeAgent.id] ? (
-                  <div className="home-agent-modal__missing">
-                    <Video size={18} />
-                    <p>Video not found at {activeAgent.src}</p>
-                  </div>
-                ) : (
-                  <video
-                    key={activeAgent.id}
-                    className="home-agent-modal__video"
-                    controls
-                    autoPlay
-                    playsInline
-                    preload="metadata"
-                    onError={() => setAgentVideoErrors((prev) => ({ ...prev, [activeAgent.id]: true }))}
-                  >
-                    <source src={activeAgent.src} type="video/mp4" />
-                  </video>
-                )}
-              </div>
-            </div>
-          ) : null}
         </div>
       </section>
 

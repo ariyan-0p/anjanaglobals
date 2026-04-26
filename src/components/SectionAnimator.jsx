@@ -25,7 +25,7 @@ export default function SectionAnimator() {
           }
         })
       },
-      { threshold: 0.14, rootMargin: '0px 0px -8% 0px' }
+      { threshold: 0, rootMargin: '0px 0px -8% 0px' }
     )
 
     nodes.forEach((node) => observer.observe(node))

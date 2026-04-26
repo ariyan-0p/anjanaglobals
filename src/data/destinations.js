@@ -1,3 +1,19 @@
+const testimonialModules = import.meta.glob('../assets/testimonials/*.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+})
+const testimonialImages = Object.entries(testimonialModules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, src]) => src)
+
+const demoByDestination = {
+  dubai: testimonialImages.slice(0, 2),
+  azerbaijan: testimonialImages.slice(2, 4),
+  singapore: testimonialImages.slice(4, 6),
+  malaysia: testimonialImages.slice(6, 8),
+  bali: testimonialImages.slice(8, 10),
+}
+
 export const destinations = [
   {
     id: 'dubai',
@@ -145,5 +161,11 @@ export const destinations = [
     airlines: ['Garuda Indonesia', 'AirAsia', 'IndiGo', 'Air India'],
   },
 ]
+
+destinations.forEach((dest) => {
+  const demos = demoByDestination[dest.id] || []
+  dest.testimonialImages = demos
+  dest.galleryImages = [...dest.galleryImages, ...demos]
+})
 
 export const getDestination = (id) => destinations.find(d => d.id === id)
