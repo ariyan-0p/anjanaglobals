@@ -10,6 +10,8 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Destinations from './pages/Destinations'
 import DestinationDetail from './pages/DestinationDetail'
+import DubaiPage from './pages/DubaiPage'
+import BaliPage from './pages/BaliPage'
 import Services from './pages/Services'
 import B2B from './pages/B2B'
 import Packages from './pages/Packages'
@@ -28,6 +30,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/destinations" element={<Destinations />} />
+        <Route path="/destinations/dubai" element={<DubaiPage />} />
+        <Route path="/destinations/bali" element={<BaliPage />} />
         <Route path="/destinations/:slug" element={<DestinationDetail />} />
         <Route path="/services" element={<Services />} />
         <Route path="/b2b" element={<B2B />} />
