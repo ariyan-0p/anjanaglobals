@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, ChevronRight, MapPin, Calendar, DollarSign, Globe, Clock, Plane,
-  Sparkles, CheckCircle, Star, Award, Users, TrendingUp, Headphones,
-  Plane as PlaneIcon, Heart, Building2, Sun, FileCheck,
+  CheckCircle, XCircle, Star, Award, Users, TrendingUp, Headphones,
+  Plane as PlaneIcon, Heart, Building2, Sun, FileCheck, Car, Camera, Utensils,
+  ShieldCheck, Languages, Ticket, Sparkles,
 } from 'lucide-react'
 import { getDestination } from '../data/destinations'
 import { getPackagesByDestination } from '../data/packages'
@@ -13,92 +14,183 @@ import './DestinationPage.css'
 const heroSlides = [
   {
     image: dubaiHero,
-    badge: 'Middle East · UAE',
-    title: 'Dubai —',
-    accent: 'where dreams touch the sky',
+    badge: 'Dubai City Tours · UAE',
+    title: 'Dubai City Tours —',
+    accent: 'every icon, one curated day',
   },
   {
     image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=1920&q=80',
-    badge: 'Iconic Skyline',
-    title: 'A city built',
-    accent: 'on the impossible',
+    badge: 'Modern & Old Dubai',
+    title: 'From the Burj',
+    accent: 'to the gold souks of Deira',
   },
   {
     image: 'https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=1920&q=80',
     badge: 'Desert & Dunes',
-    title: 'Golden silence,',
-    accent: 'just beyond the city',
+    title: 'Dune-bash, dine,',
+    accent: 'sleep under desert stars',
   },
 ]
 
 const trustSignals = [
-  'Direct hotel contracts',
-  'On-ground team since 2007',
-  'Visa support · 3–5 days',
-  'Premium transfers',
-  '24/7 destination support',
-  '180+ properties contracted',
+  'Hotel pickup & drop',
+  'Licensed English-speaking guide',
+  '20–25 min photo stops',
+  'Skip-the-queue tickets',
+  'AC vehicles · group-size matched',
+  '24/7 on-tour support',
 ]
 
 const stats = [
-  { icon: <Award size={20} strokeWidth={1.75} />, value: '17+', label: 'Years on the ground' },
-  { icon: <Building2 size={20} strokeWidth={1.75} />, value: '180+', label: 'Hotels contracted' },
-  { icon: <Users size={20} strokeWidth={1.75} />, value: '12,000+', label: 'Travellers hosted' },
+  { icon: <Award size={20} strokeWidth={1.75} />, value: '17+', label: 'Years running tours' },
+  { icon: <Camera size={20} strokeWidth={1.75} />, value: '14+', label: 'Iconic stops covered' },
+  { icon: <Users size={20} strokeWidth={1.75} />, value: '12,000+', label: 'Guests toured' },
   { icon: <Headphones size={20} strokeWidth={1.75} />, value: '2 hrs', label: 'Avg. quote response' },
 ]
 
-const signatureExperiences = [
+const attractions = [
+  {
+    tag: 'World #1',
+    title: 'Burj Khalifa',
+    desc: 'The world\'s tallest tower. Photo stop at the base, with optional At The Top tickets to Levels 124/125.',
+    image: 'https://images.unsplash.com/photo-1582672060674-bc2bd808a8f5?w=800&q=80',
+  },
+  {
+    tag: 'Shopping',
+    title: 'Dubai Mall & Fountain',
+    desc: 'The world\'s largest mall, the Dubai Aquarium tunnel, and the choreographed Dubai Fountain show.',
+    image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',
+  },
   {
     tag: 'Iconic',
-    title: 'Burj Khalifa — At the Top',
-    desc: 'Ascend the world\'s tallest building and watch the city melt into the desert horizon from level 124.',
-    image: 'https://images.unsplash.com/photo-1582672060674-bc2bd808a8f5?w=800&q=80',
+    title: 'Burj Al Arab',
+    desc: 'Photo stop at the seven-star sail — Dubai\'s most photographed silhouette, on Jumeirah Beach.',
+    image: 'https://images.unsplash.com/photo-1546412414-e1885259563a?w=800&q=80',
+  },
+  {
+    tag: 'Heritage',
+    title: 'Jumeirah Mosque',
+    desc: 'A masterpiece of modern Islamic architecture in pure white stone — exterior visit and walk-around.',
+    image: 'https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=800&q=80',
+  },
+  {
+    tag: 'Engineering',
+    title: 'Palm Jumeirah & Atlantis',
+    desc: 'A drive across the man-made palm-shaped island, ending at the iconic Atlantis The Palm resort.',
+    image: 'https://images.unsplash.com/photo-1559666126-84f389727b9a?w=800&q=80',
+  },
+  {
+    tag: 'Old Dubai',
+    title: 'Dubai Creek & Dhow Cruise',
+    desc: 'Abra ride across the historic creek and an evening dhow cruise with dinner on traditional wooden boats.',
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
+  },
+  {
+    tag: 'Culture',
+    title: 'Dubai Museum & Al Fahidi',
+    desc: 'Inside the 18th-century Al Fahidi Fort — the story of Dubai before the oil, in the old quarter.',
+    image: 'https://images.unsplash.com/photo-1583425423320-cb8a3c4b4e8b?w=800&q=80',
+  },
+  {
+    tag: 'Souks',
+    title: 'Gold & Spice Souks',
+    desc: 'The bustling lanes of Deira — gold by the kilo, spices by the scoop, and sharp bargaining.',
+    image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',
   },
   {
     tag: 'Adventure',
     title: 'Red Dune Desert Safari',
-    desc: 'Dune-bash the Lahbab desert, ride a camel into the sunset, and dine under a billion stars at a Bedouin camp.',
+    desc: '4×4 dune-bashing in Lahbab desert, sandboarding, camel ride, henna, falconry, BBQ under the stars.',
     image: 'https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=800&q=80',
   },
-  {
-    tag: 'Heritage',
-    title: 'Old Dubai & Dhow Cruise',
-    desc: 'Wander the spice and gold souks of Deira, then glide along Dubai Creek aboard a traditional wooden dhow.',
-    image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',
-  },
-  {
-    tag: 'Luxury',
-    title: 'Atlantis & Palm Jumeirah',
-    desc: 'A private monorail ride to the iconic palm-shaped island, ending with high tea at Atlantis The Palm.',
-    image: 'https://images.unsplash.com/photo-1546412414-e1885259563a?w=800&q=80',
-  },
-  {
-    tag: 'Family',
-    title: 'IMG Worlds & Global Village',
-    desc: 'The world\'s largest indoor theme park paired with an evening at the cultural mosaic of Global Village.',
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
-  },
-  {
-    tag: 'Skyline',
-    title: 'Helicopter City Tour',
-    desc: 'A 22-minute aerial ballet over the Burj, the Palm, the World Islands and Marina — premium altitude only.',
-    image: 'https://images.unsplash.com/photo-1547721064-da6cfb341d50?w=800&q=80',
-  },
-]
-
-const tripStyles = [
-  { icon: <PlaneIcon size={20} strokeWidth={1.75} />, title: 'FIT & bespoke', desc: 'Private trips for couples, families and small groups — your pace, your call.' },
-  { icon: <Heart size={20} strokeWidth={1.75} />, title: 'Honeymoon', desc: 'Beachfront resorts, private dinners, helicopter rides — moments that stay with you.' },
-  { icon: <Building2 size={20} strokeWidth={1.75} />, title: 'Groups & MICE', desc: 'Conferences, incentives, and group movements — coordinated end to end.' },
 ]
 
 const sampleItinerary = [
-  { title: 'Arrival & Marina Sunset', desc: 'Meet & greet at DXB, premium transfer to your hotel. Evening at Dubai Marina with a stroll along The Walk and dinner at Bluewaters.', tags: ['Airport pickup', 'Marina walk', 'Welcome dinner'] },
-  { title: 'Modern Dubai City Tour', desc: 'Burj Khalifa (Level 124), Dubai Mall fountains, Museum of the Future, then a curated drive past the Frame and Palm Jumeirah.', tags: ['Burj Khalifa', 'Museum of the Future', 'Dubai Mall'] },
-  { title: 'Desert Safari Experience', desc: 'Pickup in a 4×4, dune-bashing in the red sands, sandboarding, camel ride, henna, falconry, and a BBQ buffet under the stars.', tags: ['Dune bashing', 'Bedouin camp', 'Live show'] },
-  { title: 'Old Dubai & Dhow Cruise', desc: 'Souk Madinat, gold & spice souks of Deira, abra ride across the creek, evening dhow cruise with dinner on the water.', tags: ['Souks', 'Abra ride', 'Dhow dinner'] },
-  { title: 'Abu Dhabi Day Trip', desc: 'Sheikh Zayed Grand Mosque, Heritage Village, Emirates Palace photo stop, and the Louvre Abu Dhabi for an art-led close.', tags: ['Grand Mosque', 'Louvre AD', 'Day return'] },
-  { title: 'Departure', desc: 'Optional last-mile shopping at Mall of the Emirates or Dubai Hills Mall, premium transfer to the airport.', tags: ['Late checkout', 'Shopping', 'Airport drop'] },
+  {
+    title: 'Pickup & Modern Dubai',
+    desc: 'Pickup from your hotel or location in Dubai. Drive past Sheikh Zayed Road skyline, photo stops at Burj Khalifa and Dubai Mall fountains.',
+    tags: ['Hotel pickup', 'Burj Khalifa', 'Dubai Mall'],
+  },
+  {
+    title: 'Jumeirah & The Palm',
+    desc: 'Jumeirah Mosque exterior, photo stop at Burj Al Arab on Jumeirah Beach, drive across Palm Jumeirah ending at Atlantis.',
+    tags: ['Jumeirah Mosque', 'Burj Al Arab', 'Atlantis'],
+  },
+  {
+    title: 'Old Dubai & The Creek',
+    desc: 'Dubai Museum at Al Fahidi Fort, abra ride across Dubai Creek, walk through the gold and spice souks of Deira.',
+    tags: ['Dubai Museum', 'Abra ride', 'Souks'],
+  },
+  {
+    title: 'Optional · Desert Safari',
+    desc: 'Afternoon pickup in a 4×4, dune-bashing on red sands of Lahbab, sandboarding, camel ride, henna, BBQ buffet at Bedouin camp.',
+    tags: ['Dune bashing', 'Camel ride', 'BBQ dinner'],
+  },
+  {
+    title: 'Optional · Dhow Cruise',
+    desc: 'Evening cruise along Dubai Creek or Marina aboard a traditional wooden dhow — dinner, live tanoura show, city lights.',
+    tags: ['Dhow cruise', 'Dinner', 'Tanoura show'],
+  },
+  {
+    title: 'Drop Off',
+    desc: 'Drop back to your hotel or onward location. Add-on extensions: Abu Dhabi, Al Ain, Ferrari World, Miracle Garden.',
+    tags: ['Hotel drop', 'Add-ons available'],
+  },
+]
+
+const vehicleOptions = [
+  {
+    capacity: '1–4 persons',
+    name: 'Toyota Land Cruiser',
+    desc: 'Premium SUV with chilled water and leather interiors — ideal for couples and small families.',
+    perks: ['Premium SUV', 'Chilled water', 'Leather interior'],
+  },
+  {
+    capacity: '4–6 persons',
+    name: '7-Seat AC SUV',
+    desc: 'Spacious 7-seater with luggage room — perfect for families travelling with kids and elders.',
+    perks: ['7-seat AC', 'Luggage space', 'Family-friendly'],
+  },
+  {
+    capacity: '5–6 persons',
+    name: 'Family Sedan / MPV',
+    desc: 'Comfortable family car with privacy, kid-seats on request, and English-speaking chauffeur.',
+    perks: ['Privacy glass', 'Kid seats', 'Pro chauffeur'],
+  },
+  {
+    capacity: '10–12 persons',
+    name: 'Hi-Roof Van',
+    desc: 'Stand-up cabin van for extended families and friend groups — luggage racks, large windows, AC.',
+    perks: ['Hi-roof cabin', 'Large windows', 'Group-friendly'],
+  },
+  {
+    capacity: '13–25 persons',
+    name: 'Mini-Coach',
+    desc: 'Tinted-glass mini-coach with onboard PA — used for school groups, extended families, MICE.',
+    perks: ['Tinted glass', 'Onboard PA', 'MICE-ready'],
+  },
+  {
+    capacity: '26–50 persons',
+    name: 'Luxury Coach',
+    desc: 'Full-size luxury coach with reclining seats and onboard washroom — for large group movements.',
+    perks: ['Reclining seats', 'Washroom', 'Pro driver'],
+  },
+]
+
+const inclusions = [
+  'Pickup & drop from your hotel or location in Dubai',
+  '20–25 minute photo stops at every major attraction',
+  'AC vehicle matched to your group size',
+  'Licensed English-speaking driver / guide',
+  'Bottled water on board',
+  'All taxes and parking fees',
+]
+
+const exclusions = [
+  'Burj Khalifa entry tickets (At The Top — addable)',
+  'Meals not specified in the itinerary',
+  'Personal expenses & tipping',
+  'Anything not listed under inclusions',
 ]
 
 const galleryImages = [
@@ -114,8 +206,22 @@ const essentials = [
   { icon: <Plane size={20} />, title: 'Flying time', desc: '~3.5 hrs from India · direct flights from BLR, BOM, DEL, HYD, MAA.' },
   { icon: <DollarSign size={20} />, title: 'Currency', desc: 'AED (Dirham) · cards accepted everywhere; tip 10%.' },
   { icon: <FileCheck size={20} />, title: 'Visa', desc: 'On Arrival / E-Visa · we arrange tourist visas in 3–5 days.' },
-  { icon: <Globe size={20} />, title: 'Language', desc: 'Arabic & English · English universally spoken.' },
+  { icon: <Languages size={20} />, title: 'Language', desc: 'Arabic & English · English universally spoken.' },
   { icon: <Sun size={20} />, title: 'Climate', desc: 'Desert / arid · sunny year-round, hot in summer.' },
+]
+
+const tripStyles = [
+  { icon: <PlaneIcon size={20} strokeWidth={1.75} />, title: 'Half-day city tour', desc: '4–5 hour iconic-stops circuit — Burj, Mall, Jumeirah, Palm.' },
+  { icon: <Heart size={20} strokeWidth={1.75} />, title: 'Full-day combo', desc: 'City tour + Desert Safari OR Dhow Cruise — the classic Dubai day.' },
+  { icon: <Building2 size={20} strokeWidth={1.75} />, title: 'Multi-day with add-ons', desc: 'Dubai + Abu Dhabi + Al Ain + Ferrari World, fully itinerised.' },
+]
+
+const relatedTours = [
+  { id: 'abu-dhabi', name: 'Abu Dhabi City Tour', emoji: '🕌' },
+  { id: 'al-ain', name: 'Al Ain Excursion', emoji: '🌴' },
+  { id: 'ferrari-world', name: 'Ferrari World Combo', emoji: '🏎️' },
+  { id: 'desert-safari', name: 'Desert Safari', emoji: '🐪' },
+  { id: 'dhow-cruise', name: 'Dhow Cruise Dinner', emoji: '⛵' },
 ]
 
 export default function DubaiPage() {
@@ -133,6 +239,17 @@ export default function DubaiPage() {
     return () => clearInterval(intervalRef.current)
   }, [])
 
+  useEffect(() => {
+    const els = document.querySelectorAll('.dest-reveal')
+    if (!els.length) return
+    const obs = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target) } }),
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    )
+    els.forEach(el => obs.observe(el))
+    return () => obs.disconnect()
+  }, [])
+
   const goToSlide = (i) => {
     setCurrentSlide(i)
     clearInterval(intervalRef.current)
@@ -148,7 +265,7 @@ export default function DubaiPage() {
 
   return (
     <main className="dest-page">
-      {/* HERO — multi-slide */}
+      {/* HERO */}
       <section className="dest-hero">
         {heroSlides.map((s, i) => (
           <div
@@ -171,18 +288,19 @@ export default function DubaiPage() {
               <span>›</span>
               <Link to="/destinations">Destinations</Link>
               <span>›</span>
-              <span>Dubai</span>
+              <span>Dubai City Tours</span>
             </div>
             <span className="dest-hero__badge">
-              <MapPin size={13} aria-hidden /> {slide.badge}
+              <Sparkles size={13} aria-hidden /> {slide.badge}
             </span>
             <h1 className="dest-hero__title">
               {slide.title}
               <span className="dest-hero__title-accent">{slide.accent}</span>
             </h1>
             <p className="dest-hero__lead">
-              Glittering skylines, golden dunes, and a luxury hospitality scene unmatched anywhere — designed
-              with the precision of an Anjana Globals itinerary.
+              From the foot of the Burj Khalifa to the gold souks of Deira — our Dubai City Tours
+              cover every iconic stop in one beautifully paced day, with hotel pickup, premium AC vehicles,
+              and licensed local guides.
             </p>
             <div className="dest-hero__actions">
               <Link to="/contact" className="btn-primary">
@@ -208,7 +326,7 @@ export default function DubaiPage() {
       </section>
 
       {/* TRUST MARQUEE */}
-      <section className="dest-trust" aria-label="Why book Dubai with us">
+      <section className="dest-trust" aria-label="What's included on every tour">
         <div className="dest-trust__track">
           {[...trustSignals, ...trustSignals].map((signal, i) => (
             <div key={`${signal}-${i}`} className="dest-trust__item">
@@ -219,7 +337,7 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* STATS BAND */}
+      {/* STATS */}
       <section className="dest-stats">
         <div className="container">
           <div className="dest-stats__grid">
@@ -234,21 +352,24 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* WHY DUBAI */}
+      {/* ABOUT THE CITY TOUR */}
       <section className="dest-section">
         <div className="container">
-          <div className="dest-why">
+          <div className="dest-why dest-reveal">
             <div className="dest-why__text">
-              <span className="tag">Why Dubai</span>
-              <h2 className="section-heading">A city that rewrote what hospitality means</h2>
+              <span className="tag">About the tour</span>
+              <h2 className="section-heading">One day. Every Dubai icon. Beautifully paced.</h2>
               <p>
-                Few destinations balance the futuristic and the timeless quite like Dubai. In one day you can
-                breakfast at a 5-star pool overlooking the Burj Khalifa, lunch at a centuries-old spice souk,
-                and dine under desert stars 40 km from the city.
+                Dubai is a city designed to be photographed — the tallest tower in the world, the
+                seven-star sail of Burj Al Arab, an island shaped like a palm, and a creek lined with
+                wooden dhows older than the city itself. Our Dubai City Tour is a single, seamless day
+                that connects every one of these landmarks.
               </p>
               <p>
-                Our Dubai desk has been running ground operations since 2007 — direct hotel contracts, vetted
-                desert camps, and a fleet of premium transfers ensure you experience it the right way.
+                You'll be picked up directly from your hotel or location in Dubai, driven in an AC
+                vehicle matched to your group size, and accompanied by a licensed English-speaking
+                driver-guide who builds in 20–25 minute photo stops at each major attraction. The tour
+                pairs perfectly with a desert safari in the afternoon or a dhow cruise in the evening.
               </p>
               <div className="dest-why__chips">
                 {dest.popularFor.map(tag => (
@@ -268,19 +389,19 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* SIGNATURE EXPERIENCES */}
+      {/* ATTRACTIONS COVERED */}
       <section className="dest-section dest-section--surface">
         <div className="container">
-          <header className="dest-section__head">
-            <span className="tag">Signature experiences</span>
-            <h2 className="section-heading">Six unforgettable Dubai moments</h2>
+          <header className="dest-section__head dest-reveal">
+            <span className="tag">Attractions covered</span>
+            <h2 className="section-heading">Every iconic stop, in one day</h2>
             <p className="section-sub">
-              The experiences our clients remember years later. Every itinerary includes your pick of these —
-              fully customisable to your pace.
+              The full circuit of must-see Dubai landmarks — modern, heritage, and adventure. Mix and
+              match to build your perfect city day.
             </p>
           </header>
           <div className="dest-experiences">
-            {signatureExperiences.map((exp, i) => (
+            {attractions.map((exp, i) => (
               <article key={exp.title} className="dest-exp-card">
                 <div className="dest-exp-card__media" style={{ backgroundImage: `url(${exp.image})` }}>
                   <div className="dest-exp-card__num">{String(i + 1).padStart(2, '0')}</div>
@@ -296,17 +417,17 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* TRIP STYLES */}
+      {/* TOUR FORMATS */}
       <section className="dest-section">
         <div className="container">
-          <header className="dest-section__head">
-            <span className="tag">Trip styles</span>
-            <h2 className="section-heading">However you want to do Dubai</h2>
+          <header className="dest-section__head dest-reveal">
+            <span className="tag">Tour formats</span>
+            <h2 className="section-heading">Three ways to do the Dubai tour</h2>
             <p className="section-sub">
-              Three ways to travel — every itinerary is built around your group, occasion and pace.
+              Pick the format that fits your timeline — every option is private and customisable.
             </p>
           </header>
-          <div className="dest-pillars">
+          <div className="dest-pillars dest-reveal">
             {tripStyles.map(p => (
               <div key={p.title} className="dest-pillar">
                 <div className="dest-pillar__icon">{p.icon}</div>
@@ -318,15 +439,15 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* SAMPLE ITINERARY */}
+      {/* HOW THE DAY FLOWS */}
       <section className="dest-section dest-section--surface">
         <div className="container">
-          <header className="dest-section__head">
-            <span className="tag">Sample itinerary</span>
-            <h2 className="section-heading">Six days in Dubai — how it could flow</h2>
+          <header className="dest-section__head dest-reveal">
+            <span className="tag">How the day flows</span>
+            <h2 className="section-heading">A reference flow for your Dubai City Tour</h2>
             <p className="section-sub">
-              A reference itinerary our planners build on. Add days, swap experiences, switch to a 5★ beach
-              property — your trip, your pace.
+              Every stop is a 20–25 minute photo break unless otherwise noted. Day 4 and 5 are popular
+              add-ons most guests pair with the main tour.
             </p>
           </header>
           <div className="dest-itinerary">
@@ -334,7 +455,7 @@ export default function DubaiPage() {
               <article key={day.title} className="dest-itinerary__day">
                 <div className="dest-itinerary__marker">
                   <div className="dest-itinerary__num">{i + 1}</div>
-                  <div className="dest-itinerary__day-label">Day</div>
+                  <div className="dest-itinerary__day-label">Stop</div>
                 </div>
                 <div className="dest-itinerary__content">
                   <h4>{day.title}</h4>
@@ -353,6 +474,83 @@ export default function DubaiPage() {
         </div>
       </section>
 
+      {/* VEHICLE OPTIONS */}
+      <section className="dest-section">
+        <div className="container">
+          <header className="dest-section__head dest-reveal">
+            <span className="tag">Vehicle options</span>
+            <h2 className="section-heading">Matched to your group size</h2>
+            <p className="section-sub">
+              Every tour is private. Your vehicle is allocated based on group size — from a premium
+              Land Cruiser for couples, to a luxury coach for incentive groups.
+            </p>
+          </header>
+          <div className="dest-vehicles dest-reveal">
+            {vehicleOptions.map(v => (
+              <article key={v.name} className="dest-vehicle-card">
+                <div className="dest-vehicle-card__head">
+                  <div className="dest-vehicle-card__icon"><Car size={22} strokeWidth={1.75} /></div>
+                  <span className="dest-vehicle-card__capacity">{v.capacity}</span>
+                </div>
+                <h3 className="dest-vehicle-card__name">{v.name}</h3>
+                <p className="dest-vehicle-card__desc">{v.desc}</p>
+                <ul className="dest-vehicle-card__perks">
+                  {v.perks.map(p => (
+                    <li key={p}>
+                      <CheckCircle size={13} color="#10B981" /> {p}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* INCLUSIONS / EXCLUSIONS */}
+      <section className="dest-section dest-section--surface">
+        <div className="container">
+          <header className="dest-section__head dest-reveal">
+            <span className="tag">What's included</span>
+            <h2 className="section-heading">Transparent pricing — no surprises</h2>
+            <p className="section-sub">
+              Every Dubai City Tour quote spells out exactly what's covered and what's optional. Below
+              is the standard inclusion list.
+            </p>
+          </header>
+          <div className="dest-incex dest-reveal">
+            <div className="dest-incex__col dest-incex__col--in">
+              <div className="dest-incex__head">
+                <ShieldCheck size={18} />
+                <h3>Included on every tour</h3>
+              </div>
+              <ul className="dest-incex__list">
+                {inclusions.map(item => (
+                  <li key={item}>
+                    <CheckCircle size={14} color="#10B981" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="dest-incex__col dest-incex__col--ex">
+              <div className="dest-incex__head">
+                <Ticket size={18} />
+                <h3>Optional add-ons / not included</h3>
+              </div>
+              <ul className="dest-incex__list">
+                {exclusions.map(item => (
+                  <li key={item}>
+                    <XCircle size={14} color="#9CA3AF" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PACKAGES */}
       <section id="packages" className="dest-section">
         <div className="container">
@@ -361,8 +559,8 @@ export default function DubaiPage() {
               <span className="tag">Ready packages</span>
               <h2 className="section-heading">Curated Dubai itineraries</h2>
               <p className="section-sub" style={{ marginBottom: 0 }}>
-                Hand-built packages travellers book most often. Every quote is customised — these are
-                starting points, not boxes.
+                Hand-built combinations of city tour, desert safari, and dhow cruise — every quote is
+                customised to your dates and group.
               </p>
             </div>
             <Link to="/packages" className="dest-section__link">
@@ -410,11 +608,11 @@ export default function DubaiPage() {
       {/* GALLERY */}
       <section className="dest-section dest-section--surface">
         <div className="container">
-          <header className="dest-section__head">
+          <header className="dest-section__head dest-reveal">
             <span className="tag">Gallery</span>
             <h2 className="section-heading">Dubai through our lens</h2>
           </header>
-          <div className="dest-gallery">
+          <div className="dest-gallery dest-reveal">
             <div className="dest-gallery__item dest-gallery__item--lg" style={{ backgroundImage: `url(${galleryImages[0]})` }} />
             <div className="dest-gallery__item" style={{ backgroundImage: `url(${galleryImages[1]})` }} />
             <div className="dest-gallery__item" style={{ backgroundImage: `url(${galleryImages[2]})` }} />
@@ -427,7 +625,7 @@ export default function DubaiPage() {
       {/* TRAVEL ESSENTIALS */}
       <section className="dest-section">
         <div className="container">
-          <header className="dest-section__head">
+          <header className="dest-section__head dest-reveal">
             <span className="tag">Travel essentials</span>
             <h2 className="section-heading">Everything you need before you fly</h2>
           </header>
@@ -443,7 +641,7 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* SPECIALIST (B2B-style dark) */}
+      {/* SPECIALIST */}
       <section className="dest-section dest-specialist">
         <div className="dest-specialist__bg" />
         <div className="dest-specialist__bg-img" style={{ backgroundImage: `url(${dubaiHero})` }} />
@@ -455,15 +653,15 @@ export default function DubaiPage() {
                 A real specialist, not a chatbot
               </h2>
               <p className="section-sub section-sub-light" style={{ marginBottom: 0 }}>
-                Our Dubai desk sits across India and the UAE. Share what you have in mind — duration, group
-                size, occasion — and you'll get a tailored proposal back within 2 working hours.
+                Our Dubai desk sits across India and the UAE. Share your dates, group size, and which
+                landmarks you want covered — you'll get a tailored proposal back within 2 working hours.
               </p>
               <div className="dest-specialist__list">
                 <div className="dest-specialist__list-item">
                   <TrendingUp size={18} />
                   <div>
-                    <strong>Direct hotel & supplier rates</strong>
-                    <span>180+ properties contracted, no middleman markup.</span>
+                    <strong>Direct vehicle & guide rates</strong>
+                    <span>Owned fleet and contracted guides — no middleman markup.</span>
                   </div>
                 </div>
                 <div className="dest-specialist__list-item">
@@ -496,11 +694,11 @@ export default function DubaiPage() {
                 <span>Since 2007</span>
               </div>
               <div className="dest-specialist__metric">
-                <span>Hotels contracted</span>
-                <span>180+</span>
+                <span>Iconic stops covered</span>
+                <span>14+</span>
               </div>
               <div className="dest-specialist__metric">
-                <span>Travellers hosted</span>
+                <span>Guests toured</span>
                 <span>12,000+</span>
               </div>
               <div className="dest-specialist__metric">
@@ -544,10 +742,12 @@ export default function DubaiPage() {
                 </div>
                 <div className="dest-query__grid">
                   <input type="email" placeholder="Email ID *" required />
-                  <select defaultValue="dubai-classic">
-                    <option value="dubai-classic">Dubai Classic (5D/4N)</option>
-                    <option value="dubai-luxury">Dubai Luxury Escape (7D/6N)</option>
-                    <option value="dubai-custom">Custom itinerary</option>
+                  <select defaultValue="city-tour">
+                    <option value="city-tour">Dubai City Tour (Half/Full day)</option>
+                    <option value="city-safari">City Tour + Desert Safari</option>
+                    <option value="city-dhow">City Tour + Dhow Cruise</option>
+                    <option value="multi-day">Multi-day Dubai package</option>
+                    <option value="custom">Custom itinerary</option>
                   </select>
                 </div>
                 <textarea rows={4} placeholder="Travel dates, group size & requirements (optional)" />
@@ -560,24 +760,25 @@ export default function DubaiPage() {
         </div>
       </section>
 
-      {/* ALSO EXPLORE */}
+      {/* RELATED TOURS */}
       <section className="dest-section">
         <div className="container">
-          <header className="dest-section__head">
-            <span className="tag">Also explore</span>
-            <h2 className="section-heading">Other destinations we run</h2>
+          <header className="dest-section__head dest-reveal">
+            <span className="tag">Pair with</span>
+            <h2 className="section-heading">Related UAE tours</h2>
+            <p className="section-sub">
+              Most guests pair the Dubai City Tour with one of these — tell us your dates and we'll
+              build the combined itinerary.
+            </p>
           </header>
-          <div className="dest-also">
-            {['bali', 'azerbaijan', 'singapore', 'malaysia'].map(id => {
-              const d = getDestination(id)
-              return (
-                <Link key={id} to={`/destinations/${id}`} className="dest-also__card">
-                  <span style={{ fontSize: 20 }}>{d.flag}</span>
-                  {d.name}
-                  <ChevronRight size={14} color="#9CA3AF" />
-                </Link>
-              )
-            })}
+          <div className="dest-also dest-reveal">
+            {relatedTours.map(t => (
+              <Link key={t.id} to="/contact" className="dest-also__card">
+                <span style={{ fontSize: 20 }}>{t.emoji}</span>
+                {t.name}
+                <ChevronRight size={14} color="#9CA3AF" />
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -590,11 +791,11 @@ export default function DubaiPage() {
           <div className="dest-cta__inner">
             <span className="tag tag-light" style={{ marginBottom: 12 }}>Ready when you are</span>
             <h2>
-              Plan your <span style={{ color: '#C8102E' }}>Dubai</span> escape
+              Plan your <span style={{ color: '#C8102E' }}>Dubai</span> day
             </h2>
             <p>
-              Tell us your brief — FIT, honeymoon, or group — and we'll respond with a clear, actionable
-              proposal within 2 hours.
+              Tell us your brief — half-day, full-day, or multi-city — and we'll respond with a clear,
+              actionable proposal within 2 hours.
             </p>
             <div className="dest-cta__actions">
               <Link to="/contact" className="btn-primary" style={{ padding: '15px 32px' }}>
