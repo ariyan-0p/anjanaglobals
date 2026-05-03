@@ -72,7 +72,7 @@ export default function WhatsAppFloat() {
           </div>
           <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f0' }}>
             <a
-              href="https://wa.me/919876543210?text=Hi%20Anjna%20Global%2C%20I%20would%20like%20to%20enquire%20about%20a%20travel%20package."
+              href="https://wa.me/919958801627?text=Hi%20Anjna%20Global%2C%20I%20would%20like%20to%20enquire%20about%20a%20travel%20package."
               target="_blank"
               rel="noreferrer"
               style={{

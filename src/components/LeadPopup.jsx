@@ -2,34 +2,38 @@ import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import './LeadPopup.css'
 
-const REOPEN_INTERVAL_MS = 50000
+const FIRST_DELAY_MS = 30000
+const SESSION_DISMISS_KEY = 'anjna:leadPopupDismissed'
 
 export default function LeadPopup() {
   const [open, setOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
-    const openPopup = () => {
+    if (typeof window === 'undefined') return
+    if (window.sessionStorage.getItem(SESSION_DISMISS_KEY) === '1') return
+
+    const timer = window.setTimeout(() => {
       setSubmitted(false)
       setOpen(true)
-    }
+    }, FIRST_DELAY_MS)
 
-    const firstTimer = window.setTimeout(openPopup, REOPEN_INTERVAL_MS)
-    const interval = window.setInterval(openPopup, REOPEN_INTERVAL_MS)
-
-    return () => {
-      window.clearTimeout(firstTimer)
-      window.clearInterval(interval)
-    }
+    return () => window.clearTimeout(timer)
   }, [])
 
   const closePopup = () => {
     setOpen(false)
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(SESSION_DISMISS_KEY, '1')
+    }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setSubmitted(true)
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(SESSION_DISMISS_KEY, '1')
+    }
     window.setTimeout(() => setOpen(false), 1300)
   }
 

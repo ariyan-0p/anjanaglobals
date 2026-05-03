@@ -44,12 +44,10 @@ const quickLinks = [
 ]
 
 const services = [
-  'FIT Packages',
-  'Group Tours',
-  'MICE & Events',
-  'Honeymoon Specials',
-  'Visa Assistance',
-  'Airport Transfers',
+  { label: 'Tours & Transfers', path: '/services' },
+  { label: 'Hotel Partners', path: '/services' },
+  { label: 'UAE Visa Assistance', path: '/uae-visa' },
+  { label: 'FIT, Groups & MICE', path: '/services' },
 ]
 
 export default function Footer() {
@@ -88,7 +86,7 @@ export default function Footer() {
               Contact <ArrowRight size={14} />
             </Link>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919958801627"
               target="_blank"
               rel="noreferrer"
               style={{
@@ -115,17 +113,17 @@ export default function Footer() {
               style={{ height: '44px', width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: '20px' }}
             />
             <p style={{ fontSize: '14px', lineHeight: '1.8', color: 'rgba(255,255,255,0.55)', marginBottom: '24px', maxWidth: '280px' }}>
-              Your trusted DMC partner for Dubai, Azerbaijan, Singapore, Malaysia & Bali. Crafting extraordinary travel experiences since 2003.
+              Your trusted DMC partner for Dubai, Azerbaijan, Singapore, Malaysia & Bali. Crafting extraordinary travel experiences since 2013.
             </p>
             <p style={{ fontSize: '12px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '12px' }}>
               Follow Us
             </p>
             <div style={{ display: 'flex', gap: '10px' }}>
               {[
-                { icon: <SocialIcons.Instagram />, href: '#', label: 'Instagram' },
-                { icon: <SocialIcons.Facebook />, href: '#', label: 'Facebook' },
-                { icon: <SocialIcons.Linkedin />, href: '#', label: 'LinkedIn' },
-                { icon: <SocialIcons.Youtube />, href: '#', label: 'YouTube' },
+                { icon: <SocialIcons.Instagram />, href: 'https://www.instagram.com/anjna.global/', label: 'Instagram' },
+                { icon: <SocialIcons.Facebook />, href: 'https://www.facebook.com/AnjnaGlobal/', label: 'Facebook' },
+                { icon: <SocialIcons.Linkedin />, href: 'https://www.linkedin.com/company/anjna-global/', label: 'LinkedIn' },
+                { icon: <SocialIcons.Youtube />, href: 'https://www.youtube.com/channel/UCk4HXXsWgzDDYChAQBqpXfw', label: 'YouTube' },
               ].map(social => (
                 <a
                   key={social.label}
@@ -210,9 +208,16 @@ export default function Footer() {
             </h4>
             <ul style={{ listStyle: 'none' }}>
               {services.map(s => (
-                <li key={s} style={{ marginBottom: '10px', color: 'rgba(255,255,255,0.55)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <ArrowRight size={12} style={{ opacity: 0.4 }} />
-                  {s}
+                <li key={s.label} style={{ marginBottom: '10px' }}>
+                  <Link
+                    to={s.path}
+                    style={{ color: 'rgba(255,255,255,0.55)', fontSize: '14px', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#C8102E'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+                  >
+                    <ArrowRight size={12} style={{ opacity: 0.4 }} />
+                    {s.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -227,12 +232,17 @@ export default function Footer() {
               {[
                 {
                   icon: <MapPin size={15} style={{ flexShrink: 0, marginTop: '2px' }} />,
-                  text: '123 Travel House, Nehru Place, New Delhi – 110019, India',
+                  text: 'Plot No. 1, Sector 10A, Gurugram, Haryana 122001, India',
                 },
                 {
                   icon: <Phone size={15} style={{ flexShrink: 0 }} />,
-                  text: '+91 98765 43210',
-                  href: 'tel:+919876543210',
+                  text: '+91-124-2786999',
+                  href: 'tel:+911242786999',
+                },
+                {
+                  icon: <Phone size={15} style={{ flexShrink: 0 }} />,
+                  text: '+91 99588 01627',
+                  href: 'tel:+919958801627',
                 },
                 {
                   icon: <Mail size={15} style={{ flexShrink: 0 }} />,

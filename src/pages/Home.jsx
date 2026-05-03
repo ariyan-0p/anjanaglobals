@@ -44,7 +44,7 @@ const heroSlides = [
     dest: 'Baku, Azerbaijan',
     tag: 'Land of Fire',
     title: 'Built on reliability and relationships —',
-    accent: 'trusted since 2003',
+    accent: 'trusted since 2013',
   },
   {
     image: heroImgKualaLumpur,
@@ -56,15 +56,15 @@ const heroSlides = [
 ]
 
 const stats = [
-  { value: '20+', label: 'Years of excellence', icon: <Award size={20} strokeWidth={1.75} /> },
+  { value: 'Since 2013', label: 'Trusted DMC', icon: <Award size={20} strokeWidth={1.75} /> },
   { value: '5', label: 'Signature destinations', icon: <Globe size={20} strokeWidth={1.75} /> },
-  { value: '500+', label: 'Travel partners', icon: <Users size={20} strokeWidth={1.75} /> },
+  { value: '2500+', label: 'Travel partners across India', icon: <Users size={20} strokeWidth={1.75} /> },
   { value: '24/7', label: 'Dedicated support', icon: <Headphones size={20} strokeWidth={1.75} /> },
 ]
 
 const trustSignals = [
-  'Trusted Since 2003',
-  '500+ Partner Agencies',
+  'Trusted Since 2013',
+  '2500+ Travel Partners across India',
   '24/7 Operational Support',
   'Dedicated On-ground Teams',
   'Transparent Net Rates',
@@ -408,7 +408,7 @@ export default function Home() {
               {[
                 { label: 'Partner satisfaction', val: '98%' },
                 { label: 'Avg. quote response', val: '2h' },
-                { label: 'Active partners', val: '500+' },
+                { label: 'Active partners', val: '2000+' },
               ].map(row => (
                 <div key={row.label} className="home-b2b__metric">
                   <span>{row.label}</span>
@@ -690,9 +690,17 @@ function DestCardLarge({ dest }) {
 }
 
 function DestCardSmall({ dest }) {
+  const hasImage = Boolean(dest.image)
   return (
     <Link to={`/destinations/${dest.id}`} className="home-card-dest home-card-dest--sm">
-      <div className="home-card-dest__img" style={{ backgroundImage: `url(${dest.image})` }} />
+      {hasImage ? (
+        <div className="home-card-dest__img" style={{ backgroundImage: `url(${dest.image})` }} />
+      ) : (
+        <div className="home-card-dest__placeholder">
+          <Video size={22} aria-hidden />
+          <span>No photo yet</span>
+        </div>
+      )}
       <div className="home-card-dest__grad" />
       <span className="home-card-dest__badge">{dest.packages} pkgs</span>
       <div className="home-card-dest__body">

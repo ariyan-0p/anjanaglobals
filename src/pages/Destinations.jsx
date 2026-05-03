@@ -19,7 +19,7 @@ export default function Destinations() {
       {/* Hero */}
       <div
         className="page-hero"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80)', paddingTop: '80px' }}
+        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80)' }}
       >
         <div className="container page-hero-content">
           <div className="breadcrumb">

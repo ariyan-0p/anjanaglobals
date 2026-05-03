@@ -13,6 +13,7 @@ import DestinationDetail from './pages/DestinationDetail'
 import DubaiPage from './pages/DubaiPage'
 import BaliPage from './pages/BaliPage'
 import Services from './pages/Services'
+import UAEVisaPage from './pages/UAEVisaPage'
 import B2B from './pages/B2B'
 import Packages from './pages/Packages'
 import Contact from './pages/Contact'
@@ -34,6 +35,7 @@ function App() {
         <Route path="/destinations/bali" element={<BaliPage />} />
         <Route path="/destinations/:slug" element={<DestinationDetail />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/uae-visa" element={<UAEVisaPage />} />
         <Route path="/b2b" element={<B2B />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/testimonials" element={<Testimonials />} />

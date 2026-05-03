@@ -24,7 +24,7 @@ const partnerBenefits = [
   {
     icon: <Shield size={24} />,
     title: 'Reliable Operations',
-    desc: '20+ years of on-ground experience. Our local teams in every destination ensure zero hiccups — from arrival to departure.',
+    desc: 'Over a decade of on-ground experience. Our local teams in every destination ensure zero hiccups — from arrival to departure.',
     color: '#7C3AED',
   },
   {
@@ -81,7 +81,7 @@ export default function B2B() {
               Your Trusted DMC Partner
             </h1>
               <p style={{ fontSize: isMobile ? '16px' : '18px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.7', marginBottom: '32px', fontFamily: 'var(--font-body)' }}>
-              Join 500+ travel agencies and operators who rely on Anjna Global for competitive rates, seamless operations, and on-ground excellence across 5 destinations.
+              Join 2500+ travel agencies and operators across India who rely on Anjna Global for competitive rates, seamless operations, and on-ground excellence across 5 destinations.
             </p>
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <a href="#register" className="btn-primary" style={{ padding: '15px 34px' }}>
@@ -96,19 +96,24 @@ export default function B2B() {
       </div>
 
       {/* Stats bar */}
-      <div style={{ background: '#C8102E', padding: '24px 0' }}>
+      <div style={{ background: '#C8102E', padding: '28px 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '20px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(6, 1fr)',
+            gap: '20px',
+          }}>
             {[
-              { value: '500+', label: 'Active Partners' },
-              { value: '20+', label: 'Years of Trust' },
-              { value: '2hr', label: 'Quote Response' },
-              { value: '98%', label: 'Partner Satisfaction' },
+              { value: '2500+', label: 'Travel Partners' },
+              { value: '700+', label: 'Hotel Partners' },
               { value: '5', label: 'Destinations' },
+              { value: '2hr', label: 'Quote Response' },
+              { value: '98%', label: 'Satisfaction' },
+              { value: 'Since 2013', label: 'Trusted DMC' },
             ].map((s, i) => (
               <div key={i} style={{ textAlign: 'center', color: 'white' }}>
-                <p style={{ fontSize: '28px', fontWeight: '900', fontFamily: 'var(--font-body)', lineHeight: 1 }}>{s.value}</p>
-                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', letterSpacing: '1px', textTransform: 'uppercase', marginTop: '4px', fontFamily: 'var(--font-body)' }}>{s.label}</p>
+                <p style={{ fontSize: 'clamp(20px, 2.4vw, 28px)', fontWeight: '900', fontFamily: 'var(--font-body)', lineHeight: 1.05 }}>{s.value}</p>
+                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.78)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '6px', fontFamily: 'var(--font-body)' }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -202,7 +207,7 @@ export default function B2B() {
                   Accreditations
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {['🏆 IATA Accredited Agency', '🤝 TAAI Member', '🇮🇳 Ministry of Tourism Recognised', '⭐ 20+ Years in Industry'].map((a, i) => (
+                  {['🏆 IATA Accredited Agency', '🤝 TAAI Member', '🇮🇳 Ministry of Tourism Recognised', '⭐ Trusted Since 2013'].map((a, i) => (
                     <p key={i} style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)' }}>{a}</p>
                   ))}
                 </div>

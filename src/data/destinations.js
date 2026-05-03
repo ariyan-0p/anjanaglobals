@@ -1,3 +1,9 @@
+import dubaiLocal from '../assets/Dubai.jpg'
+import baliLocal from '../assets/Bali.jpg'
+import singaporeLocal from '../assets/singapore.jpg'
+import bakuLocal from '../assets/baku.jpg'
+import kualalumpurLocal from '../assets/Kualalumpur.jpg'
+
 const testimonialModules = import.meta.glob('../assets/testimonials/*.{jpg,jpeg,png,webp}', {
   eager: true,
   import: 'default',
@@ -24,9 +30,10 @@ export const destinations = [
     description:
       'Experience the perfect blend of ultra-modern architecture, luxury shopping, and vibrant nightlife set against the backdrop of a rich Emirati heritage. From the glittering Burj Khalifa to the golden dunes of the Arabian desert, Dubai redefines what extraordinary looks like.',
     shortDesc: 'Luxury, adventure & iconic skylines in the heart of the Middle East.',
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=900&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&q=80',
+    image: dubaiLocal,
+    heroImage: dubaiLocal,
     galleryImages: [
+      dubaiLocal,
       'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',
       'https://images.unsplash.com/photo-1559666126-84f389727b9a?w=800&q=80',
       'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80',
@@ -53,9 +60,10 @@ export const destinations = [
     description:
       "Discover the captivating land where ancient Silk Road heritage meets modern innovation. Baku's medieval Old City stands beneath futuristic Flame Towers, while ancient mud volcanoes, lush mountain forests, and the warm Caspian coast offer a diversity few destinations can match.",
     shortDesc: 'Ancient Silk Road heritage meets futuristic flair on the Caspian.',
-    image: 'https://images.unsplash.com/photo-1570214476695-8f09e2e1cc87?w=900&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1570214476695-8f09e2e1cc87?w=1920&q=80',
+    image: bakuLocal,
+    heroImage: bakuLocal,
     galleryImages: [
+      bakuLocal,
       'https://images.unsplash.com/photo-1574175819253-0cdec79e6253?w=800&q=80',
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
@@ -82,9 +90,10 @@ export const destinations = [
     description:
       'A futuristic city-state where cultures, cuisines, and cutting-edge design collide in perfect harmony. From the iconic Marina Bay Sands to the lush Gardens by the Bay, Singapore blends nature and technology to create experiences that feel truly otherworldly.',
     shortDesc: 'Futuristic skylines, world-class food & Asia\'s most efficient city.',
-    image: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=900&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=1920&q=80',
+    image: singaporeLocal,
+    heroImage: singaporeLocal,
     galleryImages: [
+      singaporeLocal,
       'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80',
       'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=800&q=80',
       'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80',
@@ -111,9 +120,10 @@ export const destinations = [
     description:
       'A vibrant tapestry of rainforests, stunning beaches, and cosmopolitan cities. Malaysia offers extraordinary cultural diversity, extraordinary food, and extraordinary natural beauty — from the Petronas Twin Towers to the primordial jungles of Borneo and idyllic shores of Langkawi.',
     shortDesc: 'Rainforests, beaches, twin towers & Southeast Asia\'s most diverse cuisine.',
-    image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=900&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1920&q=80',
+    image: kualalumpurLocal,
+    heroImage: kualalumpurLocal,
     galleryImages: [
+      kualalumpurLocal,
       'https://images.unsplash.com/photo-1549526610-01cff2e06a77?w=800&q=80',
       'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80',
       'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=800&q=80',
@@ -140,9 +150,10 @@ export const destinations = [
     description:
       "Bali's emerald rice terraces, ancient temples, and deeply spiritual culture create an enchanting escape unlike anywhere on Earth. Whether you seek spiritual renewal in Ubud, surf on Kuta's shores, or watch a flaming sunset at Tanah Lot — Bali is pure magic.",
     shortDesc: 'Ancient temples, emerald rice fields & soul-restoring island magic.',
-    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=900&q=80',
-    heroImage: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1920&q=80',
+    image: baliLocal,
+    heroImage: baliLocal,
     galleryImages: [
+      baliLocal,
       'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=80',
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
       'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',

@@ -3,18 +3,18 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle, Award, Users, Globe, Heart } from 'lucide-react'
 
 const milestones = [
-  { year: '2003', event: 'Anjna Global founded in New Delhi, India — starting with Dubai as our first destination.' },
-  { year: '2007', event: 'Expanded operations to Singapore and Malaysia, growing to 50+ travel partners.' },
-  { year: '2010', event: 'Added Bali (Indonesia) to our portfolio. Crossed 100+ active travel agent partners.' },
-  { year: '2015', event: 'IATA Accreditation received. Launched dedicated MICE division for corporate clients.' },
-  { year: '2019', event: 'Launched Azerbaijan as a destination. Team grown to 40+ travel professionals.' },
-  { year: '2023', event: '20th anniversary. 500+ partners, 50,000+ satisfied travellers, 5 destinations.' },
+  { year: '2013', event: 'Anjna Global founded in Gurugram, India — starting with Dubai as our first destination.' },
+  { year: '2015', event: 'Expanded operations to Singapore and Malaysia, growing the partner network rapidly.' },
+  { year: '2017', event: 'Added Bali (Indonesia) to our portfolio. Crossed 500+ active travel agent partners.' },
+  { year: '2019', event: 'IATA Accreditation received. Launched dedicated MICE division for corporate clients.' },
+  { year: '2021', event: 'Launched Azerbaijan as a destination. Opened Dubai office at Aspin Commercial Building.' },
+  { year: '2025', event: 'Crossed 2500+ travel partners across India and 700+ directly contracted hotels across all five destinations.' },
 ]
 
 const team = [
-  { name: 'Anjana Sharma', role: 'Founder & Managing Director', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80', bio: '20+ years in the travel industry. Visionary leader who built Anjna Global from a single-destination DMC to a multi-destination powerhouse.' },
+  { name: 'Anjana Sharma', role: 'Founder & Managing Director', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80', bio: 'Visionary leader who built Anjna Global from a single-destination DMC into a five-destination powerhouse trusted across India.' },
   { name: 'Rajesh Kumar', role: 'Head of Operations', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80', bio: 'Ensures every booking runs with military precision. Rajesh and his team manage 200+ groups annually across all five destinations.' },
-  { name: 'Priya Nair', role: 'Director — B2B Sales', image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80', bio: 'The driving force behind our partner network. Priya has built relationships with 500+ travel agencies across India and abroad.' },
+  { name: 'Priya Nair', role: 'Director — B2B Sales', image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80', bio: 'The driving force behind our partner network. Priya has built relationships with 2500+ travel agencies across India and abroad.' },
   { name: 'Arjun Mehta', role: 'Head of MICE', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', bio: 'Corporate events specialist with a flair for the dramatic. From intimate boardrooms to 500-person gala dinners — Arjun delivers.' },
 ]
 
@@ -42,7 +42,7 @@ export default function About() {
       {/* Hero */}
       <div
         className="page-hero"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&q=80)', paddingTop: '80px' }}
+        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&q=80)' }}
       >
         <div className="container page-hero-content">
           <div className="breadcrumb">
@@ -51,7 +51,7 @@ export default function About() {
             <span>About Us</span>
           </div>
           <h1>Our Story</h1>
-          <p>Two decades of crafting extraordinary travel experiences across the Middle East & Asia.</p>
+          <p>Over a decade of crafting extraordinary travel experiences across the Middle East & Asia.</p>
         </div>
       </div>
 
@@ -62,20 +62,20 @@ export default function About() {
             <div>
               <span className="tag">Who We Are</span>
               <h2 className="section-heading">
-                20 Years of Fabulously Planned Journeys
+                A Decade of Fabulously Planned Journeys
               </h2>
               <p style={{ fontSize: '17px', color: '#374151', lineHeight: '1.8', marginBottom: '20px' }}>
-                Founded in 2003, <strong>Anjna Global</strong> is a premier Destination Management Company (DMC) headquartered in New Delhi, India. We specialise in creating bespoke travel experiences across five extraordinary destinations — Dubai, Azerbaijan, Singapore, Malaysia, and Bali.
+                Founded in 2013, <strong>Anjna Global</strong> is a premier Destination Management Company (DMC) headquartered in Gurugram, India, with offices in Dubai and Ahmedabad. We specialise in creating bespoke travel experiences across five extraordinary destinations — Dubai, Azerbaijan, Singapore, Malaysia, and Bali.
               </p>
               <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: '1.8', marginBottom: '32px' }}>
                 Our tagline <em>"Fabulously Planned... Remembered Always"</em> isn't just marketing — it's a promise we make to every travel partner and every traveller who chooses to experience the world through us. We serve both the B2B trade community and discerning direct travellers who seek something beyond the ordinary.
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '14px', marginBottom: '30px' }}>
                 {[
-                  { icon: <Award size={20} />, label: '20+ Years', sub: 'of Excellence' },
+                  { icon: <Award size={20} />, label: 'Since 2013', sub: 'of Excellence' },
                   { icon: <Globe size={20} />, label: '5 Destinations', sub: 'across 4 countries' },
-                  { icon: <Users size={20} />, label: '500+ Partners', sub: 'worldwide' },
-                  { icon: <Heart size={20} />, label: '50K+ Travellers', sub: 'served with love' },
+                  { icon: <Users size={20} />, label: '2500+ Partners', sub: 'across India' },
+                  { icon: <Heart size={20} />, label: '700+ Hotels', sub: 'directly contracted' },
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '16px', background: '#F8F7F4', borderRadius: '10px' }}>
                     <div style={{ color: '#C8102E', flexShrink: 0 }}>{item.icon}</div>
@@ -112,8 +112,8 @@ export default function About() {
                 color: 'white',
                 boxShadow: '0 20px 50px rgba(200,16,46,0.35)',
               }}>
-                <p style={{ fontSize: '36px', fontWeight: '900', fontFamily: 'var(--font-body)', lineHeight: 1 }}>20+</p>
-                <p style={{ fontSize: '14px', opacity: 0.85, marginTop: '4px' }}>Years of Expertise</p>
+                <p style={{ fontSize: '36px', fontWeight: '900', fontFamily: 'var(--font-body)', lineHeight: 1 }}>2013</p>
+                <p style={{ fontSize: '14px', opacity: 0.85, marginTop: '4px' }}>Trusted Since</p>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function About() {
         <div className="container">
           <div className="text-center" style={{ marginBottom: '56px' }}>
             <span className="tag">Our Journey</span>
-            <h2 className="section-heading">Two Decades of Milestones</h2>
+            <h2 className="section-heading">Our Journey So Far</h2>
           </div>
           <div style={{ position: 'relative', maxWidth: '800px', margin: '0 auto' }}>
             {/* Line */}

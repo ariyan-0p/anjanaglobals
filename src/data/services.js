@@ -1,76 +1,88 @@
 export const services = [
   {
-    id: 'fit',
-    icon: 'User',
-    title: 'FIT Packages',
-    subtitle: 'Fully Independent Travel',
-    description:
-      'Tailored itineraries crafted for individual travellers and couples who want premium experiences on their own schedule. Every element — hotels, transfers, sightseeing — perfectly planned.',
-    features: ['Custom Itineraries', 'Luxury Hotel Contracting', 'Private Transfers', 'Personal Guide'],
-    color: '#C8102E',
-  },
-  {
-    id: 'groups',
-    icon: 'Users',
-    title: 'Group Tours',
-    subtitle: 'Seamless Group Experiences',
-    description:
-      'From religious pilgrimages to corporate outings and incentive travel, we orchestrate flawless group journeys for 10 to 500+ travellers across all our destinations.',
-    features: ['Group Flights Coordination', 'Block Hotel Bookings', 'Group Visas', 'Dedicated Tour Manager'],
-    color: '#1D3461',
-  },
-  {
-    id: 'mice',
-    icon: 'Briefcase',
-    title: 'MICE',
-    subtitle: 'Meetings, Incentives, Conferences & Events',
-    description:
-      'We design and execute world-class MICE programs — from intimate boardroom meetings to spectacular product launches and gala dinners — at premium venues across all five destinations.',
-    features: ['Venue Selection', 'Event Production', 'AV & Tech Support', 'Gala Dinners & Entertainment'],
-    color: '#B8963E',
-  },
-  {
-    id: 'honeymoon',
-    icon: 'Heart',
-    title: 'Honeymoon Specials',
-    subtitle: 'Romance Redefined',
-    description:
-      'From overwater villas in Bali to desert glamping in Dubai — we craft unforgettable honeymoon experiences that your clients will cherish for a lifetime.',
-    features: ['Romantic Properties', 'Candlelit Dinners', 'Spa Experiences', 'Surprise Setups'],
-    color: '#DB2777',
-  },
-  {
-    id: 'visa',
-    icon: 'FileText',
-    title: 'Visa Assistance',
-    subtitle: 'Stress-Free Documentation',
-    description:
-      'Complete visa support for all our destinations, including documentation guidance, application processing, and expedited services when needed.',
-    features: ['Tourist Visas', 'Business Visas', 'Group Visa Processing', 'Express Services'],
-    color: '#7C3AED',
-  },
-  {
-    id: 'transfers',
+    id: 'tours-transfers',
     icon: 'Car',
-    title: 'Transfers & Transport',
-    subtitle: 'Seamless Mobility',
+    title: 'Tours & Transfers',
+    subtitle: 'Our Own Fleet · End-to-End Mobility',
     description:
-      'Premium airport transfers, chauffeur-driven sightseeing, luxury coaches for groups, and yacht charters — all with professional, punctual drivers.',
-    features: ['Airport Transfers', 'Luxury Sedans & SUVs', 'Coach Hire', 'Yacht & Boat Charters'],
+      'We operate our own fleet across destinations — from comfortable sedans and premium SUVs to 7-seater MPVs, mini-buses, and full-size coaches. Whether it is an airport pick-up for a couple, a sightseeing day for a family, or moving a 200-pax incentive group between venues, we have a vehicle and a vetted chauffeur ready. Owning the fleet means consistent quality, on-time arrivals, and zero last-minute surprises for your clients.',
+    features: [
+      'Sedans, SUVs & 7-seater MPVs',
+      'Mini-buses (12 / 16 / 20 seater)',
+      'Full-size coaches for groups',
+      'Trained, uniformed chauffeurs',
+      'Real-time movement tracking',
+    ],
     color: '#059669',
+    href: '/contact',
+    cta: 'Request a transfer quote',
+  },
+  {
+    id: 'hotels',
+    icon: 'Building2',
+    title: 'Hotel Partners Across Destinations',
+    subtitle: '700+ Directly Contracted Properties',
+    description:
+      'Because we are physically present in every destination we sell, we contract directly with hotels — over 700 properties combined across Dubai, Azerbaijan, Singapore, Malaysia, and Bali. That means stronger net rates, room-block priority during peak dates, flexible payment terms for partner agencies, and a real human at the hotel who knows our name when something needs to happen on-property.',
+    features: [
+      'Direct hotel contracting in 5 destinations',
+      'Net rates with partner-friendly margins',
+      'Group room-block priority',
+      'On-ground rep for every property',
+      'Flexible cancellation windows',
+    ],
+    color: '#1D3461',
+    href: '/contact',
+    cta: 'Request hotel rates',
+  },
+  {
+    id: 'uae-visa',
+    icon: 'FileText',
+    title: 'UAE Visa Assistance',
+    subtitle: 'Our Own Visa Quota · Seamless Processing',
+    description:
+      'In the UAE we hold our own visa quota, which lets our experienced documentation team file, follow up, and deliver visas without depending on third-party intermediaries. The result is faster turnarounds, transparent status updates at every stage, and a much higher first-pass approval rate. Tourist, transit, 30-day, 60-day, and multiple-entry — all handled in-house by people who do this every single day.',
+    features: [
+      'In-house UAE visa quota',
+      '30-day, 60-day & multi-entry tourist visas',
+      'Transit and express options',
+      'Document review before submission',
+      'Live status tracking until issuance',
+    ],
+    color: '#7C3AED',
+    href: '/uae-visa',
+    cta: 'Explore UAE visas',
+  },
+  {
+    id: 'journeys',
+    icon: 'Compass',
+    title: 'FIT, Groups & MICE',
+    subtitle: 'Tailored Journeys at Every Scale',
+    description:
+      'One team, every trip type. We build bespoke FIT itineraries for individuals, couples, and families; coordinate large group movements including pilgrimages and incentive travel; and design full-service MICE programmes — meetings, conferences, product launches, and gala dinners — across all five destinations. Same standards of planning, same on-ground crew, regardless of size.',
+    features: [
+      'Custom FIT & honeymoon itineraries',
+      'Group flights & block bookings (10–500+ pax)',
+      'MICE: venues, AV, production & gala nights',
+      'Dedicated tour managers on-ground',
+      'Single point of contact through every phase',
+    ],
+    color: '#C8102E',
+    href: '/contact',
+    cta: 'Plan a journey',
   },
 ]
 
 export const whyUs = [
   {
     icon: '🏆',
-    title: '20+ Years of Expertise',
-    desc: 'Two decades of DMC experience across the Middle East and Asia — trusted by over 500 travel partners worldwide.',
+    title: 'Trusted Since 2013',
+    desc: 'Over a decade of DMC experience across the Middle East and Asia — trusted by 2500+ travel partners across India.',
   },
   {
     icon: '🤝',
     title: 'Preferred Partner Network',
-    desc: 'Direct contracts with leading hotels, airlines, and attraction operators — giving you better rates and priority access.',
+    desc: 'Direct contracts with 700+ hotels and leading transport, attraction, and airline partners — giving you better rates and priority access.',
   },
   {
     icon: '⚡',
@@ -80,7 +92,7 @@ export const whyUs = [
   {
     icon: '🗺️',
     title: 'On-Ground Excellence',
-    desc: 'Local experts in every destination ensure seamless execution — from the first airport transfer to the last farewell dinner.',
+    desc: 'Local teams in every destination ensure seamless execution — from the first airport transfer to the last farewell dinner.',
   },
   {
     icon: '💰',

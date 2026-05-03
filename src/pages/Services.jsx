@@ -4,13 +4,19 @@ import { ArrowRight, CheckCircle } from 'lucide-react'
 import { services, whyUs } from '../data/services'
 
 const serviceIcons = {
-  fit: '✈️',
-  groups: '👥',
-  mice: '💼',
-  honeymoon: '💍',
-  visa: '📄',
-  transfers: '🚗',
+  'tours-transfers': '🚗',
+  hotels: '🏨',
+  'uae-visa': '📄',
+  journeys: '🌍',
 }
+
+const hotelPartners = [
+  { name: 'Admiral Plaza' },
+  { name: 'Arabian Courtyard' },
+  { name: 'Canvas' },
+  { name: 'Omega Hotel' },
+  { name: 'Panorama Group of Hotels' },
+]
 
 export default function Services() {
   const [isMobile, setIsMobile] = useState(false)
@@ -27,7 +33,7 @@ export default function Services() {
       {/* Hero */}
       <div
         className="page-hero"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80)', paddingTop: '80px' }}
+        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80)' }}
       >
         <div className="container page-hero-content">
           <div className="breadcrumb">
@@ -119,9 +125,38 @@ export default function Services() {
                       </div>
                     ))}
                   </div>
-                  <Link to="/contact" className="btn-primary">
-                    Enquire About This Service <ArrowRight size={16} />
+                  <Link to={svc.href || '/contact'} className="btn-primary">
+                    {svc.cta || 'Enquire about this service'} <ArrowRight size={16} />
                   </Link>
+                  {svc.id === 'hotels' && (
+                    <div style={{ marginTop: '32px' }}>
+                      <p style={{ fontSize: '13px', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: '14px' }}>
+                        A few of our hotel partners
+                      </p>
+                      {hotelPartners.length === 0 ? (
+                        <p style={{ fontSize: '14px', color: '#6B7280', fontStyle: 'italic' }}>
+                          Partner logos coming soon.
+                        </p>
+                      ) : (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
+                          {hotelPartners.map(p => (
+                            p.logo ? (
+                              <a key={p.name} href={p.href || '#'} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '64px', background: '#F8F7F4', borderRadius: '10px', padding: '8px', border: '1px solid #EFEDE8' }}>
+                                <img src={p.logo} alt={p.name} style={{ maxHeight: '40px', maxWidth: '100%', objectFit: 'contain' }} />
+                              </a>
+                            ) : (
+                              <div key={p.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '56px', background: '#F8F7F4', borderRadius: '10px', padding: '10px 12px', border: '1px solid #EFEDE8', fontSize: '13px', fontWeight: 600, color: '#374151', textAlign: 'center', lineHeight: 1.3 }}>
+                                {p.name}
+                              </div>
+                            )
+                          ))}
+                        </div>
+                      )}
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '12px', fontStyle: 'italic' }}>
+                        … and 700+ more across all five destinations.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

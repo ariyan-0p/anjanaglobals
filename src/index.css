@@ -231,11 +231,11 @@ input, textarea, select { font-family: var(--font-body); }
 
 /* ── Page hero (inner pages) ─────────────────── */
 .page-hero {
-  min-height: 400px;
+  min-height: 320px;
   display: flex;
   align-items: flex-end;
-  padding-top: 100px;
-  padding-bottom: 60px;
+  padding-top: 96px;
+  padding-bottom: 40px;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -306,9 +306,9 @@ input, textarea, select { font-family: var(--font-body); }
   .container { padding: 0 16px; }
 
   .page-hero {
-    min-height: 320px;
-    padding-top: 88px;
-    padding-bottom: 44px;
+    min-height: 240px;
+    padding-top: 80px;
+    padding-bottom: 28px;
     background-position: center;
   }
 

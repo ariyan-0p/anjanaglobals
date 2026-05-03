@@ -145,12 +145,12 @@ export default function Navbar() {
           <div className="site-nav__tail">
             <div className="site-nav__actions">
               <a
-                href="tel:+919876543210"
+                href="tel:+911242786999"
                 className="site-nav__phone"
-                aria-label="Call +91 98765 43210"
+                aria-label="Call +91-124-2786999"
               >
                 <Phone size={16} strokeWidth={1.75} aria-hidden />
-                +91&nbsp;98765&nbsp;43210
+                +91-124-2786999
               </a>
               <Link to="/contact" className="btn-primary site-nav__cta" style={{ padding: '10px 18px', fontSize: '14px' }}>
                 Get a quote
@@ -257,15 +257,15 @@ export default function Navbar() {
             ))}
 
             <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <a href="tel:+919876543210" className="site-nav__phone" style={{ justifyContent: 'center', border: '1px solid rgba(255,255,255,0.15)' }}>
+              <a href="tel:+911242786999" className="site-nav__phone" style={{ justifyContent: 'center', border: '1px solid rgba(255,255,255,0.15)' }}>
                 <Phone size={18} aria-hidden />
-                +91 98765 43210
+                +91-124-2786999
               </a>
               <Link to="/contact" className="btn-primary" style={{ textAlign: 'center', justifyContent: 'center' }}>
                 Get a quote
               </Link>
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/919958801627"
                 target="_blank"
                 rel="noreferrer"
                 style={{

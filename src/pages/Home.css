@@ -1238,6 +1238,21 @@
   transition: transform 0.65s ease;
 }
 
+.home-card-dest__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .home-card-dest:hover .home-card-dest__img {
   transform: scale(1.05);
 }

@@ -4,10 +4,10 @@ import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, CheckCircle } fr
 
 const offices = [
   {
-    city: 'New Delhi',
-    country: 'India (Head Office)',
-    address: '123 Travel House, Nehru Place, New Delhi – 110019',
-    phone: '+91 98765 43210',
+    city: 'Gurugram',
+    country: 'India (Corporate Office)',
+    address: 'Plot No. 1, Sector 10A, Gurugram, Haryana 122001',
+    phone: '+91-124-2786999',
     email: 'info@anjnaglobal.com',
     hours: 'Mon – Sat: 9:00 AM – 7:00 PM IST',
     flag: '🇮🇳',
@@ -15,11 +15,20 @@ const offices = [
   {
     city: 'Dubai',
     country: 'UAE (Operations)',
-    address: 'Office 412, Al Barsha Business Centre, Dubai',
-    phone: '+971 55 123 4567',
-    email: 'dubai@anjnaglobal.com',
+    address: 'Aspin Commercial Building, Trade Centre First, Plot 11, Dubai · Trade Licence 773256',
+    phone: '+971-565954997',
+    email: 'info@anjnaglobal.com',
     hours: 'Mon – Sat: 9:00 AM – 7:00 PM GST',
     flag: '🇦🇪',
+  },
+  {
+    city: 'Ahmedabad',
+    country: 'India (Gujarat Office)',
+    address: 'B 1202, Gamesh Glory 11, Jagatpur Road, Ahmedabad, Gujarat 382470',
+    phone: '+91 99588 01627',
+    email: 'info@anjnaglobal.com',
+    hours: 'Mon – Sat: 9:00 AM – 7:00 PM IST',
+    flag: '🇮🇳',
   },
 ]
 
@@ -78,7 +87,7 @@ export default function Contact() {
       {/* Hero */}
       <div
         className="page-hero"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80)', paddingTop: '80px' }}
+        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80)' }}
       >
         <div className="container page-hero-content">
           <div className="breadcrumb">
@@ -96,8 +105,8 @@ export default function Contact() {
         <div className="container">
           <div style={{ display: 'flex', gap: isMobile ? '18px' : '40px', justifyContent: 'center', flexWrap: 'wrap' }}>
             {[
-              { icon: <Phone size={16} />, label: 'Call Us', value: '+91 98765 43210', href: 'tel:+919876543210' },
-              { icon: <MessageCircle size={16} />, label: 'WhatsApp', value: '+91 98765 43210', href: 'https://wa.me/919876543210' },
+              { icon: <Phone size={16} />, label: 'Call Us', value: '+91-124-2786999', href: 'tel:+911242786999' },
+              { icon: <MessageCircle size={16} />, label: 'WhatsApp', value: '+91 99588 01627', href: 'https://wa.me/919958801627' },
               { icon: <Mail size={16} />, label: 'Email Us', value: 'info@anjnaglobal.com', href: 'mailto:info@anjnaglobal.com' },
               { icon: <Clock size={16} />, label: 'Response Time', value: 'Within 2 Hours', href: null },
             ].map((item, i) => (
@@ -273,7 +282,7 @@ export default function Contact() {
 
               {/* WhatsApp CTA */}
               <a
-                href="https://wa.me/919876543210?text=Hi%20Anjna%20Global%2C%20I%27d%20like%20to%20enquire%20about%20a%20trip."
+                href="https://wa.me/919958801627?text=Hi%20Anjna%20Global%2C%20I%27d%20like%20to%20enquire%20about%20a%20trip."
                 target="_blank"
                 rel="noreferrer"
                 style={{
