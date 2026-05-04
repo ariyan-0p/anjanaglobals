@@ -6,6 +6,8 @@ import {
 } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { packages } from '../data/packages'
+import { homepagePartners } from '../data/hotelPartners'
+import HotelPartners from '../components/HotelPartners'
 import heroImgDubai from '../assets/Dubai.jpg'
 import heroImgBali from '../assets/Bali.jpg'
 import heroImgSingapore from '../assets/singapore.jpg'
@@ -638,6 +640,14 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <HotelPartners
+        hotels={homepagePartners}
+        eyebrow="Hospitality partners"
+        heading="A few of our hotel partners"
+        subtitle="Across Dubai, Singapore, Baku and beyond — we work with chains and boutique properties to deliver consistent stays for every traveller."
+        background="white"
+      />
 
       <section className="home-cta">
         <div

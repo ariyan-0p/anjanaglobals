@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle, Clock, ShieldCheck, FileText, Plane, Phone, Ch
 const visaTypes = [
   {
     name: 'Visit Visa',
-    duration: '30 / 90 Days · Non-renewable',
+    duration: '30 / 60 Days · Non-renewable',
     stay: 'For stays longer than 14 days',
     price: 'On request',
     bestFor: 'Family visits, business visits, longer holidays',
@@ -22,8 +22,8 @@ const visaTypes = [
   },
   {
     name: 'Multiple Entry Visa',
-    duration: 'Valid 6 Months',
-    stay: '30 days per entry',
+    duration: '30 / 60 Days · Multiple Entry',
+    stay: 'Re-enter the UAE within validity',
     price: 'On request',
     bestFor: 'Cruise passengers and frequent business visitors',
     color: '#059669',
@@ -84,19 +84,12 @@ const steps = [
   },
 ]
 
-const documents = {
-  individual: [
-    'Clear passport copy of the sponsor',
-    'Proof of family relationship (kinship)',
-    'Travel insurance',
-    'A copy of the salary certificate or employment contract',
-  ],
-  company: [
-    'Passport copies',
-    'Establishment card copies',
-    'Travel insurance',
-  ],
-}
+const documents = [
+  'Clear passport copies of the applicant',
+  'Return Flight tickets',
+  'Passport size photograph',
+  'Confirmed Hotel Booking',
+]
 
 const faqs = [
   {
@@ -288,15 +281,8 @@ export default function UAEVisaPage() {
             </div>
           </div>
           <div>
-            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0A0F1E', marginBottom: '12px', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>For individuals</h3>
-            {documents.individual.map(d => (
-              <div key={d} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '12px 0', borderBottom: '1px solid #EFEDE8' }}>
-                <CheckCircle size={18} color="#7C3AED" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span style={{ fontSize: '15px', color: '#374151' }}>{d}</span>
-              </div>
-            ))}
-            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0A0F1E', marginTop: '28px', marginBottom: '12px', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>For companies</h3>
-            {documents.company.map(d => (
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0A0F1E', marginBottom: '12px', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>Requirements</h3>
+            {documents.map(d => (
               <div key={d} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '12px 0', borderBottom: '1px solid #EFEDE8' }}>
                 <CheckCircle size={18} color="#7C3AED" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <span style={{ fontSize: '15px', color: '#374151' }}>{d}</span>

@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowRight, MapPin, Clock, Calendar, DollarSign, Globe, CheckCircle, Star, ChevronRight } from 'lucide-react'
 import { getDestination } from '../data/destinations'
 import { getPackagesByDestination } from '../data/packages'
+import { hotelPartners } from '../data/hotelPartners'
+import HotelPartners from '../components/HotelPartners'
 
 export default function DestinationDetail() {
   const { slug } = useParams()
@@ -364,6 +366,16 @@ export default function DestinationDetail() {
           )}
         </div>
       </section>
+
+      {hotelPartners[slug] && hotelPartners[slug].length > 0 && (
+        <HotelPartners
+          hotels={hotelPartners[slug]}
+          eyebrow="Where you stay"
+          heading={`${dest.name} hotel partners`}
+          subtitle={`A few of the properties we work with in ${dest.name} — we book across the star rating spectrum at competitive net rates.`}
+          background="white"
+        />
+      )}
 
       {/* Other destinations */}
       <section style={{ padding: '80px 0', background: '#F8F7F4' }}>

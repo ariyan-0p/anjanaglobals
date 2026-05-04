@@ -8,6 +8,8 @@ import {
 } from 'lucide-react'
 import { getDestination } from '../data/destinations'
 import { getPackagesByDestination } from '../data/packages'
+import { hotelPartners } from '../data/hotelPartners'
+import HotelPartners from '../components/HotelPartners'
 import dubaiHero from '../assets/Dubai.jpg'
 import './DestinationPage.css'
 
@@ -759,6 +761,13 @@ export default function DubaiPage() {
           </div>
         </div>
       </section>
+
+      <HotelPartners
+        hotels={hotelPartners.dubai}
+        eyebrow="Where you stay"
+        heading="Dubai hotel partners"
+        subtitle="From Atlantis on the Palm to value picks in Bur Dubai — we book across the spectrum and pass net rates through to our partners."
+      />
 
       {/* RELATED TOURS */}
       <section className="dest-section">
