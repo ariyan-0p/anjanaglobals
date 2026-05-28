@@ -1,0 +1,22 @@
+import { Router } from 'express';
+import { authRoutes } from './authRoutes.js';
+import { leadRoutes } from './leadRoutes.js';
+import { subscriberRoutes } from './subscriberRoutes.js';
+import { destinationRoutes } from './destinationRoutes.js';
+import { packageRoutes } from './packageRoutes.js';
+import { serviceRoutes } from './serviceRoutes.js';
+import { testimonialRoutes } from './testimonialRoutes.js';
+import { hotelPartnerRoutes } from './hotelPartnerRoutes.js';
+import { b2bRoutes } from './b2bRoutes.js';
+
+export const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/leads', leadRoutes);
+router.use('/subscribers', subscriberRoutes);
+router.use('/destinations', destinationRoutes);
+router.use('/packages', packageRoutes);
+router.use('/services', serviceRoutes);
+router.use('/testimonials', testimonialRoutes);
+router.use('/hotel-partners', hotelPartnerRoutes);
+router.use('/b2b', b2bRoutes);
