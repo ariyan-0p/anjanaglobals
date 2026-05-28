@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import WhatsAppFloat from './components/WhatsAppFloat'
@@ -18,31 +18,63 @@ import B2B from './pages/B2B'
 import Packages from './pages/Packages'
 import Contact from './pages/Contact'
 import Testimonials from './pages/Testimonials'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminGalleries from './pages/admin/AdminGalleries'
+import { AuthProvider } from './context/AuthContext'
+
+function PublicChrome({ children }) {
+  const { pathname } = useLocation()
+  const isAdmin = pathname.startsWith('/admin')
+  return (
+    <>
+      {!isAdmin && (
+        <>
+          <SitePreloader />
+          <LeadPopup />
+          <Navbar />
+        </>
+      )}
+      {children}
+      {!isAdmin && (
+        <>
+          <Footer />
+          <WhatsAppFloat />
+        </>
+      )}
+    </>
+  )
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <SitePreloader />
-      <ScrollToTop />
-      <SectionAnimator />
-      <LeadPopup />
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/destinations" element={<Destinations />} />
-        <Route path="/destinations/dubai" element={<DubaiPage />} />
-        <Route path="/destinations/bali" element={<BaliPage />} />
-        <Route path="/destinations/:slug" element={<DestinationDetail />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/uae-visa" element={<UAEVisaPage />} />
-        <Route path="/b2b" element={<B2B />} />
-        <Route path="/packages" element={<Packages />} />
-        <Route path="/testimonials" element={<Testimonials />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
-      <Footer />
-      <WhatsAppFloat />
+      <AuthProvider>
+        <ScrollToTop />
+        <SectionAnimator />
+        <PublicChrome>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/destinations" element={<Destinations />} />
+            <Route path="/destinations/dubai" element={<DubaiPage />} />
+            <Route path="/destinations/bali" element={<BaliPage />} />
+            <Route path="/destinations/:slug" element={<DestinationDetail />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/uae-visa" element={<UAEVisaPage />} />
+            <Route path="/b2b" element={<B2B />} />
+            <Route path="/packages" element={<Packages />} />
+            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/contact" element={<Contact />} />
+
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminGalleries />} />
+              <Route path="galleries" element={<AdminGalleries />} />
+            </Route>
+          </Routes>
+        </PublicChrome>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

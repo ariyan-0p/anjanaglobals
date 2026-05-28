@@ -4,7 +4,13 @@
       "Bash(npm install:*)",
       "Bash(npm run:*)",
       "mcp__Claude_Preview__preview_start",
-      "WebFetch(domain:www.anjnaglobal.com)"
+      "WebFetch(domain:www.anjnaglobal.com)",
+      "Bash(timeout 8 node src/index.js)",
+      "PowerShell(Set-Location \"C:\\\\PROJECTS LEARNING AND MAIN\\\\anjanaglobals\\\\server\"; $job = Start-Job -ScriptBlock { Set-Location \"C:\\\\PROJECTS LEARNING AND MAIN\\\\anjanaglobals\\\\server\"; node src/index.js 2>&1 }; Start-Sleep -Seconds 6; Stop-Job $job; Receive-Job $job; Remove-Job $job -Force)",
+      "PowerShell(Set-Location \"C:\\\\PROJECTS LEARNING AND MAIN\\\\anjanaglobals\\\\server\"; $env:NODE_NO_WARNINGS=1; node -e \"import\\('./src/index.js'\\).catch\\(e => { console.error\\('ERR:', e.message\\); process.exit\\(1\\); }\\)\" 2>&1 | Select-Object -First 30; Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "Bash(ssh -i /c/Users/creep/.ssh/anjana_vps root@69.62.76.241 \"set -e; export DEBIAN_FRONTEND=noninteractive; apt-get update -y && apt-get -o Dpkg::Options::=--force-confnew upgrade -y && apt-get install -y ufw curl ca-certificates gnupg lsb-release software-properties-common unzip git build-essential && ufw --force reset && ufw default deny incoming && ufw default allow outgoing && ufw allow OpenSSH && ufw allow 80/tcp && ufw allow 443/tcp && ufw --force enable && ufw status verbose\")"
     ]
   }
 }

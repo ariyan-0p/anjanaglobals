@@ -8,6 +8,7 @@ import { serviceRoutes } from './serviceRoutes.js';
 import { testimonialRoutes } from './testimonialRoutes.js';
 import { hotelPartnerRoutes } from './hotelPartnerRoutes.js';
 import { b2bRoutes } from './b2bRoutes.js';
+import { galleryRoutes } from './galleryRoutes.js';
 
 export const router = Router();
 
@@ -20,3 +21,4 @@ router.use('/services', serviceRoutes);
 router.use('/testimonials', testimonialRoutes);
 router.use('/hotel-partners', hotelPartnerRoutes);
 router.use('/b2b', b2bRoutes);
+router.use('/galleries', galleryRoutes);
