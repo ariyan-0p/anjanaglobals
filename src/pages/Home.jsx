@@ -13,9 +13,14 @@ import heroImgBali from '../assets/Bali.jpg'
 import heroImgSingapore from '../assets/singapore.jpg'
 import heroImgBaku from '../assets/baku.jpg'
 import heroImgKualaLumpur from '../assets/Kualalumpur.jpg'
-import agentVideo1 from '../assets/WhatsApp Video 2026-04-13 at 10.52.42 AM.mp4'
-import agentVideo2 from '../assets/WhatsApp Video 2026-04-13 at 10.54.40 AM.mp4'
+import { api, apiBase } from '../lib/api'
 import './Home.css'
+
+function absoluteUrl(url) {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return `${apiBase}${url}`
+}
 
 const heroImgBaliFresh = `${heroImgBali}?v=2`
 
@@ -98,25 +103,6 @@ const serviceChecks = [
   'Net rates for trade partners',
 ]
 
-const agentVoices = [
-  {
-    id: 'agent-1',
-    name: 'Riya Malhotra',
-    role: 'Senior Destination Specialist',
-    desk: 'Dubai Desk',
-    quote: 'Every journey we design is built for smooth on-ground execution and fast response times.',
-    src: agentVideo1,
-  },
-  {
-    id: 'agent-2',
-    name: 'Vikash Nair',
-    role: 'Group Operations Lead',
-    desk: 'Bali Desk',
-    quote: 'Our promise is simple: transparent planning, dependable operations, and measurable guest delight.',
-    src: agentVideo2,
-  },
-]
-
 const homeMoments = destinations.map((dest) => ({
   id: dest.id,
   name: dest.name,
@@ -169,7 +155,33 @@ export default function Home() {
   const [querySubmitted, setQuerySubmitted] = useState(false)
   const [agentVideoErrors, setAgentVideoErrors] = useState({})
   const [playingAgentId, setPlayingAgentId] = useState(null)
+  const [agentVoices, setAgentVoices] = useState([])
   const agentVideoRefs = useRef({})
+
+  useEffect(() => {
+    let alive = true
+    api
+      .get('/agent-voices')
+      .then((res) => {
+        if (!alive) return
+        setAgentVoices(
+          (res.items || []).map((a) => ({
+            id: a._id,
+            name: a.name,
+            role: a.role,
+            desk: a.desk,
+            quote: a.quote,
+            src: absoluteUrl(a.videoUrl),
+          }))
+        )
+      })
+      .catch(() => {
+        if (alive) setAgentVoices([])
+      })
+    return () => {
+      alive = false
+    }
+  }, [])
   const statsRef = useRef(null)
   const intervalRef = useRef(null)
 
@@ -451,6 +463,7 @@ export default function Home() {
         </div>
       </section>
 
+      {agentVoices.length > 0 ? (
       <section className="home-section home-agent-voices">
         <div className="container">
           <header className="home-section__head text-center" style={{ marginBottom: 'clamp(1.5rem,4vw,2.4rem)' }}>
@@ -533,6 +546,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      ) : null}
 
       <section className="home-section home-section--light home-moments">
         <div className="container">

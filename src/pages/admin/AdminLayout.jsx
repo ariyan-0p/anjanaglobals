@@ -1,5 +1,5 @@
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Images, FileText, LogOut, ExternalLink } from 'lucide-react'
+import { LayoutDashboard, Images, FileText, LogOut, ExternalLink, Video } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import './admin.css'
 
@@ -45,6 +45,10 @@ export default function AdminLayout() {
           <NavLink to="/admin/galleries" className="admin-nav__link">
             <Images size={16} aria-hidden />
             Galleries
+          </NavLink>
+          <NavLink to="/admin/agent-voices" className="admin-nav__link">
+            <Video size={16} aria-hidden />
+            Agent voices
           </NavLink>
         </nav>
 

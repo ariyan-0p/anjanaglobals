@@ -11,6 +11,7 @@ import { b2bRoutes } from './b2bRoutes.js';
 import { galleryRoutes } from './galleryRoutes.js';
 import { blogRoutes } from './blogRoutes.js';
 import { statsRoutes } from './statsRoutes.js';
+import { agentVoiceRoutes } from './agentVoiceRoutes.js';
 
 export const router = Router();
 
@@ -26,3 +27,4 @@ router.use('/b2b', b2bRoutes);
 router.use('/galleries', galleryRoutes);
 router.use('/blog', blogRoutes);
 router.use('/stats', statsRoutes);
+router.use('/agent-voices', agentVoiceRoutes);

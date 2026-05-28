@@ -24,6 +24,7 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminGalleries from './pages/admin/AdminGalleries'
+import AdminAgentVoices from './pages/admin/AdminAgentVoices'
 import AdminBlogs from './pages/admin/AdminBlogs'
 import AdminBlogEdit from './pages/admin/AdminBlogEdit'
 import { AuthProvider } from './context/AuthContext'
@@ -78,6 +79,7 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="galleries" element={<AdminGalleries />} />
+              <Route path="agent-voices" element={<AdminAgentVoices />} />
               <Route path="blogs" element={<AdminBlogs />} />
               <Route path="blogs/new" element={<AdminBlogEdit />} />
               <Route path="blogs/:id/edit" element={<AdminBlogEdit />} />
