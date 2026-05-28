@@ -768,6 +768,36 @@ a.admin-list__title:hover { color: var(--admin-primary); }
   padding: 14px 16px !important;
 }
 
+.admin-input-wrap {
+  position: relative;
+}
+
+.admin-input-wrap input {
+  padding-right: 40px;
+}
+
+.admin-input-eye {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--admin-text-faint);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+
+.admin-input-eye:hover {
+  color: var(--admin-text);
+  background: var(--admin-surface-3);
+}
+
 /* Buttons */
 .admin-btn {
   display: inline-flex;
