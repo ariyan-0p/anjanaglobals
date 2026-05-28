@@ -18,9 +18,13 @@ import B2B from './pages/B2B'
 import Packages from './pages/Packages'
 import Contact from './pages/Contact'
 import Testimonials from './pages/Testimonials'
+import Blog from './pages/Blog'
+import BlogPostPage from './pages/BlogPost'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminGalleries from './pages/admin/AdminGalleries'
+import AdminBlogs from './pages/admin/AdminBlogs'
+import AdminBlogEdit from './pages/admin/AdminBlogEdit'
 import { AuthProvider } from './context/AuthContext'
 
 function PublicChrome({ children }) {
@@ -65,12 +69,17 @@ function App() {
             <Route path="/b2b" element={<B2B />} />
             <Route path="/packages" element={<Packages />} />
             <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/contact" element={<Contact />} />
 
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminGalleries />} />
               <Route path="galleries" element={<AdminGalleries />} />
+              <Route path="blogs" element={<AdminBlogs />} />
+              <Route path="blogs/new" element={<AdminBlogEdit />} />
+              <Route path="blogs/:id/edit" element={<AdminBlogEdit />} />
             </Route>
           </Routes>
         </PublicChrome>

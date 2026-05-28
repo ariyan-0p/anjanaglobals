@@ -13,9 +13,13 @@ export const UPLOADS_DIR =
     : path.join(serverRoot, 'uploads'));
 
 export const GALLERIES_DIR = path.join(UPLOADS_DIR, 'galleries');
+export const BLOG_DIR = path.join(UPLOADS_DIR, 'blog');
+export const BLOG_IMPORTED_DIR = path.join(BLOG_DIR, 'imported');
 
 export function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
 ensureDir(GALLERIES_DIR);
+ensureDir(BLOG_DIR);
+ensureDir(BLOG_IMPORTED_DIR);

@@ -1,5 +1,5 @@
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
-import { Images, LogOut, ExternalLink } from 'lucide-react'
+import { Images, LogOut, ExternalLink, FileText } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import './admin.css'
 
@@ -34,6 +34,10 @@ export default function AdminLayout() {
           <NavLink to="/admin/galleries" className="admin-nav__link">
             <Images size={17} aria-hidden />
             Galleries
+          </NavLink>
+          <NavLink to="/admin/blogs" className="admin-nav__link">
+            <FileText size={17} aria-hidden />
+            Blog posts
           </NavLink>
         </nav>
 
