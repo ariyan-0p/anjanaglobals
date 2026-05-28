@@ -1,59 +1,62 @@
-// Hotel partner data per destination. The HotelPartners component renders each
-// entry as a clean typographic name tile — using actual hotel logos would
-// require trademark permission from each chain, so we display names instead.
+// Hotel partner logos. Files are picked up automatically from the
+// assets folders below via Vite's import.meta.glob — drop a new image
+// into the matching folder and it appears on the site after rebuild.
+// Filename (without extension) becomes the displayed hotel name.
 
-export const hotelPartners = {
-  dubai: [
-    { name: 'Atlantis The Palm' },
-    { name: 'Crowne Plaza Yas Island' },
-    { name: 'Movenpick Bur Dubai' },
-    { name: 'Millennium Downtown' },
-    { name: 'Park Inn by Radisson Yas Island' },
-    { name: 'Citymax Hotel' },
-    { name: 'Admiral Plaza' },
-    { name: 'Royal Ascot' },
-    { name: 'Landmark Hotel' },
-    { name: 'Canvas Hotel' },
-    { name: 'Majestic City Retreat' },
-  ],
-  singapore: [
-    { name: 'Marina Bay Sands' },
-    { name: 'Pan Pacific Singapore' },
-    { name: 'Grand Copthorne Waterfront' },
-    { name: 'Novotel Singapore on Kitchener' },
-    { name: 'Mercure Singapore Tyrwhitt' },
-    { name: 'Holiday Inn Little India' },
-    { name: 'Ibis Novena' },
-    { name: 'YOTEL Orchard Road' },
-    { name: 'Hotel Boss' },
-    { name: 'V Hotel Lavender' },
-    { name: 'V Hotel Bencoolen' },
-    { name: 'Village Hotel Albert Court' },
-    { name: 'One Farrer Hotel' },
-    { name: 'Ibis Style Albert' },
-    { name: 'Value Hotel Thomson' },
-    { name: 'Hotel Bencoolen' },
-    { name: 'The Quay Hotel' },
-  ],
-  azerbaijan: [
-    { name: 'JW Marriott Absheron Baku' },
-    { name: 'Pik Palace Shahdag' },
-    { name: 'Sapphire City Hotel' },
-    { name: 'Diamond Hotel Baku' },
-    { name: 'Atlas Hotel Baku' },
-    { name: 'Altus Hotel' },
-    { name: 'Mildom Hotel' },
-    { name: 'Austin Hotel' },
-    { name: 'Shahdag Hotel & Spa' },
-    { name: 'Gabala Garden' },
-    { name: 'Sahil Hotel Baku' },
-  ],
+const dubaiModules = import.meta.glob('../assets/DXB Partners/*.{png,jpg,jpeg,webp,svg}', {
+  eager: true,
+  import: 'default',
+})
+
+const azerbaijanModules = import.meta.glob('../assets/Azerbaijan Partners/*.{png,jpg,jpeg,webp,svg}', {
+  eager: true,
+  import: 'default',
+})
+
+// Singapore logos are organised by star rating in separate folders.
+const singapore3StarModules = import.meta.glob('../assets/3 Star/*.{png,jpg,jpeg,webp,svg}', {
+  eager: true,
+  import: 'default',
+})
+const singapore4StarModules = import.meta.glob('../assets/4 Star/*.{png,jpg,jpeg,webp,svg}', {
+  eager: true,
+  import: 'default',
+})
+const singapore5StarModules = import.meta.glob('../assets/5 Star/*.{png,jpg,jpeg,webp,svg}', {
+  eager: true,
+  import: 'default',
+})
+
+function nameFromPath(path) {
+  const file = path.split(/[\\/]/).pop() || ''
+  return file.replace(/\.[^.]+$/, '').trim()
 }
 
-// Curated mix for the homepage strip — pulls a few names from each destination
-// so the section reads as breadth rather than depth.
+function toEntries(modules, extra = {}) {
+  return Object.entries(modules)
+    .map(([path, logo]) => ({
+      name: nameFromPath(path),
+      logo,
+      ...extra,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+}
+
+export const hotelPartners = {
+  dubai: toEntries(dubaiModules),
+  azerbaijan: toEntries(azerbaijanModules),
+  singapore: [
+    ...toEntries(singapore5StarModules, { stars: 5 }),
+    ...toEntries(singapore4StarModules, { stars: 4 }),
+    ...toEntries(singapore3StarModules, { stars: 3 }),
+  ],
+  malaysia: [],
+  bali: [],
+}
+
+// Homepage strip — a curated handful from each destination.
 export const homepagePartners = [
   ...hotelPartners.dubai.slice(0, 4),
-  ...hotelPartners.singapore.slice(0, 4),
-  ...hotelPartners.azerbaijan.slice(0, 2),
+  ...hotelPartners.singapore.slice(0, 3), // 5★ first
+  ...hotelPartners.azerbaijan.slice(0, 3),
 ]
