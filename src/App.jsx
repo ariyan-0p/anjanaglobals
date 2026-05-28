@@ -22,6 +22,7 @@ import Blog from './pages/Blog'
 import BlogPostPage from './pages/BlogPost'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminLogin from './pages/admin/AdminLogin'
+import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminGalleries from './pages/admin/AdminGalleries'
 import AdminBlogs from './pages/admin/AdminBlogs'
 import AdminBlogEdit from './pages/admin/AdminBlogEdit'
@@ -75,7 +76,7 @@ function App() {
 
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminGalleries />} />
+              <Route index element={<AdminDashboard />} />
               <Route path="galleries" element={<AdminGalleries />} />
               <Route path="blogs" element={<AdminBlogs />} />
               <Route path="blogs/new" element={<AdminBlogEdit />} />

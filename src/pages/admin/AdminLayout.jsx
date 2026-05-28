@@ -1,5 +1,5 @@
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
-import { Images, LogOut, ExternalLink, FileText } from 'lucide-react'
+import { LayoutDashboard, Images, FileText, LogOut, ExternalLink } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import './admin.css'
 
@@ -31,28 +31,46 @@ export default function AdminLayout() {
         </div>
 
         <nav className="admin-nav">
-          <NavLink to="/admin/galleries" className="admin-nav__link">
-            <Images size={17} aria-hidden />
-            Galleries
+          <span className="admin-nav__group">Overview</span>
+          <NavLink to="/admin" end className="admin-nav__link">
+            <LayoutDashboard size={16} aria-hidden />
+            Dashboard
           </NavLink>
+
+          <span className="admin-nav__group">Content</span>
           <NavLink to="/admin/blogs" className="admin-nav__link">
-            <FileText size={17} aria-hidden />
+            <FileText size={16} aria-hidden />
             Blog posts
+          </NavLink>
+          <NavLink to="/admin/galleries" className="admin-nav__link">
+            <Images size={16} aria-hidden />
+            Galleries
           </NavLink>
         </nav>
 
         <div className="admin-sidebar__foot">
-          <a href="/" className="admin-nav__link admin-nav__link--ghost" target="_blank" rel="noreferrer">
-            <ExternalLink size={15} aria-hidden />
+          <a
+            href="/"
+            className="admin-nav__link admin-nav__link--ghost"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <ExternalLink size={14} aria-hidden />
             View site
           </a>
           <div className="admin-user">
-            <div>
+            <div style={{ minWidth: 0 }}>
               <strong>{user.name}</strong>
               <span>{user.email}</span>
             </div>
-            <button type="button" onClick={logout} className="admin-btn admin-btn--ghost" title="Sign out">
-              <LogOut size={15} aria-hidden />
+            <button
+              type="button"
+              onClick={logout}
+              className="admin-icon-btn"
+              title="Sign out"
+              aria-label="Sign out"
+            >
+              <LogOut size={15} />
             </button>
           </div>
         </div>

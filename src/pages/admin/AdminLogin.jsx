@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { LogIn, Loader2 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import './admin.css'
 
@@ -13,7 +14,7 @@ export default function AdminLogin() {
   const [submitting, setSubmitting] = useState(false)
 
   if (status === 'authenticated' && user) {
-    const to = location.state?.from || '/admin/galleries'
+    const to = location.state?.from || '/admin'
     return <Navigate to={to} replace />
   }
 
@@ -23,7 +24,7 @@ export default function AdminLogin() {
     setSubmitting(true)
     try {
       await login(email.trim(), password)
-      navigate(location.state?.from || '/admin/galleries', { replace: true })
+      navigate(location.state?.from || '/admin', { replace: true })
     } catch (err) {
       setError(err.message || 'Login failed')
     } finally {
@@ -34,8 +35,16 @@ export default function AdminLogin() {
   return (
     <div className="admin-login">
       <form className="admin-login__card" onSubmit={handleSubmit}>
-        <h1>Anjana Globals Admin</h1>
-        <p className="admin-login__sub">Sign in with your admin account</p>
+        <div className="admin-login__brand">
+          <div className="admin-login__brand-dot" />
+          <div>
+            <strong>Anjana Globals</strong>
+            <span>Admin console</span>
+          </div>
+        </div>
+
+        <h1>Sign in</h1>
+        <p className="admin-login__sub">Use your admin credentials to continue.</p>
 
         <label className="admin-field">
           <span>Email</span>
@@ -46,6 +55,7 @@ export default function AdminLogin() {
             required
             autoComplete="username"
             autoFocus
+            placeholder="you@example.com"
           />
         </label>
 
@@ -57,12 +67,18 @@ export default function AdminLogin() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
+            placeholder="••••••••"
           />
         </label>
 
         {error ? <p className="admin-login__error">{error}</p> : null}
 
-        <button type="submit" className="admin-btn admin-btn--primary" disabled={submitting}>
+        <button
+          type="submit"
+          className="admin-btn admin-btn--primary admin-login__submit"
+          disabled={submitting}
+        >
+          {submitting ? <Loader2 size={15} className="spin" /> : <LogIn size={15} />}
           {submitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>

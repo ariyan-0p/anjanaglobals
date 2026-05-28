@@ -10,6 +10,7 @@ import { hotelPartnerRoutes } from './hotelPartnerRoutes.js';
 import { b2bRoutes } from './b2bRoutes.js';
 import { galleryRoutes } from './galleryRoutes.js';
 import { blogRoutes } from './blogRoutes.js';
+import { statsRoutes } from './statsRoutes.js';
 
 export const router = Router();
 
@@ -24,3 +25,4 @@ router.use('/hotel-partners', hotelPartnerRoutes);
 router.use('/b2b', b2bRoutes);
 router.use('/galleries', galleryRoutes);
 router.use('/blog', blogRoutes);
+router.use('/stats', statsRoutes);
