@@ -8,21 +8,21 @@ function HotelTile({ hotel }) {
     <div
       style={{
         flex: '0 0 auto',
-        width: 'clamp(140px, 22vw, 180px)',
-        height: '90px',
+        width: 'clamp(200px, 26vw, 260px)',
+        height: '150px',
         background: 'white',
         border: '1px solid #EFEDE8',
-        borderRadius: '12px',
+        borderRadius: '14px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '14px 16px',
+        padding: '14px 18px',
         transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.transform = 'translateY(-3px)'
         e.currentTarget.style.borderColor = '#7C3AED'
-        e.currentTarget.style.boxShadow = '0 6px 20px rgba(124,58,237,0.08)'
+        e.currentTarget.style.boxShadow = '0 10px 28px rgba(124,58,237,0.10)'
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'translateY(0)'
@@ -41,8 +41,6 @@ function HotelTile({ hotel }) {
             maxWidth: '100%',
             maxHeight: '100%',
             objectFit: 'contain',
-            filter: 'grayscale(100%)',
-            opacity: 0.85,
           }}
         />
       ) : (
