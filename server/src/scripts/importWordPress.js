@@ -39,13 +39,18 @@ const WP_BASE = `https://${HOST}/blog/wp-json/wp/v2`;
 
 import dns from 'node:dns';
 
-// Custom HTTPS agent that resolves HOST → IP and accepts the old cert
+// Custom HTTPS agent that resolves HOST → IP and accepts the old cert.
+// Note: Node's lookup may invoke callback with `options.all=true`, in which case
+// we must return an array of { address, family }.
 const agent = new https.Agent({
   rejectUnauthorized: false,
   lookup: (hostname, options, callback) => {
     if (hostname === HOST) {
-      // Node's lookup callback shape: (err, address, family)
-      return process.nextTick(() => callback(null, IP, 4));
+      const all = options && options.all;
+      return process.nextTick(() => {
+        if (all) callback(null, [{ address: IP, family: 4 }]);
+        else callback(null, IP, 4);
+      });
     }
     return dns.lookup(hostname, options, callback);
   },
