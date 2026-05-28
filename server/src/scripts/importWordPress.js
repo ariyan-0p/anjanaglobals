@@ -215,17 +215,19 @@ function extensionFromUrl(url) {
 const urlCache = new Map(); // srcUrl -> { url, ... } | 'failed'
 
 async function processInlineImages(html) {
-  // Find all img src and srcset URLs that point to the old host
-  const imgRegex = /<img\b[^>]*?\bsrc=["']([^"']+)["'][^>]*>/gi;
-  const tasks = [];
-  let match;
-  const targets = new Set();
-  while ((match = imgRegex.exec(html)) !== null) {
-    const src = match[1];
-    if (src.includes(HOST)) targets.add(src);
-  }
+  // Strip srcset first (browser would prefer those, often referencing the old host)
+  let out = html.replace(/srcset=["'][^"']*["']/gi, '');
 
-  // Sequentially download (small fleet, gentler on old host)
+  // Find every URL pointing at old-host /blog/wp-content/uploads/* with an image extension,
+  // regardless of which HTML attribute it's in.
+  const urlRegex = new RegExp(
+    `https?://(?:www\\.)?${HOST.replace(/^www\\./, '')}/blog/wp-content/uploads/[^"'<>\\s)]+\\.(?:jpe?g|png|gif|webp|avif|bmp|svg)`,
+    'gi'
+  );
+  const targets = new Set();
+  let m;
+  while ((m = urlRegex.exec(out)) !== null) targets.add(m[0]);
+
   for (const src of targets) {
     if (urlCache.has(src)) continue;
     try {
@@ -238,15 +240,12 @@ async function processInlineImages(html) {
     }
   }
 
-  let out = html;
-  for (const [src, saved] of urlCache.entries()) {
-    if (saved === 'failed') continue;
-    if (!targets.has(src)) continue;
-    out = out.split(src).join(saved.url);
+  for (const src of targets) {
+    const saved = urlCache.get(src);
+    if (saved && saved !== 'failed') {
+      out = out.split(src).join(saved.url);
+    }
   }
-
-  // Also strip srcset that still references old host (browser would prefer those)
-  out = out.replace(/srcset=["'][^"']*["']/gi, '');
 
   return out;
 }
