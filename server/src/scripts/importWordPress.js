@@ -37,15 +37,17 @@ const LIMIT = arg('limit') ? Number(arg('limit')) : 0;
 const PER_PAGE = 50;
 const WP_BASE = `https://${HOST}/blog/wp-json/wp/v2`;
 
+import dns from 'node:dns';
+
 // Custom HTTPS agent that resolves HOST → IP and accepts the old cert
 const agent = new https.Agent({
   rejectUnauthorized: false,
   lookup: (hostname, options, callback) => {
     if (hostname === HOST) {
-      return callback(null, IP, 4);
+      // Node's lookup callback shape: (err, address, family)
+      return process.nextTick(() => callback(null, IP, 4));
     }
-    // Fall through to default DNS for everything else
-    import('node:dns').then((dns) => dns.lookup(hostname, options, callback));
+    return dns.lookup(hostname, options, callback);
   },
 });
 
