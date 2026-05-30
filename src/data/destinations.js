@@ -4,20 +4,49 @@ import singaporeLocal from '../assets/singapore.jpg'
 import bakuLocal from '../assets/baku.jpg'
 import kualalumpurLocal from '../assets/Kualalumpur.jpg'
 
-const testimonialModules = import.meta.glob('../assets/testimonials/*.{jpg,jpeg,png,webp}', {
+// Per-destination subfolders — drop photos into
+//   src/assets/testimonials/{dubai|azerbaijan|singapore|malaysia|bali}/
+// and they appear under that destination on /testimonials automatically.
+const perDestModules = import.meta.glob(
+  '../assets/testimonials/{dubai,azerbaijan,singapore,malaysia,bali}/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' }
+)
+
+// Legacy flat folder — kept for backwards compatibility with the
+// original WhatsApp images that lived directly under /testimonials.
+const flatModules = import.meta.glob('../assets/testimonials/*.{jpg,jpeg,png,webp}', {
   eager: true,
   import: 'default',
 })
-const testimonialImages = Object.entries(testimonialModules)
+const flatImages = Object.entries(flatModules)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, src]) => src)
 
+function imagesForDestination(id) {
+  return Object.entries(perDestModules)
+    .filter(([path]) => path.includes(`/testimonials/${id}/`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, src]) => src)
+}
+
 const demoByDestination = {
-  dubai: testimonialImages.slice(0, 2),
-  azerbaijan: testimonialImages.slice(2, 4),
-  singapore: testimonialImages.slice(4, 6),
-  malaysia: testimonialImages.slice(6, 8),
-  bali: testimonialImages.slice(8, 10),
+  dubai: imagesForDestination('dubai'),
+  azerbaijan: imagesForDestination('azerbaijan'),
+  singapore: imagesForDestination('singapore'),
+  malaysia: imagesForDestination('malaysia'),
+  bali: imagesForDestination('bali'),
+}
+
+// If nothing has been dropped into the per-destination folders yet,
+// keep the old behaviour: split the flat-folder images evenly across destinations
+// so the page is never empty.
+const hasAnyPerDest = Object.values(demoByDestination).some((arr) => arr.length > 0)
+if (!hasAnyPerDest && flatImages.length > 0) {
+  demoByDestination.dubai = flatImages.slice(0, 2)
+  demoByDestination.azerbaijan = flatImages.slice(2, 4)
+  demoByDestination.singapore = flatImages.slice(4, 6)
+  demoByDestination.malaysia = flatImages.slice(6, 8)
+  demoByDestination.bali = flatImages.slice(8, 10)
 }
 
 export const destinations = [

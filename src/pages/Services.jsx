@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 import { services, whyUs } from '../data/services'
+import { homepagePartners } from '../data/hotelPartners'
+import HotelPartners from '../components/HotelPartners'
 
 const serviceIcons = {
   'tours-transfers': '🚗',
@@ -10,13 +12,8 @@ const serviceIcons = {
   journeys: '🌍',
 }
 
-const hotelPartners = [
-  { name: 'Admiral Plaza' },
-  { name: 'Arabian Courtyard' },
-  { name: 'Canvas' },
-  { name: 'Omega Hotel' },
-  { name: 'Panorama Group of Hotels' },
-]
+// Inline preview inside the Hotels service card
+const hotelPartnersPreview = homepagePartners.slice(0, 6)
 
 export default function Services() {
   const [isMobile, setIsMobile] = useState(false)
@@ -133,22 +130,39 @@ export default function Services() {
                       <p style={{ fontSize: '13px', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: '14px' }}>
                         A few of our hotel partners
                       </p>
-                      {hotelPartners.length === 0 ? (
+                      {hotelPartnersPreview.length === 0 ? (
                         <p style={{ fontSize: '14px', color: '#6B7280', fontStyle: 'italic' }}>
                           Partner logos coming soon.
                         </p>
                       ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
-                          {hotelPartners.map(p => (
-                            p.logo ? (
-                              <a key={p.name} href={p.href || '#'} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '64px', background: '#F8F7F4', borderRadius: '10px', padding: '8px', border: '1px solid #EFEDE8' }}>
-                                <img src={p.logo} alt={p.name} style={{ maxHeight: '40px', maxWidth: '100%', objectFit: 'contain' }} />
-                              </a>
-                            ) : (
-                              <div key={p.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '56px', background: '#F8F7F4', borderRadius: '10px', padding: '10px 12px', border: '1px solid #EFEDE8', fontSize: '13px', fontWeight: 600, color: '#374151', textAlign: 'center', lineHeight: 1.3 }}>
-                                {p.name}
-                              </div>
-                            )
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
+                          {hotelPartnersPreview.map(p => (
+                            <div
+                              key={p.name}
+                              title={p.name}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                height: '90px',
+                                background: 'white',
+                                borderRadius: '10px',
+                                padding: '10px 14px',
+                                border: '1px solid #EFEDE8',
+                              }}
+                            >
+                              {p.logo ? (
+                                <img
+                                  src={p.logo}
+                                  alt={p.name}
+                                  style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                                />
+                              ) : (
+                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151', textAlign: 'center', lineHeight: 1.3 }}>
+                                  {p.name}
+                                </span>
+                              )}
+                            </div>
                           ))}
                         </div>
                       )}
@@ -163,6 +177,14 @@ export default function Services() {
           </div>
         </div>
       </section>
+
+      {/* Hotel partners — dedicated section */}
+      <HotelPartners
+        hotels={homepagePartners}
+        eyebrow="Hospitality partners"
+        heading="A few of our hotel partners"
+        subtitle="A curated mix of brands we contract directly with across Dubai, Singapore, Azerbaijan, Malaysia and Bali."
+      />
 
       {/* Why Choose Us */}
       <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: '#0A0F1E' }}>
