@@ -185,8 +185,314 @@
   font-size: 13px;
 }
 
+.testimonials-page__footnote a {
+  color: #c8102e;
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .testimonials-page__tabs-wrap {
     top: 66px;
   }
+}
+
+/* Section heading shared */
+.t-section-head {
+  text-align: center;
+  margin: 0 auto 32px;
+  max-width: 720px;
+}
+
+.t-section-head .tag {
+  margin-bottom: 14px;
+}
+
+.t-section-head h2 {
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  color: #0f172a;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.t-section-head p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Agent voices section */
+.t-agents {
+  padding: clamp(48px, 7vw, 80px) 0;
+  background: linear-gradient(180deg, #fff 0%, #f1f6ff 100%);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.t-agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.t-agent-card {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.t-agent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.1);
+}
+
+.t-agent-card__media {
+  position: relative;
+  background: #0b152b;
+  aspect-ratio: 4 / 5;
+}
+
+.t-agent-card__media video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.t-agent-card__index {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.12em;
+  z-index: 2;
+}
+
+.t-agent-card__desk {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.t-agent-card__cover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.5) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s ease;
+}
+
+.t-agent-card__cover:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.t-agent-card__play {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease;
+}
+
+.t-agent-card__cover:hover .t-agent-card__play {
+  transform: scale(1.08);
+}
+
+.t-agent-card__cover-label {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.t-agent-card__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  gap: 8px;
+}
+
+.t-agent-card__body {
+  padding: 16px 18px 18px;
+}
+
+.t-agent-card__body h3 {
+  font-size: 16px;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.t-agent-card__role {
+  margin: 0 0 10px;
+  color: #64748b;
+  font-size: 12.5px;
+}
+
+.t-agent-card__quote {
+  margin: 0;
+  color: #334155;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* Reviews */
+.testi-reviews {
+  margin-top: 20px;
+  padding-top: 22px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+.testi-reviews__heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 14px;
+}
+
+.testi-reviews__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.t-review {
+  position: relative;
+  background: #fbfcff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.t-review:hover {
+  border-color: rgba(200, 16, 46, 0.3);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.t-review.is-featured {
+  background: linear-gradient(180deg, #fff8ec 0%, #fbfcff 100%);
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+.t-review__quote {
+  color: #B8963E;
+  opacity: 0.6;
+}
+
+.t-review__text {
+  margin: 0;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.t-review__foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.t-review__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e2e8f0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+}
+
+.t-review__avatar--placeholder {
+  background: linear-gradient(135deg, #c8102e, #B8963E);
+}
+
+.t-review__who {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.t-review__who strong {
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.t-review__who span {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.t-stars {
+  display: inline-flex;
+  gap: 1px;
+  margin-top: 2px;
+}
+
+.t-review__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.t-chip {
+  background: rgba(200, 16, 46, 0.1);
+  color: #c8102e;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.t-chip--ghost {
+  background: rgba(15, 23, 42, 0.06);
+  color: #475569;
 }

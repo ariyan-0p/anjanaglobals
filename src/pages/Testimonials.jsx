@@ -1,11 +1,178 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, MapPin, Camera } from 'lucide-react'
+import { ArrowRight, MapPin, Camera, Star, Play, Video as VideoIcon, Sparkles, Quote } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { useAllGalleries } from '../hooks/useGalleries'
+import { api, apiBase } from '../lib/api'
 import './Testimonials.css'
 
+function absoluteUrl(url) {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return `${apiBase}${url}`
+}
+
+function Stars({ rating = 5 }) {
+  return (
+    <div className="t-stars" aria-label={`${rating} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          size={14}
+          fill={i < rating ? '#B8963E' : 'transparent'}
+          color={i < rating ? '#B8963E' : '#D4D4D4'}
+          strokeWidth={1.5}
+        />
+      ))}
+    </div>
+  )
+}
+
+function ReviewCard({ review }) {
+  const initial = (review.name || '?').trim().charAt(0).toUpperCase()
+  const avatar = review.avatarThumbUrl || review.avatarUrl
+  return (
+    <article className={`t-review${review.isFeatured ? ' is-featured' : ''}`}>
+      <Quote size={18} aria-hidden className="t-review__quote" />
+      <p className="t-review__text">{review.message}</p>
+      <div className="t-review__foot">
+        {avatar ? (
+          <img src={absoluteUrl(avatar)} alt={review.name} className="t-review__avatar" />
+        ) : (
+          <div className="t-review__avatar t-review__avatar--placeholder">{initial}</div>
+        )}
+        <div className="t-review__who">
+          <strong>{review.name}</strong>
+          {review.location ? <span>{review.location}</span> : null}
+          <Stars rating={review.rating} />
+        </div>
+        {(review.tripType || review.tripDate) && (
+          <div className="t-review__tags">
+            {review.tripType ? <span className="t-chip">{review.tripType}</span> : null}
+            {review.tripDate ? <span className="t-chip t-chip--ghost">{review.tripDate}</span> : null}
+          </div>
+        )}
+      </div>
+    </article>
+  )
+}
+
+function AgentVoicesSection() {
+  const [voices, setVoices] = useState([])
+  const [playing, setPlaying] = useState(null)
+  const [errors, setErrors] = useState({})
+  const videoRefs = useRef({})
+
+  useEffect(() => {
+    let alive = true
+    api
+      .get('/agent-voices')
+      .then((res) => alive && setVoices(res.items || []))
+      .catch(() => alive && setVoices([]))
+    return () => { alive = false }
+  }, [])
+
+  function handlePlay(id) {
+    setPlaying(id)
+    Object.entries(videoRefs.current).forEach(([k, node]) => {
+      if (!node) return
+      if (k === id) {
+        node.play().catch(() => {})
+      } else {
+        node.pause()
+        try { node.currentTime = 0 } catch { /* noop */ }
+      }
+    })
+  }
+
+  function handlePause(id) {
+    if (playing === id) setPlaying(null)
+  }
+
+  if (voices.length === 0) return null
+
+  return (
+    <section className="t-agents">
+      <div className="container">
+        <header className="t-section-head">
+          <span className="tag">Agent voices</span>
+          <h2>Hear it from our team</h2>
+          <p>Real insights from our destination experts across operations, planning and guest experience.</p>
+        </header>
+
+        <div className="t-agent-grid">
+          {voices.map((agent, idx) => {
+            const isPlaying = playing === agent._id
+            const hasError = errors[agent._id]
+            return (
+              <article key={agent._id} className={`t-agent-card${isPlaying ? ' is-playing' : ''}`}>
+                <div className="t-agent-card__media">
+                  <span className="t-agent-card__index">0{idx + 1}</span>
+                  {agent.desk ? (
+                    <span className="t-agent-card__desk">
+                      <Sparkles size={12} aria-hidden /> {agent.desk}
+                    </span>
+                  ) : null}
+                  {hasError ? (
+                    <div className="t-agent-card__fallback">
+                      <VideoIcon size={22} />
+                      <p>Video unavailable</p>
+                    </div>
+                  ) : (
+                    <video
+                      ref={(node) => { videoRefs.current[agent._id] = node }}
+                      src={absoluteUrl(agent.videoUrl)}
+                      playsInline
+                      preload="metadata"
+                      controls={isPlaying}
+                      onPlay={() => setPlaying(agent._id)}
+                      onPause={() => handlePause(agent._id)}
+                      onEnded={() => handlePause(agent._id)}
+                      onError={() => setErrors((p) => ({ ...p, [agent._id]: true }))}
+                    />
+                  )}
+                  {!isPlaying && !hasError ? (
+                    <button
+                      type="button"
+                      className="t-agent-card__cover"
+                      onClick={() => handlePlay(agent._id)}
+                      aria-label={`Play video from ${agent.name}`}
+                    >
+                      <span className="t-agent-card__play"><Play size={18} aria-hidden /></span>
+                      <span className="t-agent-card__cover-label">Watch testimonial</span>
+                    </button>
+                  ) : null}
+                </div>
+                <div className="t-agent-card__body">
+                  <h3>{agent.name}</h3>
+                  {agent.role ? <p className="t-agent-card__role">{agent.role}</p> : null}
+                  {agent.quote ? (
+                    <p className="t-agent-card__quote">
+                      <span aria-hidden>"</span>{agent.quote}<span aria-hidden>"</span>
+                    </p>
+                  ) : null}
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Testimonials() {
-  const { data: galleries, loading } = useAllGalleries()
+  const { data: galleries } = useAllGalleries()
+  const [reviews, setReviews] = useState([])
+
+  useEffect(() => {
+    let alive = true
+    api
+      .get('/testimonials')
+      .then((res) => alive && setReviews(res.items || []))
+      .catch(() => alive && setReviews([]))
+    return () => { alive = false }
+  }, [])
 
   function imagesFor(dest) {
     const apiItems = galleries?.[dest.id]
@@ -16,12 +183,15 @@ export default function Testimonials() {
         caption: item.caption || '',
       }))
     }
-    // Fallback to hardcoded images while API is empty
     return (dest.galleryImages || []).map((src, idx) => ({
       src,
       alt: `${dest.name} travel moment ${idx + 1}`,
       caption: '',
     }))
+  }
+
+  function reviewsFor(destId) {
+    return reviews.filter((r) => r.destinationId === destId)
   }
 
   return (
@@ -33,32 +203,40 @@ export default function Testimonials() {
             <span>›</span>
             <span>Testimonials</span>
           </div>
-          <span className="tag tag-light">Client moments</span>
-          <h1>Stories and snapshots from all destinations</h1>
+          <span className="tag tag-light">Client & team voices</span>
+          <h1>Real journeys, real teams, real promises kept</h1>
           <p>
-            Explore travel moments from our five core destinations. Click any location tab to jump
-            directly to that destination page.
+            Watch our destination specialists, browse photo moments from real trips, and read
+            what travellers say about working with Anjna Global.
           </p>
         </div>
       </section>
 
+      {/* Agent video testimonials */}
+      <AgentVoicesSection />
+
+      {/* Destination tabs */}
       <section className="testimonials-page__tabs-wrap">
         <div className="container">
-          <div className="testimonials-page__tabs" aria-label="Destination tabs">
+          <div className="testimonials-page__tabs" aria-label="Destination jump links">
             {destinations.map((dest) => (
-              <Link key={dest.id} to={`/destinations/${dest.id}`} className="testimonials-page__tab">
+              <a key={dest.id} href={`#${dest.id}`} className="testimonials-page__tab">
                 <span>{dest.flag}</span>
                 {dest.name}
-              </Link>
+              </a>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Per-destination sections */}
       <section className="testimonials-page__content">
         <div className="container">
           {destinations.map((dest) => {
             const images = imagesFor(dest)
+            const destReviews = reviewsFor(dest.id)
+            const hasContent = images.length > 0 || destReviews.length > 0
+            if (!hasContent) return null
             return (
               <article key={dest.id} id={dest.id} className="testi-destination">
                 <header className="testi-destination__head">
@@ -75,30 +253,41 @@ export default function Testimonials() {
                   </Link>
                 </header>
 
-                <div className="testi-gallery">
-                  {images.map((img, idx) => (
-                    <figure
-                      key={`${dest.id}-${idx}-${img.src}`}
-                      className={`testi-gallery__item${idx === 0 ? ' is-featured' : ''}`}
-                    >
-                      <img src={img.src} alt={img.alt} loading="lazy" />
-                      {img.caption ? <figcaption>{img.caption}</figcaption> : null}
-                    </figure>
-                  ))}
-                </div>
+                {images.length > 0 ? (
+                  <div className="testi-gallery">
+                    {images.map((img, idx) => (
+                      <figure
+                        key={`${dest.id}-${idx}-${img.src}`}
+                        className={`testi-gallery__item${idx === 0 ? ' is-featured' : ''}`}
+                      >
+                        <img src={img.src} alt={img.alt} loading="lazy" />
+                        {img.caption ? <figcaption>{img.caption}</figcaption> : null}
+                      </figure>
+                    ))}
+                  </div>
+                ) : null}
+
+                {destReviews.length > 0 ? (
+                  <div className="testi-reviews">
+                    <h3 className="testi-reviews__heading">
+                      <Star size={15} fill="#B8963E" color="#B8963E" /> What travellers say about {dest.name}
+                    </h3>
+                    <div className="testi-reviews__grid">
+                      {destReviews.map((r) => <ReviewCard key={r._id} review={r} />)}
+                    </div>
+                  </div>
+                ) : null}
               </article>
             )
           })}
 
-          {loading ? null : (
-            <div className="testimonials-page__footnote">
-              <Camera size={15} />
-              <p>
-                Need destination-wise itineraries and more client moments? Visit any location page
-                above for detailed highlights and packages.
-              </p>
-            </div>
-          )}
+          <div className="testimonials-page__footnote">
+            <Camera size={15} />
+            <p>
+              Want to share your own journey? <Link to="/contact">Drop us a note</Link> — we
+              love hearing from our travellers.
+            </p>
+          </div>
         </div>
       </section>
     </main>

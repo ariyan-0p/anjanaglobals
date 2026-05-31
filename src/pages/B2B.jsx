@@ -201,17 +201,6 @@ export default function B2B() {
                 ))}
               </div>
 
-              {/* Accreditation */}
-              <div style={{ background: 'linear-gradient(135deg, #0A0F1E, #1D3461)', borderRadius: '20px', padding: isMobile ? '24px' : '32px', color: 'white' }}>
-                <p style={{ fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '12px', fontFamily: 'var(--font-body)' }}>
-                  Accreditations
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {['🏆 IATA Accredited Agency', '🤝 TAAI Member', '🇮🇳 Ministry of Tourism Recognised', '⭐ Trusted Since 2013'].map((a, i) => (
-                    <p key={i} style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)' }}>{a}</p>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>

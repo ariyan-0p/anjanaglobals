@@ -429,12 +429,6 @@ export default function Home() {
                   <span>{row.val}</span>
                 </div>
               ))}
-              <div className="home-b2b__badge">
-                <p>
-                  <strong>IATA · TAAI</strong> — Ministry of Tourism (India) recognised DMC
-                </p>
-                <small>Credentials you can share with confidence.</small>
-              </div>
             </aside>
           </div>
         </div>

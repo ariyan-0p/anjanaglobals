@@ -6,7 +6,7 @@ const milestones = [
   { year: '2013', event: 'Anjna Global founded in Gurugram, India — starting with Dubai as our first destination.' },
   { year: '2015', event: 'Expanded operations to Singapore and Malaysia, growing the partner network rapidly.' },
   { year: '2017', event: 'Added Bali (Indonesia) to our portfolio. Crossed 500+ active travel agent partners.' },
-  { year: '2019', event: 'IATA Accreditation received. Launched dedicated MICE division for corporate clients.' },
+  { year: '2019', event: 'Launched dedicated MICE division for corporate clients.' },
   { year: '2021', event: 'Launched Azerbaijan as a destination. Opened Dubai office at Aspin Commercial Building.' },
   { year: '2025', event: 'Crossed 2500+ travel partners across India and 700+ directly contracted hotels across all five destinations.' },
 ]

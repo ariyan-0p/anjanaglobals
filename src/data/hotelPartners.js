@@ -54,9 +54,33 @@ export const hotelPartners = {
   bali: [],
 }
 
-// Homepage strip — a curated handful from each destination.
+// Pick specific hotels from a destination list by exact name match.
+// Silently skips names that don't (yet) have a matching file in assets.
+function pickByName(list, names) {
+  const byName = new Map(list.map((h) => [h.name, h]))
+  return names.map((n) => byName.get(n)).filter(Boolean)
+}
+
+// Homepage strip — hand-curated. Edit the arrays below to control
+// exactly which logos appear on the home and Services pages.
 export const homepagePartners = [
-  ...hotelPartners.dubai.slice(0, 4),
-  ...hotelPartners.singapore.slice(0, 3), // 5★ first
-  ...hotelPartners.azerbaijan.slice(0, 3),
+  ...pickByName(hotelPartners.dubai, [
+    'Admiral Plaza',
+    'Canvas Hotel',
+    'Citymax Hotel',
+    'Crowne Plaza Yas Island',
+    'Royal Ascot',
+    "Jacob's Garden",
+  ]),
+  ...pickByName(hotelPartners.singapore, [
+    'Grand Copthorne Waterfront Hotel Singapore',
+    'Marina Bay Sands Singapore',
+    'One Farrer Hotel',
+  ]),
+  ...pickByName(hotelPartners.azerbaijan, [
+    'AtlasHotel',
+    'Altus Hotel',
+    'Austin Hotel',
+    'Marriott Boulevard',
+  ]),
 ]

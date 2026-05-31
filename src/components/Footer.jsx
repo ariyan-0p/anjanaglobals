@@ -263,15 +263,6 @@ export default function Footer() {
                 </div>
               ))}
 
-              {/* IATA / Accreditations */}
-              <div style={{ marginTop: '8px', padding: '14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px' }}>
-                <p style={{ fontSize: '11px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: '6px' }}>
-                  Accredited By
-                </p>
-                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', lineHeight: '1.6' }}>
-                  IATA Accredited · TAAI Member<br />Ministry of Tourism (India) Recognised
-                </p>
-              </div>
             </div>
           </div>
         </div>

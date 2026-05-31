@@ -313,7 +313,7 @@ export default function Contact() {
                   '⚡ 2-Hour response guarantee',
                   '🔒 100% secure enquiry process',
                   '💰 No hidden fees, ever',
-                  '✅ IATA Accredited & Ministry recognised',
+                  '⭐ Trusted DMC since 2013',
                 ].map((item, i) => (
                   <p key={i} style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', padding: '8px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', fontFamily: 'var(--font-body)' }}>
                     {item}

@@ -508,10 +508,6 @@ export default function BaliPage() {
                 <span>Avg. quote response</span>
                 <span>Within 2 hrs</span>
               </div>
-              <div className="dest-specialist__badge">
-                <p>IATA · TAAI · Ministry of Tourism (India) recognised DMC</p>
-                <small>Credentials you can rely on.</small>
-              </div>
             </aside>
           </div>
         </div>
