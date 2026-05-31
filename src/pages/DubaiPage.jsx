@@ -10,8 +10,37 @@ import { getDestination } from '../data/destinations'
 import { getPackagesByDestination } from '../data/packages'
 import { hotelPartners } from '../data/hotelPartners'
 import HotelPartners from '../components/HotelPartners'
+import DestinationB2BBrief from '../components/DestinationB2BBrief'
 import dubaiHero from '../assets/Dubai.jpg'
 import './DestinationPage.css'
+
+const dubaiBrief = {
+  hero: {
+    title: 'Anjna Global — Your Dubai DMC on the Ground',
+    subtitle: 'Transfers · Hotels · Attraction Tickets · Visa Services · MICE — B2B rates for travel agents.',
+  },
+  services: [
+    { icon: '🚐', title: 'Transfers', desc: 'Airport, intercity, private & group. Own fleet. Fixed B2B rates.' },
+    { icon: '🏨', title: 'Hotels', desc: '3★ to 5★. Direct contracts. No markup surprises.' },
+    { icon: '🎟️', title: 'Attractions', desc: 'Burj Khalifa, Desert Safari, Dhow Cruise, theme parks — ticketed.' },
+    { icon: '📄', title: 'Visa', desc: 'UAE visa for Indian passport. 30 & 60 day. Fast processing.' },
+  ],
+  trustPoints: [
+    { title: 'Direct hotel contracts', desc: 'We hold allotments — no middleman, no extra margin.' },
+    { title: 'Own transport fleet', desc: "Sedans, vans, coaches — we don't outsource ground transport." },
+    { title: 'Attraction tickets in bulk', desc: 'Pre-purchased allotments — faster confirmation, better price.' },
+  ],
+  products: [
+    { name: 'Evening Desert Safari', duration: '4 hrs', includes: 'BBQ dinner · dune bashing · camel ride', price: '₹1,800/pax' },
+    { name: 'Dubai City Tour', duration: '4 hrs', includes: 'Half day · Burj Al Arab · Creek · Souk', price: '₹900/pax' },
+    { name: 'Dhow Cruise Marina', duration: '2 hrs', includes: 'Dinner · Entertainment · Marina views', price: '₹1,200/pax' },
+  ],
+  itineraries: [
+    { name: 'Dubai Express', nights: '4N/5D', price: '₹28,000/pax' },
+    { name: 'Dubai Premium', nights: '5N/6D', price: '₹42,000/pax' },
+    { name: 'Dubai Honeymoon', nights: '5N/6D', price: '₹55,000/couple' },
+  ],
+}
 
 const heroSlides = [
   {
@@ -353,6 +382,9 @@ export default function DubaiPage() {
           </div>
         </div>
       </section>
+
+      {/* B2B BRIEF — For travel agents */}
+      <DestinationB2BBrief {...dubaiBrief} />
 
       {/* ABOUT THE CITY TOUR */}
       <section className="dest-section">
