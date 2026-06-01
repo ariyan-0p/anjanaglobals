@@ -31,7 +31,11 @@
   --content-max: 40rem;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
 
 body {
   font-family: var(--font-body);
@@ -39,7 +43,20 @@ body {
   background: radial-gradient(1200px 700px at 10% -10%, #eef4ff 0%, transparent 55%), var(--light);
   line-height: 1.6;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Long titles / URLs should not break the layout */
+h1, h2, h3, h4 {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -67,7 +84,9 @@ input, textarea, select { font-family: var(--font-body); }
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 clamp(16px, 4vw, 32px);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ── Buttons ─────────────────────────────────── */
