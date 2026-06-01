@@ -290,10 +290,25 @@
   color: #c8102e;
 }
 
+@media (max-width: 1400px) {
+  .site-nav__link {
+    padding: 9px 9px;
+    font-size: 13px;
+  }
+  /* Phone number collides with the long nav-link row on laptop screens.
+     Hide it here — Get a quote CTA + mobile menu still expose contact paths. */
+  .site-nav__phone {
+    display: none;
+  }
+}
+
 @media (max-width: 1320px) {
   .site-nav__link {
-    padding: 10px 10px;
-    font-size: 13px;
+    padding: 8px 7px;
+    font-size: 12.5px;
+  }
+  .site-nav__inner {
+    column-gap: clamp(12px, 1.6vw, 28px);
   }
 }
 
