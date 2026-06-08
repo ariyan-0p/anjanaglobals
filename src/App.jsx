@@ -12,6 +12,7 @@ import Destinations from './pages/Destinations'
 import DestinationDetail from './pages/DestinationDetail'
 import DubaiPage from './pages/DubaiPage'
 import BaliPage from './pages/BaliPage'
+import DestinationPage from './pages/destination/DestinationPage'
 import Services from './pages/Services'
 import UAEVisaPage from './pages/UAEVisaPage'
 import B2B from './pages/B2B'
@@ -64,9 +65,11 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/destinations" element={<Destinations />} />
-            <Route path="/destinations/dubai" element={<DubaiPage />} />
-            <Route path="/destinations/bali" element={<BaliPage />} />
-            <Route path="/destinations/:slug" element={<DestinationDetail />} />
+            <Route path="/destinations/:slug" element={<DestinationPage />} />
+            {/* Legacy pages — kept for any external links; not linked from nav */}
+            <Route path="/destinations/dubai-legacy" element={<DubaiPage />} />
+            <Route path="/destinations/bali-legacy" element={<BaliPage />} />
+            <Route path="/destinations/:slug/legacy" element={<DestinationDetail />} />
             <Route path="/services" element={<Services />} />
             <Route path="/uae-visa" element={<UAEVisaPage />} />
             <Route path="/b2b" element={<B2B />} />
