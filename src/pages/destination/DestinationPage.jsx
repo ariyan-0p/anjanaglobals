@@ -3,7 +3,16 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowRight, Calendar, MapPin, ShieldCheck, Star, Clock, Globe,
   Plane, FileCheck, ChevronDown, Copy, Check, MessageCircle, ExternalLink,
+  Building2, Sparkles, Users, Briefcase, Heart, Crown, Camera, Award,
 } from 'lucide-react'
+
+const TRIP_TYPE_META = {
+  fit: { icon: <Sparkles size={14} aria-hidden /> },
+  family: { icon: <Users size={14} aria-hidden /> },
+  honeymoon: { icon: <Heart size={14} aria-hidden /> },
+  mice: { icon: <Briefcase size={14} aria-hidden /> },
+  group: { icon: <Users size={14} aria-hidden /> },
+}
 
 import { getDestination } from '../../data/destinations'
 import { getDestinationBrief } from '../../data/destinationBriefs'
@@ -73,19 +82,91 @@ function Hero({ destination, brief }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// STORY — narrative chapters
+// BY THE NUMBERS — visual stats strip just below hero
 // ────────────────────────────────────────────────────────────────
-function Story({ chapters }) {
+function ByTheNumbers({ destination, brief, hotelCount, experienceCount }) {
+  const stats = [
+    { label: 'Partner hotels', value: hotelCount > 0 ? `${hotelCount}+` : 'Direct', icon: <Building2 size={18} aria-hidden /> },
+    { label: 'Curated experiences', value: experienceCount > 0 ? experienceCount : '—', icon: <Sparkles size={18} aria-hidden /> },
+    { label: 'Avg. quote response', value: '2 hrs', icon: <Clock size={18} aria-hidden /> },
+    { label: 'Specialist desk since', value: '2013', icon: <Award size={18} aria-hidden /> },
+  ]
+  return (
+    <section className="dp-numbers" aria-label="Destination stats">
+      <div className="container">
+        <ul className="dp-numbers__grid">
+          {stats.map((s) => (
+            <li key={s.label} className="dp-numbers__stat">
+              <span className="dp-numbers__icon">{s.icon}</span>
+              <strong>{s.value}</strong>
+              <span className="dp-numbers__label">{s.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+// ────────────────────────────────────────────────────────────────
+// STORY — alternating image + text rows
+// ────────────────────────────────────────────────────────────────
+function Story({ chapters, destination }) {
   if (!chapters?.length) return null
+  const galleryPool = destination.galleryImages || [destination.image]
   return (
     <section className="dp-section dp-story">
       <div className="container">
-        <div className="dp-story__grid">
-          {chapters.map((c) => (
-            <article key={c.heading} className="dp-story__chapter">
-              <h2>{c.heading}</h2>
-              <p>{c.paragraph}</p>
+        <div className="dp-story__rows">
+          {chapters.map((c, idx) => (
+            <article
+              key={c.heading}
+              className={`dp-story__row${idx % 2 === 1 ? ' is-reverse' : ''}`}
+            >
+              <div
+                className="dp-story__media"
+                style={{ backgroundImage: `url(${galleryPool[idx % galleryPool.length]})` }}
+                aria-hidden
+              >
+                <span className="dp-story__chip">Chapter {idx + 1}</span>
+              </div>
+              <div className="dp-story__body">
+                <h2>{c.heading}</h2>
+                <p>{c.paragraph}</p>
+              </div>
             </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ────────────────────────────────────────────────────────────────
+// SIGNATURE MOMENTS — 4 visual mood cards
+// ────────────────────────────────────────────────────────────────
+function SignatureMoments({ moments, destinationName }) {
+  if (!moments?.length) return null
+  return (
+    <section className="dp-section dp-section--alt" id="moments-overview">
+      <div className="container">
+        <header className="dp-head">
+          <span className="dp-eyebrow">Signature moments</span>
+          <h2>What {destinationName} feels like</h2>
+          <p>The mood your client will remember.</p>
+        </header>
+        <div className="dp-moments-grid">
+          {moments.map((m) => (
+            <figure
+              key={m.title}
+              className="dp-moment"
+              style={{ backgroundImage: `url(${m.image})` }}
+            >
+              <figcaption>
+                <strong>{m.title}</strong>
+                {m.meta ? <span>{m.meta}</span> : null}
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
@@ -107,31 +188,46 @@ function PricingTiers({ tiers, onQuote }) {
           <p>Net rates · twin sharing · request live quote for actual pax + dates.</p>
         </header>
         <div className="dp-tier-grid">
-          {tiers.map((t) => (
+          {tiers.map((t, idx) => (
             <article key={t.name} className={`dp-tier${t.isPopular ? ' is-popular' : ''}`}>
-              {t.isPopular ? <span className="dp-tier__pop">Most booked</span> : null}
-              <header>
-                <h3>{t.name}</h3>
-                <p className="dp-tier__sub">{t.subtitle}</p>
-              </header>
-              <div className="dp-tier__price">
-                <strong>{t.price}</strong>
-                <span>{t.perPaxNote}</span>
+              {t.image ? (
+                <div
+                  className="dp-tier__media"
+                  style={{ backgroundImage: `url(${t.image})` }}
+                  aria-hidden
+                >
+                  {t.isPopular ? <span className="dp-tier__pop">Most booked</span> : null}
+                  <span className="dp-tier__media-tag">
+                    <Crown size={12} aria-hidden /> Tier {idx + 1}
+                  </span>
+                </div>
+              ) : (
+                <>{t.isPopular ? <span className="dp-tier__pop">Most booked</span> : null}</>
+              )}
+              <div className="dp-tier__body">
+                <header>
+                  <h3>{t.name}</h3>
+                  <p className="dp-tier__sub">{t.subtitle}</p>
+                </header>
+                <div className="dp-tier__price">
+                  <strong>{t.price}</strong>
+                  <span>{t.perPaxNote}</span>
+                </div>
+                <ul className="dp-tier__includes">
+                  {t.includes?.map((inc) => (
+                    <li key={inc}>
+                      <Check size={13} aria-hidden /> {inc}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  className="dp-btn dp-btn--ghost"
+                  onClick={() => onQuote(`Quote for ${t.name} tier`)}
+                >
+                  Get this quote <ArrowRight size={14} aria-hidden />
+                </button>
               </div>
-              <ul className="dp-tier__includes">
-                {t.includes?.map((inc) => (
-                  <li key={inc}>
-                    <Check size={13} aria-hidden /> {inc}
-                  </li>
-                ))}
-              </ul>
-              <button
-                type="button"
-                className="dp-btn dp-btn--ghost"
-                onClick={() => onQuote(`Quote for ${t.name} tier`)}
-              >
-                Get this quote <ArrowRight size={14} aria-hidden />
-              </button>
             </article>
           ))}
         </div>
@@ -176,6 +272,7 @@ function TripTypeSection({ brief, onQuote }) {
               className={`dp-tab${active === k ? ' is-active' : ''}`}
               onClick={() => setActive(k)}
             >
+              {TRIP_TYPE_META[k]?.icon}
               {brief.tripTypes[k].label}
             </button>
           ))}
@@ -184,8 +281,13 @@ function TripTypeSection({ brief, onQuote }) {
         <div className="dp-tab-panel">
           <p className="dp-tab-blurb">{cfg.blurb}</p>
           <div className="dp-exp-grid">
-            {linkedExperiences.map((e) => (
-              <ExperienceCard key={e.key} exp={e} onQuote={onQuote} />
+            {linkedExperiences.map((e, idx) => (
+              <ExperienceCard
+                key={e.key}
+                exp={e}
+                onQuote={onQuote}
+                fallbackImage={brief.signatureMoments?.[idx % (brief.signatureMoments?.length || 1)]?.image}
+              />
             ))}
           </div>
           {linkedItinerary ? (
@@ -200,26 +302,37 @@ function TripTypeSection({ brief, onQuote }) {
   )
 }
 
-function ExperienceCard({ exp, onQuote }) {
+function ExperienceCard({ exp, onQuote, fallbackImage }) {
+  const image = exp.image || fallbackImage
   return (
     <article className="dp-exp">
-      <header className="dp-exp__head">
-        <h3>{exp.name}</h3>
-        {exp.badge ? <span className="dp-exp__badge">{exp.badge}</span> : null}
-      </header>
-      <p className="dp-exp__meta">{[exp.duration, exp.includes].filter(Boolean).join(' · ')}</p>
-      <footer className="dp-exp__foot">
-        <span className="dp-exp__price">
-          <span>From</span> {exp.price || 'On request'}
-        </span>
-        <button
-          type="button"
-          className="dp-btn dp-btn--text"
-          onClick={() => onQuote(`Quote ${exp.name}`)}
+      {image ? (
+        <div
+          className="dp-exp__media"
+          style={{ backgroundImage: `url(${image})` }}
+          aria-hidden
         >
-          Quote <ArrowRight size={12} aria-hidden />
-        </button>
-      </footer>
+          {exp.badge ? <span className="dp-exp__badge">{exp.badge}</span> : null}
+        </div>
+      ) : null}
+      <div className="dp-exp__body">
+        <header className="dp-exp__head">
+          <h3>{exp.name}</h3>
+        </header>
+        <p className="dp-exp__meta">{[exp.duration, exp.includes].filter(Boolean).join(' · ')}</p>
+        <footer className="dp-exp__foot">
+          <span className="dp-exp__price">
+            <span>From</span> {exp.price || 'On request'}
+          </span>
+          <button
+            type="button"
+            className="dp-btn dp-btn--text"
+            onClick={() => onQuote(`Quote ${exp.name}`)}
+          >
+            Quote <ArrowRight size={12} aria-hidden />
+          </button>
+        </footer>
+      </div>
     </article>
   )
 }
@@ -619,13 +732,31 @@ export default function DestinationPage() {
     }
   }
 
+  const accentStyle = {
+    '--dp-accent': brief.accentColor || '#1f3b75',
+    '--dp-accent-ink': brief.accentInk || '#ffffff',
+  }
+  const hotelCount = (hotelPartners[destination.id] || []).length
+  const experienceCount = brief.experiences?.length || 0
+
   return (
-    <main className="dp">
+    <main className="dp" style={accentStyle}>
       <Hero destination={destination} brief={brief} />
+
+      <ByTheNumbers
+        destination={destination}
+        brief={brief}
+        hotelCount={hotelCount}
+        experienceCount={experienceCount}
+      />
 
       <div className="dp-body container">
         <div className="dp-body__main">
-          <Story chapters={brief.story} />
+          <Story chapters={brief.story} destination={destination} />
+          <SignatureMoments
+            moments={brief.signatureMoments}
+            destinationName={destination.name}
+          />
           <PricingTiers tiers={brief.pricingTiers} onQuote={openQuote} />
           <TripTypeSection brief={brief} onQuote={openQuote} />
           <ItinerarySection

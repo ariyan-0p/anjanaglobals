@@ -16,8 +16,20 @@
 
 const TBD = 'On request'
 
+// Helper: build a stats strip from the brief + linked counts
+function buildStats({ hotelCount, experienceCount, response = '2 hrs', since = '2013' }) {
+  return [
+    { label: 'Partner hotels', value: hotelCount > 0 ? `${hotelCount}+` : 'Direct contracts', tone: 'navy' },
+    { label: 'Curated experiences', value: experienceCount > 0 ? `${experienceCount}` : 'Bookable', tone: 'gold' },
+    { label: 'Avg. quote response', value: response, tone: 'navy' },
+    { label: 'Specialist desk since', value: since, tone: 'gold' },
+  ]
+}
+
 const dubai = {
   id: 'dubai',
+  accentColor: '#C9A84C',
+  accentInk: '#1a1500',
   atGlance: {
     bestMonths: 'Nov – Apr',
     visa: 'Visa on Arrival',
@@ -38,6 +50,28 @@ const dubai = {
         'Year-round demand from Indian travellers, easy visa, short flights, and constantly evolving products keep Dubai at the top of every B2B agent\'s portfolio. Whether your client wants a 4-night family escape or a 6-night honeymoon, the rate card flexes.',
     },
   ],
+  signatureMoments: [
+    {
+      title: 'Skyline at dusk',
+      meta: 'Burj Khalifa + Fountain show',
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=900&q=80',
+    },
+    {
+      title: 'Dune adventure',
+      meta: 'Sunset safari with BBQ',
+      image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=900&q=80',
+    },
+    {
+      title: 'Old Dubai',
+      meta: 'Spice Souk · Creek · abra',
+      image: 'https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=900&q=80',
+    },
+    {
+      title: 'Sea + skyline',
+      meta: 'Dhow cruise + Marina',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=900&q=80',
+    },
+  ],
   pricingTiers: [
     {
       name: 'Budget',
@@ -45,6 +79,7 @@ const dubai = {
       price: '₹18,000',
       perPaxNote: 'per pax · 4N/5D · twin sharing',
       includes: ['Airport transfers', 'Daily breakfast', 'Half-day Dubai city tour', 'Desert Safari with BBQ'],
+      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80',
     },
     {
       name: 'Standard',
@@ -53,6 +88,7 @@ const dubai = {
       perPaxNote: 'per pax · 4N/5D · twin sharing',
       includes: ['All Budget features', 'Burj Khalifa 124th floor', 'Dhow Cruise Marina dinner', 'Private SIC transfers'],
       isPopular: true,
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80',
     },
     {
       name: 'Premium',
@@ -60,6 +96,7 @@ const dubai = {
       price: '₹45,000',
       perPaxNote: 'per pax · 5N/6D · twin sharing',
       includes: ['All Standard features', '5★ hotel category (Atlantis / similar)', 'Private chauffeur transfers', 'Atlantis Aquaventure or theme park'],
+      image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80',
     },
   ],
   tripTypes: {
@@ -102,6 +139,7 @@ const dubai = {
       includes: 'BBQ dinner · dune bashing · camel ride',
       price: '₹1,800/pax',
       badge: 'Most quoted',
+      image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80',
     },
     {
       key: 'city-tour',
@@ -109,6 +147,7 @@ const dubai = {
       duration: '4 hrs',
       includes: 'Half day · Burj Al Arab · Creek · Souk',
       price: '₹900/pax',
+      image: 'https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=800&q=80',
     },
     {
       key: 'dhow-cruise',
@@ -116,6 +155,7 @@ const dubai = {
       duration: '2 hrs',
       includes: 'Dinner · Entertainment · Marina views',
       price: '₹1,200/pax',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80',
     },
     {
       key: 'burj-khalifa',
@@ -123,6 +163,7 @@ const dubai = {
       duration: '1.5 hrs',
       includes: 'Non-prime hours · skip-the-line entry',
       price: 'On request',
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
     },
     {
       key: 'aquaventure',
@@ -130,6 +171,7 @@ const dubai = {
       duration: 'Full day',
       includes: 'Waterpark + Lost Chambers access',
       price: 'On request',
+      image: 'https://images.unsplash.com/photo-1559666126-84f389727b9a?w=800&q=80',
     },
   ],
   itineraries: [
@@ -211,6 +253,14 @@ function placeholderTripTypes(experienceKeys, itineraryKey) {
 
 const azerbaijan = {
   id: 'azerbaijan',
+  accentColor: '#0092BC',
+  accentInk: '#001620',
+  signatureMoments: [
+    { title: 'Flame Towers', meta: 'Sunset over Baku skyline', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80' },
+    { title: 'Old City walls', meta: 'UNESCO Icherisheher', image: 'https://images.unsplash.com/photo-1574175819253-0cdec79e6253?w=900&q=80' },
+    { title: 'Mountain weekend', meta: 'Shahdag + Gabala resort', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900&q=80' },
+    { title: 'Mud volcanoes', meta: 'Gobustan landscape', image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=80' },
+  ],
   atGlance: {
     bestMonths: 'Apr – Jun · Sept – Nov',
     visa: 'E-Visa (ASAN)',
@@ -267,6 +317,14 @@ const azerbaijan = {
 
 const singapore = {
   id: 'singapore',
+  accentColor: '#EF4444',
+  accentInk: '#3a0808',
+  signatureMoments: [
+    { title: 'Marina Bay glow', meta: 'Sands + light show', image: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=900&q=80' },
+    { title: 'Gardens by the Bay', meta: 'Supertree Grove', image: 'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=900&q=80' },
+    { title: 'Sentosa island', meta: 'Universal Studios + beach', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=900&q=80' },
+    { title: 'Hawker food', meta: 'Chinatown + Lau Pa Sat', image: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=900&q=80' },
+  ],
   atGlance: {
     bestMonths: 'Feb – Apr',
     visa: 'eVisa (most nationalities)',
@@ -322,6 +380,14 @@ const singapore = {
 
 const malaysia = {
   id: 'malaysia',
+  accentColor: '#FBBF24',
+  accentInk: '#3a2a00',
+  signatureMoments: [
+    { title: 'Petronas at night', meta: 'Twin Towers Skybridge', image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=900&q=80' },
+    { title: 'Langkawi beach', meta: 'White sand + sky cab', image: 'https://images.unsplash.com/photo-1573790387438-4da905039392?w=900&q=80' },
+    { title: 'Batu Caves', meta: '272 colourful steps', image: 'https://images.unsplash.com/photo-1597211833712-5e41faa202ea?w=900&q=80' },
+    { title: 'Cameron Highlands', meta: 'Tea estates + cool air', image: 'https://images.unsplash.com/photo-1583338917451-face2351c0cd?w=900&q=80' },
+  ],
   atGlance: {
     bestMonths: 'Jun – Sept · Dec – Feb',
     visa: 'Visa-free (90 days)',
@@ -379,6 +445,14 @@ const malaysia = {
 
 const bali = {
   id: 'bali',
+  accentColor: '#14B8A6',
+  accentInk: '#002e29',
+  signatureMoments: [
+    { title: 'Uluwatu cliff', meta: 'Sunset + Kecak fire dance', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=900&q=80' },
+    { title: 'Rice terraces', meta: 'Tegallalang at dawn', image: 'https://images.unsplash.com/photo-1604999333679-b86d54738315?w=900&q=80' },
+    { title: 'Ubud temples', meta: 'Tirta Empul + jungle walks', image: 'https://images.unsplash.com/photo-1542897644-e04428948020?w=900&q=80' },
+    { title: 'Beach villa', meta: 'Seminyak / Nusa Dua', image: 'https://images.unsplash.com/photo-1583308148956-3deeb5dadb29?w=900&q=80' },
+  ],
   atGlance: {
     bestMonths: 'May – Sept',
     visa: 'Visa on Arrival',
