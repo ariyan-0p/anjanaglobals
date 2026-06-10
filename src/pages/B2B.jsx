@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle, Star, Users, TrendingUp, Clock, Award, Headphones, Shield } from 'lucide-react'
+import { api } from '../lib/api'
 
 const partnerBenefits = [
   {
@@ -247,6 +248,10 @@ export default function B2B() {
 }
 
 function PartnerForm({ isMobile }) {
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+
   const inputStyle = {
     width: '100%', padding: '13px 16px',
     border: '1.5px solid #E5E7EB', borderRadius: '8px',
@@ -258,45 +263,84 @@ function PartnerForm({ isMobile }) {
   const focusStyle = (e) => { e.target.style.borderColor = '#C8102E' }
   const blurStyle = (e) => { e.target.style.borderColor = '#E5E7EB' }
 
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    const fd = new FormData(e.currentTarget)
+    const firstName = (fd.get('firstName') || '').toString().trim()
+    const lastName = (fd.get('lastName') || '').toString().trim()
+    const company = (fd.get('company') || '').toString().trim()
+    const referral = (fd.get('referral') || '').toString().trim()
+    const messageParts = []
+    if (company) messageParts.push(`Company: ${company}`)
+    if (referral) messageParts.push(`Heard about us: ${referral}`)
+    try {
+      await api.post('/leads', {
+        name: `${firstName} ${lastName}`.trim(),
+        email: (fd.get('email') || '').toString().trim(),
+        phone: (fd.get('phone') || '').toString().trim(),
+        destination: (fd.get('destination') || '').toString(),
+        message: messageParts.join('\n'),
+        source: 'b2b',
+      })
+      setSubmitted(true)
+    } catch (err) {
+      setError(err.message || 'Could not send. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div style={{ background: 'rgba(76,187,95,0.08)', border: '1px solid rgba(76,187,95,0.3)', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
+        <CheckCircle size={32} color="#4cbb5f" style={{ margin: '0 auto 12px' }} />
+        <h3 style={{ margin: '0 0 6px', color: '#1a1a2e', fontSize: '17px' }}>Registration received</h3>
+        <p style={{ margin: 0, color: '#374151', fontSize: '14px' }}>Our B2B team will contact you within 24 hours.</p>
+      </div>
+    )
+  }
+
   return (
-    <form onSubmit={e => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
         <div>
           <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
             First Name *
           </label>
-          <input type="text" placeholder="Rahul" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
+          <input name="firstName" type="text" placeholder="Rahul" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
         </div>
         <div>
           <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
             Last Name *
           </label>
-          <input type="text" placeholder="Sharma" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
+          <input name="lastName" type="text" placeholder="Sharma" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
         </div>
       </div>
       <div>
         <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Company / Agency Name *
         </label>
-        <input type="text" placeholder="Sunshine Travels Pvt Ltd" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
+        <input name="company" type="text" placeholder="Sunshine Travels Pvt Ltd" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
       </div>
       <div>
         <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Business Email *
         </label>
-        <input type="email" placeholder="sales@sunshinetravels.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
+        <input name="email" type="email" placeholder="sales@sunshinetravels.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
       </div>
       <div>
         <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Phone / WhatsApp *
         </label>
-        <input type="tel" placeholder="+91 98765 43210" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
+        <input name="phone" type="tel" placeholder="+91 98765 43210" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} required />
       </div>
       <div>
         <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           Destinations of Interest
         </label>
-        <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
+        <select name="destination" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
           <option value="">Select destination(s)</option>
           <option>Dubai, UAE</option>
           <option>Azerbaijan</option>
@@ -310,10 +354,15 @@ function PartnerForm({ isMobile }) {
         <label style={{ fontSize: '12px', fontWeight: '700', color: '#374151', letterSpacing: '0.5px', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-body)' }}>
           How did you hear about us?
         </label>
-        <textarea rows={3} placeholder="Google, referral, trade fair, etc." style={{ ...inputStyle, resize: 'vertical' }} onFocus={focusStyle} onBlur={blurStyle} />
+        <textarea name="referral" rows={3} placeholder="Google, referral, trade fair, etc." style={{ ...inputStyle, resize: 'vertical' }} onFocus={focusStyle} onBlur={blurStyle} />
       </div>
-      <button type="submit" className="btn-primary" style={{ justifyContent: 'center', padding: '16px', marginTop: '4px' }}>
-        Submit Registration <ArrowRight size={16} />
+      {error ? (
+        <p style={{ margin: 0, padding: '10px 14px', background: 'rgba(200,16,46,0.08)', border: '1px solid rgba(200,16,46,0.3)', borderRadius: '8px', color: '#c8102e', fontSize: '13px' }}>
+          {error}
+        </p>
+      ) : null}
+      <button type="submit" disabled={submitting} className="btn-primary" style={{ justifyContent: 'center', padding: '16px', marginTop: '4px', opacity: submitting ? 0.6 : 1 }}>
+        {submitting ? 'Submitting…' : 'Submit Registration'} <ArrowRight size={16} />
       </button>
       <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
         Our B2B team will contact you within 24 hours.

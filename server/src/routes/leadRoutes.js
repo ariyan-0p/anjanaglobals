@@ -28,7 +28,7 @@ leadRoutes.post(
     body('name').isString().trim().isLength({ min: 1, max: 120 }),
     body('email').optional({ values: 'falsy' }).isEmail(),
     body('phone').optional({ values: 'falsy' }).isString().trim().isLength({ max: 30 }),
-    body('source').optional().isIn(['popup', 'contact', 'package', 'b2b', 'other']),
+    body('source').optional().isIn(['popup', 'contact', 'package', 'b2b', 'destination', 'destination-rail', 'other']),
   ],
   validate,
   createLead

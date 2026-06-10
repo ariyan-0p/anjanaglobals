@@ -27,6 +27,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminGalleries from './pages/admin/AdminGalleries'
 import AdminAgentVoices from './pages/admin/AdminAgentVoices'
 import AdminTestimonials from './pages/admin/AdminTestimonials'
+import AdminLeads from './pages/admin/AdminLeads'
 import AdminBlogs from './pages/admin/AdminBlogs'
 import AdminBlogEdit from './pages/admin/AdminBlogEdit'
 import { AuthProvider } from './context/AuthContext'
@@ -85,6 +86,7 @@ function App() {
               <Route path="galleries" element={<AdminGalleries />} />
               <Route path="agent-voices" element={<AdminAgentVoices />} />
               <Route path="testimonials" element={<AdminTestimonials />} />
+              <Route path="leads" element={<AdminLeads />} />
               <Route path="blogs" element={<AdminBlogs />} />
               <Route path="blogs/new" element={<AdminBlogEdit />} />
               <Route path="blogs/:id/edit" element={<AdminBlogEdit />} />

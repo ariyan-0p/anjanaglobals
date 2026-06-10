@@ -11,8 +11,9 @@ const leadSchema = new mongoose.Schema(
     message: { type: String, trim: true, maxlength: 2000 },
     source: {
       type: String,
-      enum: ['popup', 'contact', 'package', 'b2b', 'other'],
+      enum: ['popup', 'contact', 'package', 'b2b', 'destination', 'destination-rail', 'other'],
       default: 'other',
+      index: true,
     },
     packageRef: { type: mongoose.Schema.Types.ObjectId, ref: 'Package' },
     status: {

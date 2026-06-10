@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, CheckCircle } from 'lucide-react'
+import { api } from '../lib/api'
 
 const offices = [
   {
@@ -44,6 +45,8 @@ const enquiryTypes = [
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -53,9 +56,42 @@ export default function Contact() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
+    setError('')
+    setSubmitting(true)
+    const fd = new FormData(e.currentTarget)
+    const firstName = (fd.get('firstName') || '').toString().trim()
+    const lastName = (fd.get('lastName') || '').toString().trim()
+    const enquiryType = (fd.get('enquiryType') || '').toString()
+    const destination = (fd.get('destination') || '').toString()
+    const travellers = (fd.get('travellers') || '').toString()
+    const travelDates = (fd.get('travelDates') || '').toString().trim()
+    const budget = (fd.get('budget') || '').toString()
+    const message = (fd.get('message') || '').toString().trim()
+
+    const messageParts = []
+    if (enquiryType) messageParts.push(`Enquiry: ${enquiryType}`)
+    if (travellers) messageParts.push(`Travellers: ${travellers}`)
+    if (travelDates) messageParts.push(`Dates: ${travelDates}`)
+    if (budget) messageParts.push(`Budget: ${budget}`)
+    if (message) messageParts.push(message)
+
+    try {
+      await api.post('/leads', {
+        name: `${firstName} ${lastName}`.trim(),
+        email: (fd.get('email') || '').toString().trim(),
+        phone: (fd.get('phone') || '').toString().trim(),
+        destination,
+        message: messageParts.join('\n'),
+        source: 'contact',
+      })
+      setSubmitted(true)
+    } catch (err) {
+      setError(err.message || 'Could not send. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const inputStyle = {
@@ -162,28 +198,28 @@ export default function Contact() {
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>First Name *</label>
-                      <input type="text" required placeholder="Your first name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
+                      <input name="firstName" type="text" required placeholder="Your first name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
                     </div>
                     <div>
                       <label style={labelStyle}>Last Name *</label>
-                      <input type="text" required placeholder="Your last name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
+                      <input name="lastName" type="text" required placeholder="Your last name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
                     </div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>Email Address *</label>
-                      <input type="email" required placeholder="you@example.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
+                      <input name="email" type="email" required placeholder="you@example.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
                     </div>
                     <div>
                       <label style={labelStyle}>Phone / WhatsApp *</label>
-                      <input type="tel" required placeholder="+91 98765 43210" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
+                      <input name="phone" type="tel" required placeholder="+91 98765 43210" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
                     </div>
                   </div>
 
                   <div>
                     <label style={labelStyle}>Type of Enquiry</label>
-                    <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
+                    <select name="enquiryType" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
                       {enquiryTypes.map(t => <option key={t}>{t}</option>)}
                     </select>
                   </div>
@@ -191,14 +227,14 @@ export default function Contact() {
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>Destination</label>
-                      <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
+                      <select name="destination" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
                         <option value="">Select destination</option>
                         {['Dubai, UAE', 'Azerbaijan', 'Singapore', 'Malaysia', 'Bali, Indonesia', 'Multiple Destinations'].map(d => <option key={d}>{d}</option>)}
                       </select>
                     </div>
                     <div>
                       <label style={labelStyle}>Number of Travellers</label>
-                      <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
+                      <select name="travellers" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
                         <option>1 – 2 persons</option>
                         <option>3 – 5 persons</option>
                         <option>6 – 15 persons</option>
@@ -211,11 +247,11 @@ export default function Contact() {
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div>
                       <label style={labelStyle}>Approximate Travel Dates</label>
-                      <input type="text" placeholder="e.g. Dec 2025, flexible" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
+                      <input name="travelDates" type="text" placeholder="e.g. Dec 2025, flexible" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
                     </div>
                     <div>
                       <label style={labelStyle}>Budget per Person</label>
-                      <select style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
+                      <select name="budget" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
                         <option>Under ₹50,000</option>
                         <option>₹50,000 – ₹1,00,000</option>
                         <option>₹1,00,000 – ₹2,00,000</option>
@@ -228,6 +264,7 @@ export default function Contact() {
                   <div>
                     <label style={labelStyle}>Message / Special Requirements</label>
                     <textarea
+                      name="message"
                       rows={5}
                       placeholder="Tell us about your travel plans, any special requirements, or questions you have..."
                       style={{ ...inputStyle, resize: 'vertical' }}
@@ -236,8 +273,14 @@ export default function Contact() {
                     />
                   </div>
 
-                  <button type="submit" className="btn-primary" style={{ justifyContent: 'center', padding: '16px', fontSize: '14px' }}>
-                    Send Enquiry <ArrowRight size={16} />
+                  {error ? (
+                    <p style={{ margin: 0, padding: '10px 14px', background: 'rgba(200,16,46,0.08)', border: '1px solid rgba(200,16,46,0.3)', borderRadius: '8px', color: '#c8102e', fontSize: '13px' }}>
+                      {error}
+                    </p>
+                  ) : null}
+
+                  <button type="submit" className="btn-primary" disabled={submitting} style={{ justifyContent: 'center', padding: '16px', fontSize: '14px', opacity: submitting ? 0.6 : 1 }}>
+                    {submitting ? 'Sending…' : 'Send Enquiry'} <ArrowRight size={16} />
                   </button>
 
                   <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: 'var(--font-body)' }}>

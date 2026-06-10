@@ -616,10 +616,12 @@ function StickyQuoteRail({ destination, brief, intent }) {
     setSending(true)
     try {
       await api.post('/leads', {
-        ...form,
-        source: 'destination-rail',
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        source: 'destination',
         destination: destination.id,
-        message: `${intent || ''}${form.notes ? ' — ' + form.notes : ''}`,
+        message: `${intent || ''}${form.notes ? ' — ' + form.notes : ''}`.trim(),
       })
       setDone(true)
     } catch (err) {

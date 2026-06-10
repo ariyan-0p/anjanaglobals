@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
+import { api } from '../lib/api'
 import './LeadPopup.css'
 
 const FIRST_DELAY_MS = 30000
@@ -8,6 +9,9 @@ const SESSION_DISMISS_KEY = 'anjna:leadPopupDismissed'
 export default function LeadPopup() {
   const [open, setOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [form, setForm] = useState({ name: '', phone: '', email: '', destination: '', message: '' })
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -28,13 +32,29 @@ export default function LeadPopup() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(SESSION_DISMISS_KEY, '1')
+    setError('')
+    setSubmitting(true)
+    try {
+      await api.post('/leads', {
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        destination: form.destination || '',
+        message: form.message.trim(),
+        source: 'popup',
+      })
+      setSubmitted(true)
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem(SESSION_DISMISS_KEY, '1')
+      }
+      window.setTimeout(() => setOpen(false), 1800)
+    } catch (err) {
+      setError(err.message || 'Could not send. Please try again.')
+    } finally {
+      setSubmitting(false)
     }
-    window.setTimeout(() => setOpen(false), 1300)
   }
 
   if (!open) return null
@@ -60,13 +80,32 @@ export default function LeadPopup() {
             <p className="lead-popup__sub">Share your details and our team will contact you.</p>
 
             <form onSubmit={handleSubmit} className="lead-popup__form">
-              <input type="text" placeholder="Full name *" required />
-              <input type="tel" placeholder="Phone / WhatsApp *" required />
-              <input type="email" placeholder="Email ID *" required />
-              <select defaultValue="">
-                <option value="" disabled>
-                  Destination (optional)
-                </option>
+              <input
+                type="text"
+                placeholder="Full name *"
+                required
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              />
+              <input
+                type="tel"
+                placeholder="Phone / WhatsApp *"
+                required
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+              />
+              <input
+                type="email"
+                placeholder="Email ID *"
+                required
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              />
+              <select
+                value={form.destination}
+                onChange={(e) => setForm((f) => ({ ...f, destination: e.target.value }))}
+              >
+                <option value="">Destination (optional)</option>
                 <option>Dubai</option>
                 <option>Azerbaijan</option>
                 <option>Singapore</option>
@@ -74,9 +113,15 @@ export default function LeadPopup() {
                 <option>Bali</option>
                 <option>Not sure yet</option>
               </select>
-              <textarea rows={3} placeholder="Travel dates / requirements (optional)" />
-              <button type="submit" className="btn-primary lead-popup__submit">
-                Submit query
+              <textarea
+                rows={3}
+                placeholder="Travel dates / requirements (optional)"
+                value={form.message}
+                onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+              />
+              {error ? <p className="lead-popup__error">{error}</p> : null}
+              <button type="submit" className="btn-primary lead-popup__submit" disabled={submitting}>
+                {submitting ? 'Sending…' : 'Submit query'}
               </button>
             </form>
           </>

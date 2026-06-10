@@ -1471,6 +1471,126 @@ textarea.admin-field,
   margin-top: 6px;
 }
 
+/* Lead inbox */
+.admin-source-select {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  min-width: 140px;
+}
+
+.leads-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.leads-contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--admin-text);
+  text-decoration: none;
+  font-size: 12px;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leads-contact a:hover {
+  color: var(--admin-primary);
+}
+
+.leads-contact svg {
+  color: var(--admin-text-dim);
+  flex-shrink: 0;
+}
+
+.leads-status {
+  background: var(--admin-surface-2);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.leads-status--new { background: rgba(90, 155, 255, 0.15); color: #78b3ff; border-color: rgba(90, 155, 255, 0.3); }
+.leads-status--contacted { background: rgba(201, 168, 76, 0.15); color: var(--admin-primary); border-color: rgba(201, 168, 76, 0.3); }
+.leads-status--qualified { background: rgba(169, 140, 255, 0.15); color: var(--admin-violet); border-color: rgba(169, 140, 255, 0.3); }
+.leads-status--converted { background: rgba(76, 187, 95, 0.18); color: #7dd189; border-color: rgba(76, 187, 95, 0.3); }
+.leads-status--lost { background: rgba(226, 92, 92, 0.12); color: #ffb3b3; border-color: rgba(226, 92, 92, 0.3); }
+
+.leads-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leads-detail__row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--admin-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  padding: 9px 12px;
+  background: var(--admin-surface-2);
+  border-radius: 8px;
+  border: 1px solid var(--admin-border);
+}
+
+.leads-detail__row:hover {
+  border-color: var(--admin-primary);
+}
+
+.leads-detail__row svg {
+  color: var(--admin-text-dim);
+  flex-shrink: 0;
+}
+
+.leads-detail__row--wa {
+  background: rgba(37, 211, 102, 0.1);
+  border-color: rgba(37, 211, 102, 0.3);
+  color: #44c777;
+}
+
+.leads-detail__row--wa svg {
+  color: #44c777;
+}
+
+.leads-detail__msg {
+  background: var(--admin-surface-2);
+  padding: 12px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--admin-border);
+}
+
+.leads-detail__msg strong {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--admin-text-dim);
+  margin-bottom: 6px;
+}
+
+.leads-detail__msg p {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
 /* Testimonials admin grid */
 .testi-admin-grid {
   list-style: none;
