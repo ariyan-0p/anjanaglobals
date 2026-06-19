@@ -153,6 +153,8 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [statsVisible, setStatsVisible] = useState(false)
   const [querySubmitted, setQuerySubmitted] = useState(false)
+  const [querySubmitting, setQuerySubmitting] = useState(false)
+  const [queryError, setQueryError] = useState('')
   const [agentVideoErrors, setAgentVideoErrors] = useState({})
   const [playingAgentId, setPlayingAgentId] = useState(null)
   const [agentVoices, setAgentVoices] = useState([])
@@ -228,9 +230,26 @@ export default function Home() {
 
   const featuredPackages = packages.slice(0, 3)
 
-  const handleHomeQuerySubmit = (e) => {
+  const handleHomeQuerySubmit = async (e) => {
     e.preventDefault()
-    setQuerySubmitted(true)
+    setQueryError('')
+    setQuerySubmitting(true)
+    const fd = new FormData(e.currentTarget)
+    try {
+      await api.post('/leads', {
+        name: (fd.get('name') || '').toString().trim(),
+        phone: (fd.get('phone') || '').toString().trim(),
+        email: (fd.get('email') || '').toString().trim(),
+        destination: (fd.get('destination') || '').toString(),
+        message: (fd.get('message') || '').toString().trim(),
+        source: 'popup',
+      })
+      setQuerySubmitted(true)
+    } catch (err) {
+      setQueryError(err.message || 'Could not send. Please try again.')
+    } finally {
+      setQuerySubmitting(false)
+    }
   }
 
 
@@ -622,12 +641,12 @@ export default function Home() {
             ) : (
               <form className="home-query__form" onSubmit={handleHomeQuerySubmit}>
                 <div className="home-query__grid">
-                  <input type="text" placeholder="Full name *" required />
-                  <input type="tel" placeholder="Phone / WhatsApp *" required />
+                  <input name="name" type="text" placeholder="Full name *" required />
+                  <input name="phone" type="tel" placeholder="Phone / WhatsApp *" required />
                 </div>
                 <div className="home-query__grid">
-                  <input type="email" placeholder="Email ID *" required />
-                  <select defaultValue="">
+                  <input name="email" type="email" placeholder="Email ID *" required />
+                  <select name="destination" defaultValue="">
                     <option value="" disabled>
                       Destination (optional)
                     </option>
@@ -639,9 +658,14 @@ export default function Home() {
                     <option>Not sure yet</option>
                   </select>
                 </div>
-                <textarea rows={4} placeholder="Travel dates / requirements (optional)" />
-                <button type="submit" className="btn-primary home-query__submit">
-                  Submit query
+                <textarea name="message" rows={4} placeholder="Travel dates / requirements (optional)" />
+                {queryError ? (
+                  <p style={{ margin: 0, padding: '10px 14px', background: 'rgba(200,16,46,0.08)', border: '1px solid rgba(200,16,46,0.3)', borderRadius: '8px', color: '#c8102e', fontSize: '13px' }}>
+                    {queryError}
+                  </p>
+                ) : null}
+                <button type="submit" className="btn-primary home-query__submit" disabled={querySubmitting}>
+                  {querySubmitting ? 'Sending…' : 'Submit query'}
                 </button>
               </form>
             )}
