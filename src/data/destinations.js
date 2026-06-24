@@ -218,10 +218,12 @@ destinations.forEach((dest) => {
   const demos = demoByDestination[dest.id] || []
   dest.testimonialImages = demos
   const folder = destFolderPhotos(dest.id)
-  // Gallery = local hero + any real photos dropped into either
-  // src/assets/destinations/<id>/ or src/assets/testimonials/<id>/.
-  // No hardcoded stock — never shows a wrong image.
-  dest.galleryImages = [dest.heroImage || dest.image, ...folder, ...demos]
+  // Gallery = real folder photos (these already include the lead image used
+  // as the hero, so don't prepend the hero again or rows/tiles repeat).
+  // Falls back to the local hero only when a folder is empty.
+  dest.galleryImages = folder.length > 0
+    ? [...folder, ...demos]
+    : [dest.heroImage || dest.image, ...demos]
 })
 
 export const getDestination = (id) => destinations.find(d => d.id === id)
