@@ -93,7 +93,6 @@ export const destinations = [
     heroImage: bakuLocal,
     galleryImages: [
       bakuLocal,
-      'https://images.unsplash.com/photo-1574175819253-0cdec79e6253?w=800&q=80',
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
       'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80',
@@ -153,7 +152,6 @@ export const destinations = [
     heroImage: kualalumpurLocal,
     galleryImages: [
       kualalumpurLocal,
-      'https://images.unsplash.com/photo-1549526610-01cff2e06a77?w=800&q=80',
       'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80',
       'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=800&q=80',
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
@@ -202,10 +200,28 @@ export const destinations = [
   },
 ]
 
+// Real per-destination photos dropped into src/assets/destinations/<id>/.
+// These drive the destination-page Story + photo sections. Falls back to the
+// local hero image when a folder has no photos yet (never shows wrong stock).
+const destPhotoModules = import.meta.glob(
+  '../assets/destinations/*/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' }
+)
+function destFolderPhotos(id) {
+  return Object.entries(destPhotoModules)
+    .filter(([path]) => path.includes(`/destinations/${id}/`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, src]) => src)
+}
+
 destinations.forEach((dest) => {
   const demos = demoByDestination[dest.id] || []
   dest.testimonialImages = demos
-  dest.galleryImages = [...dest.galleryImages, ...demos]
+  const folder = destFolderPhotos(dest.id)
+  // Gallery = local hero + any real photos dropped into either
+  // src/assets/destinations/<id>/ or src/assets/testimonials/<id>/.
+  // No hardcoded stock — never shows a wrong image.
+  dest.galleryImages = [dest.heroImage || dest.image, ...folder, ...demos]
 })
 
 export const getDestination = (id) => destinations.find(d => d.id === id)

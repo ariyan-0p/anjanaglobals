@@ -14,6 +14,9 @@
 // from the client brief. Others use TBD-marked placeholders — replace as
 // content lands. Page handles missing/empty data gracefully.
 
+import bakuLocal from '../assets/baku.jpg'
+import kualalumpurLocal from '../assets/Kualalumpur.jpg'
+
 const TBD = 'On request'
 
 // Helper: build a stats strip from the brief + linked counts
@@ -257,7 +260,7 @@ const azerbaijan = {
   accentInk: '#001620',
   signatureMoments: [
     { title: 'Flame Towers', meta: 'Sunset over Baku skyline', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80' },
-    { title: 'Old City walls', meta: 'UNESCO Icherisheher', image: 'https://images.unsplash.com/photo-1574175819253-0cdec79e6253?w=900&q=80' },
+    { title: 'Old City walls', meta: 'UNESCO Icherisheher', image: bakuLocal },
     { title: 'Mountain weekend', meta: 'Shahdag + Gabala resort', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900&q=80' },
     { title: 'Mud volcanoes', meta: 'Gobustan landscape', image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=80' },
   ],
@@ -386,7 +389,7 @@ const malaysia = {
     { title: 'Petronas at night', meta: 'Twin Towers Skybridge', image: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=900&q=80' },
     { title: 'Langkawi beach', meta: 'White sand + sky cab', image: 'https://images.unsplash.com/photo-1573790387438-4da905039392?w=900&q=80' },
     { title: 'Batu Caves', meta: '272 colourful steps', image: 'https://images.unsplash.com/photo-1597211833712-5e41faa202ea?w=900&q=80' },
-    { title: 'Cameron Highlands', meta: 'Tea estates + cool air', image: 'https://images.unsplash.com/photo-1583338917451-face2351c0cd?w=900&q=80' },
+    { title: 'Cameron Highlands', meta: 'Tea estates + cool air', image: kualalumpurLocal },
   ],
   atGlance: {
     bestMonths: 'Jun – Sept · Dec – Feb',
@@ -451,7 +454,7 @@ const bali = {
     { title: 'Uluwatu cliff', meta: 'Sunset + Kecak fire dance', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=900&q=80' },
     { title: 'Rice terraces', meta: 'Tegallalang at dawn', image: 'https://images.unsplash.com/photo-1604999333679-b86d54738315?w=900&q=80' },
     { title: 'Ubud temples', meta: 'Tirta Empul + jungle walks', image: 'https://images.unsplash.com/photo-1542897644-e04428948020?w=900&q=80' },
-    { title: 'Beach villa', meta: 'Seminyak / Nusa Dua', image: 'https://images.unsplash.com/photo-1583308148956-3deeb5dadb29?w=900&q=80' },
+    { title: 'Beach villa', meta: 'Seminyak / Nusa Dua', image: 'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&q=80' },
   ],
   atGlance: {
     bestMonths: 'May – Sept',
@@ -515,6 +518,49 @@ export const destinationBriefs = {
   malaysia,
   bali,
 }
+
+// ── Real per-destination photos ────────────────────────────────
+// Drop images into src/assets/destinations/<id>/ (jpg/png/webp).
+// They are auto-loaded here (alphabetical order) and drive the
+// Signature Moments tiles, experience cards and pricing-tier headers.
+// Until photos are added, those image slots stay empty (sections that
+// need images hide themselves rather than show placeholder stock).
+const destPhotoModules = import.meta.glob(
+  '../assets/destinations/*/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' }
+)
+
+function destPhotos(id) {
+  return Object.entries(destPhotoModules)
+    .filter(([path]) => path.includes(`/destinations/${id}/`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, src]) => src)
+}
+
+// Wire real photos into each destination, replacing stock placeholders.
+Object.values(destinationBriefs).forEach((d) => {
+  const photos = destPhotos(d.id)
+  if (photos.length > 0) {
+    // Signature moments keep their curated captions, get real images in order.
+    d.signatureMoments = (d.signatureMoments || []).map((m, i) => ({
+      ...m,
+      image: photos[i % photos.length],
+    }))
+    d.experiences = (d.experiences || []).map((e, i) => ({
+      ...e,
+      image: photos[i % photos.length],
+    }))
+    d.pricingTiers = (d.pricingTiers || []).map((t, i) => ({
+      ...t,
+      image: photos[i % photos.length],
+    }))
+  } else {
+    // No real photos yet → hide moments, drop unreliable stock from cards.
+    d.signatureMoments = []
+    d.experiences = (d.experiences || []).map((e) => ({ ...e, image: undefined }))
+    d.pricingTiers = (d.pricingTiers || []).map((t) => ({ ...t, image: undefined }))
+  }
+})
 
 export function getDestinationBrief(id) {
   return destinationBriefs[id] || null
