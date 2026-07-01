@@ -702,6 +702,28 @@ function StickyQuoteRail({ destination, brief, intent }) {
 }
 
 // ────────────────────────────────────────────────────────────────
+// CINEMATIC BAND — full-bleed image with an overlaid headline
+// ────────────────────────────────────────────────────────────────
+function CinematicBand({ image, eyebrow, title, subtitle, cta, onCta, variant = 'feature' }) {
+  if (!image) return null
+  return (
+    <section className={`dp-band dp-band--${variant}`} style={{ backgroundImage: `url(${image})` }}>
+      <div className="dp-band__overlay" />
+      <div className="container dp-band__inner">
+        {eyebrow ? <span className="dp-band__eyebrow">{eyebrow}</span> : null}
+        {title ? <h2 className="dp-band__title">{title}</h2> : null}
+        {subtitle ? <p className="dp-band__sub">{subtitle}</p> : null}
+        {cta ? (
+          <button type="button" className="dp-btn dp-btn--primary dp-band__cta" onClick={onCta}>
+            {cta} <ArrowRight size={15} aria-hidden />
+          </button>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
+// ────────────────────────────────────────────────────────────────
 // PAGE
 // ────────────────────────────────────────────────────────────────
 export default function DestinationPage() {
@@ -741,6 +763,13 @@ export default function DestinationPage() {
   const hotelCount = (hotelPartners[destination.id] || []).length
   const experienceCount = brief.experiences?.length || 0
 
+  // Photos for the full-bleed cinematic bands — only when a destination
+  // actually has enough real photos (avoids repeating the hero on
+  // destinations that don't have a photo folder yet).
+  const gallery = destination.galleryImages || []
+  const bandFeature = gallery.length >= 3 ? gallery[2] : null
+  const bandCta = gallery.length >= 3 ? gallery[gallery.length - 1] : null
+
   return (
     <main className="dp" style={accentStyle}>
       <Hero destination={destination} brief={brief} />
@@ -750,6 +779,14 @@ export default function DestinationPage() {
         brief={brief}
         hotelCount={hotelCount}
         experienceCount={experienceCount}
+      />
+
+      <CinematicBand
+        image={bandFeature}
+        eyebrow={`Experience ${destination.name}`}
+        title={brief.story?.[0]?.heading || destination.tagline}
+        subtitle={destination.shortDesc}
+        variant="feature"
       />
 
       <div className="dp-body container">
@@ -782,6 +819,16 @@ export default function DestinationPage() {
           />
         </div>
       </div>
+
+      <CinematicBand
+        image={bandCta}
+        eyebrow="Ready when you are"
+        title={`Let's build your ${destination.name} quote`}
+        subtitle="Avg. quote response within 2 hours. Net B2B rates for your actual pax and dates."
+        cta="Get a live quote"
+        onCta={() => openQuote('')}
+        variant="cta"
+      />
 
       {/* Mobile-only sticky bottom CTA */}
       <div className="dp-bottom-bar">
