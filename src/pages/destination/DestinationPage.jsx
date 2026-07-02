@@ -1,26 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
-  ArrowRight, Calendar, MapPin, ShieldCheck, Star, Clock, Globe,
+  ArrowRight, Calendar, MapPin, ShieldCheck, Clock, Globe,
   Plane, FileCheck, ChevronDown, Copy, Check, MessageCircle, ExternalLink,
-  Building2, Sparkles, Users, Briefcase, Heart, Crown, Camera, Award,
+  Building2, Crown, Bus, Ticket,
 } from 'lucide-react'
-
-const TRIP_TYPE_META = {
-  fit: { icon: <Sparkles size={14} aria-hidden /> },
-  family: { icon: <Users size={14} aria-hidden /> },
-  honeymoon: { icon: <Heart size={14} aria-hidden /> },
-  mice: { icon: <Briefcase size={14} aria-hidden /> },
-  group: { icon: <Users size={14} aria-hidden /> },
-}
 
 import { getDestination } from '../../data/destinations'
 import { getDestinationBrief } from '../../data/destinationBriefs'
 import { hotelPartners } from '../../data/hotelPartners'
 import { api, apiBase } from '../../lib/api'
 import './DestinationPage.css'
-
-const TRIP_TYPE_ORDER = ['fit', 'family', 'honeymoon', 'mice', 'group']
 
 function absoluteUrl(url) {
   if (!url) return ''
@@ -29,7 +19,7 @@ function absoluteUrl(url) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// HERO
+// HERO — DMC positioning
 // ────────────────────────────────────────────────────────────────
 function Hero({ destination, brief }) {
   const heroImage = destination.heroImage || destination.image
@@ -44,10 +34,18 @@ function Hero({ destination, brief }) {
           <span>·</span>
           <span>{destination.name}</span>
         </div>
+
+        <span className="dp-hero__brand">
+          <ShieldCheck size={13} aria-hidden /> Anjna Global · On-ground DMC
+        </span>
         <span className="dp-hero__flag">{destination.flag}</span>
         <h1 className="dp-hero__title">{destination.name}</h1>
-        <p className="dp-hero__tagline">{destination.tagline}</p>
-        <p className="dp-hero__sub">{destination.shortDesc}</p>
+        <p className="dp-hero__tagline">Your {destination.name} DMC on the ground</p>
+
+        <p className="dp-hero__services">
+          Transfers · Hotels · Attraction Tickets · Visa · MICE
+          <span className="dp-hero__b2b">— net B2B rates for travel agents</span>
+        </p>
 
         <div className="dp-hero__glance" role="list">
           {brief.atGlance.bestMonths ? (
@@ -82,58 +80,31 @@ function Hero({ destination, brief }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// BY THE NUMBERS — visual stats strip just below hero
+// SECTION 2 — WHAT WE DO FOR TRAVEL AGENTS (4 boxes)
 // ────────────────────────────────────────────────────────────────
-function ByTheNumbers({ destination, brief, hotelCount, experienceCount }) {
-  const stats = [
-    { label: 'Partner hotels', value: hotelCount > 0 ? `${hotelCount}+` : 'Direct', icon: <Building2 size={18} aria-hidden /> },
-    { label: 'Curated experiences', value: experienceCount > 0 ? experienceCount : '—', icon: <Sparkles size={18} aria-hidden /> },
-    { label: 'Avg. quote response', value: '2 hrs', icon: <Clock size={18} aria-hidden /> },
-    { label: 'Specialist desk since', value: '2013', icon: <Award size={18} aria-hidden /> },
-  ]
-  return (
-    <section className="dp-numbers" aria-label="Destination stats">
-      <div className="container">
-        <ul className="dp-numbers__grid">
-          {stats.map((s) => (
-            <li key={s.label} className="dp-numbers__stat">
-              <span className="dp-numbers__icon">{s.icon}</span>
-              <strong>{s.value}</strong>
-              <span className="dp-numbers__label">{s.label}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )
+const WHAT_WE_DO_ICON = {
+  transfers: <Bus size={20} aria-hidden />,
+  hotels: <Building2 size={20} aria-hidden />,
+  attractions: <Ticket size={20} aria-hidden />,
+  visa: <FileCheck size={20} aria-hidden />,
 }
 
-// ────────────────────────────────────────────────────────────────
-// STORY — alternating image + text rows
-// ────────────────────────────────────────────────────────────────
-function Story({ chapters, destination }) {
-  if (!chapters?.length) return null
-  const galleryPool = destination.galleryImages || [destination.image]
+function WhatWeDo({ items, destinationName }) {
+  if (!items?.length) return null
   return (
-    <section className="dp-section dp-story">
+    <section className="dp-section dp-wwd" id="services">
       <div className="container">
-        <div className="dp-story__rows">
-          {chapters.map((c, idx) => (
-            <article
-              key={c.heading}
-              className={`dp-story__row${idx % 2 === 1 ? ' is-reverse' : ''}`}
-            >
-              <div
-                className="dp-story__media"
-                style={{ backgroundImage: `url(${galleryPool[idx % galleryPool.length]})` }}
-                aria-hidden
-              >
-                <span className="dp-story__chip">Chapter {idx + 1}</span>
-              </div>
-              <div className="dp-story__body">
-                <h2>{c.heading}</h2>
-                <p>{c.paragraph}</p>
-              </div>
+        <header className="dp-head">
+          <span className="dp-eyebrow">What we do for travel agents</span>
+          <h2>Everything on the ground in {destinationName}, handled by us</h2>
+          <p>One DMC for the whole trip — you quote, we deliver. Net B2B rates, no consolidator in the chain.</p>
+        </header>
+        <div className="dp-wwd__grid">
+          {items.map((it) => (
+            <article key={it.title} className="dp-wwd__box">
+              <span className="dp-wwd__icon">{WHAT_WE_DO_ICON[it.icon]}</span>
+              <h3>{it.title}</h3>
+              <p>{it.text}</p>
             </article>
           ))}
         </div>
@@ -143,30 +114,27 @@ function Story({ chapters, destination }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// SIGNATURE MOMENTS — 4 visual mood cards
+// SECTION 3 — WHY OUR RATES ARE BETTER (3 trust points)
 // ────────────────────────────────────────────────────────────────
-function SignatureMoments({ moments, destinationName }) {
-  if (!moments?.length) return null
+function WhyOurRates({ points }) {
+  if (!points?.length) return null
+  const top = points.slice(0, 3)
   return (
-    <section className="dp-section dp-section--alt" id="moments-overview">
+    <section className="dp-section dp-section--alt" id="trust">
       <div className="container">
         <header className="dp-head">
-          <span className="dp-eyebrow">Signature moments</span>
-          <h2>What {destinationName} feels like</h2>
-          <p>The mood your client will remember.</p>
+          <span className="dp-eyebrow dp-eyebrow--gold">
+            <ShieldCheck size={13} aria-hidden /> Why our rates are better
+          </span>
+          <h2>You're buying direct from the operator</h2>
+          <p>We own the product on the ground — that's where your margin comes from.</p>
         </header>
-        <div className="dp-moments-grid">
-          {moments.map((m) => (
-            <figure
-              key={m.title}
-              className="dp-moment"
-              style={{ backgroundImage: `url(${m.image})` }}
-            >
-              <figcaption>
-                <strong>{m.title}</strong>
-                {m.meta ? <span>{m.meta}</span> : null}
-              </figcaption>
-            </figure>
+        <div className="dp-trust-grid">
+          {top.map((p) => (
+            <article key={p.title} className="dp-trust">
+              <h3>{p.title}</h3>
+              <p>{p.desc}</p>
+            </article>
           ))}
         </div>
       </div>
@@ -175,7 +143,72 @@ function SignatureMoments({ moments, destinationName }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// PRICING TIERS
+// SECTION 4 — TOP-SELLING PRODUCTS
+// ────────────────────────────────────────────────────────────────
+function TopSellingProducts({ experiences, destination, onQuote }) {
+  if (!experiences?.length) return null
+  const top = experiences.slice(0, 6)
+  const pool = destination.galleryImages || []
+  return (
+    <section className="dp-section" id="products">
+      <div className="container">
+        <header className="dp-head">
+          <span className="dp-eyebrow">Top-selling products</span>
+          <h2>What agents actually book</h2>
+          <p>Individually bookable — drop any of these straight into a client quote. Starting net B2B rates shown.</p>
+        </header>
+        <div className="dp-exp-grid">
+          {top.map((e, idx) => (
+            <ExperienceCard
+              key={e.key}
+              exp={e}
+              onQuote={onQuote}
+              fallbackImage={pool.length ? pool[idx % pool.length] : undefined}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ExperienceCard({ exp, onQuote, fallbackImage }) {
+  const image = exp.image || fallbackImage
+  return (
+    <article className="dp-exp">
+      {image ? (
+        <div
+          className="dp-exp__media"
+          style={{ backgroundImage: `url(${image})` }}
+          aria-hidden
+        >
+          {exp.badge ? <span className="dp-exp__badge">{exp.badge}</span> : null}
+        </div>
+      ) : null}
+      <div className="dp-exp__body">
+        <header className="dp-exp__head">
+          <h3>{exp.name}</h3>
+        </header>
+        <p className="dp-exp__meta">{[exp.duration, exp.includes].filter(Boolean).join(' · ')}</p>
+        <footer className="dp-exp__foot">
+          <span className="dp-exp__price">
+            <span>From</span> {exp.price || 'On request'}
+          </span>
+          <button
+            type="button"
+            className="dp-btn dp-btn--text"
+            onClick={() => onQuote(`Quote ${exp.name}`)}
+          >
+            Quote <ArrowRight size={12} aria-hidden />
+          </button>
+        </footer>
+      </div>
+    </article>
+  )
+}
+
+// ────────────────────────────────────────────────────────────────
+// PRICING TIERS (kept extra)
 // ────────────────────────────────────────────────────────────────
 function PricingTiers({ tiers, onQuote }) {
   if (!tiers?.length) return null
@@ -185,7 +218,7 @@ function PricingTiers({ tiers, onQuote }) {
         <header className="dp-head">
           <span className="dp-eyebrow">Starting B2B rates</span>
           <h2>Pick a tier, build your quote</h2>
-          <p>Net rates · twin sharing · request live quote for actual pax + dates.</p>
+          <p>Net rates · twin sharing · request a live quote for actual pax + dates.</p>
         </header>
         <div className="dp-tier-grid">
           {tiers.map((t, idx) => (
@@ -233,107 +266,6 @@ function PricingTiers({ tiers, onQuote }) {
         </div>
       </div>
     </section>
-  )
-}
-
-// ────────────────────────────────────────────────────────────────
-// TRIP TYPE TABS + EXPERIENCES + LINKED ITINERARY
-// ────────────────────────────────────────────────────────────────
-function TripTypeSection({ brief, onQuote }) {
-  const availableTypes = TRIP_TYPE_ORDER.filter((k) => brief.tripTypes?.[k])
-  const [active, setActive] = useState(availableTypes[0] || 'fit')
-
-  if (availableTypes.length === 0) return null
-
-  const cfg = brief.tripTypes[active]
-  const linkedExperiences = (cfg.productKeys || [])
-    .map((k) => brief.experiences.find((e) => e.key === k))
-    .filter(Boolean)
-  const linkedItinerary = cfg.itineraryKey
-    ? brief.itineraries?.find((i) => i.key === cfg.itineraryKey)
-    : null
-
-  return (
-    <section className="dp-section" id="trips">
-      <div className="container">
-        <header className="dp-head">
-          <span className="dp-eyebrow">Curated by trip type</span>
-          <h2>What your client books determines what we curate</h2>
-          <p>Different segments book different products. Pick the type to see the right shortlist.</p>
-        </header>
-
-        <div className="dp-tabs" role="tablist">
-          {availableTypes.map((k) => (
-            <button
-              key={k}
-              type="button"
-              role="tab"
-              aria-selected={active === k}
-              className={`dp-tab${active === k ? ' is-active' : ''}`}
-              onClick={() => setActive(k)}
-            >
-              {TRIP_TYPE_META[k]?.icon}
-              {brief.tripTypes[k].label}
-            </button>
-          ))}
-        </div>
-
-        <div className="dp-tab-panel">
-          <p className="dp-tab-blurb">{cfg.blurb}</p>
-          <div className="dp-exp-grid">
-            {linkedExperiences.map((e, idx) => (
-              <ExperienceCard
-                key={e.key}
-                exp={e}
-                onQuote={onQuote}
-                fallbackImage={brief.signatureMoments?.[idx % (brief.signatureMoments?.length || 1)]?.image}
-              />
-            ))}
-          </div>
-          {linkedItinerary ? (
-            <div className="dp-tab-itin">
-              <p className="dp-eyebrow dp-eyebrow--gold">Suggested itinerary for this segment</p>
-              <ItineraryCard itinerary={linkedItinerary} destinationName={brief.quoteIntent} onQuote={onQuote} defaultOpen />
-            </div>
-          ) : null}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ExperienceCard({ exp, onQuote, fallbackImage }) {
-  const image = exp.image || fallbackImage
-  return (
-    <article className="dp-exp">
-      {image ? (
-        <div
-          className="dp-exp__media"
-          style={{ backgroundImage: `url(${image})` }}
-          aria-hidden
-        >
-          {exp.badge ? <span className="dp-exp__badge">{exp.badge}</span> : null}
-        </div>
-      ) : null}
-      <div className="dp-exp__body">
-        <header className="dp-exp__head">
-          <h3>{exp.name}</h3>
-        </header>
-        <p className="dp-exp__meta">{[exp.duration, exp.includes].filter(Boolean).join(' · ')}</p>
-        <footer className="dp-exp__foot">
-          <span className="dp-exp__price">
-            <span>From</span> {exp.price || 'On request'}
-          </span>
-          <button
-            type="button"
-            className="dp-btn dp-btn--text"
-            onClick={() => onQuote(`Quote ${exp.name}`)}
-          >
-            Quote <ArrowRight size={12} aria-hidden />
-          </button>
-        </footer>
-      </div>
-    </article>
   )
 }
 
@@ -431,23 +363,27 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
   )
 }
 
+// ────────────────────────────────────────────────────────────────
+// SECTION 5 — SAMPLE ITINERARIES (ready to quote)
+// ────────────────────────────────────────────────────────────────
 function ItinerarySection({ itineraries, destinationName, onQuote }) {
   if (!itineraries?.length) return null
   return (
-    <section className="dp-section dp-section--alt" id="itineraries">
+    <section className="dp-section" id="itineraries">
       <div className="container">
         <header className="dp-head">
-          <span className="dp-eyebrow">Ready-to-quote itineraries</span>
-          <h2>Copy-paste these into your client proposal</h2>
-          <p>Day-by-day plans your agents can drop straight into a quote.</p>
+          <span className="dp-eyebrow">Sample itineraries</span>
+          <h2>Ready to quote — copy-paste into your client proposal</h2>
+          <p>Day-by-day plans with hotel category and starting price. Open one and copy the text.</p>
         </header>
         <div className="dp-itin-list">
-          {itineraries.map((it) => (
+          {itineraries.map((it, idx) => (
             <ItineraryCard
               key={it.key}
               itinerary={it}
               destinationName={destinationName}
               onQuote={onQuote}
+              defaultOpen={idx === 0}
             />
           ))}
         </div>
@@ -457,7 +393,7 @@ function ItinerarySection({ itineraries, destinationName, onQuote }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// HOTEL INVENTORY
+// HOTEL INVENTORY (kept extra)
 // ────────────────────────────────────────────────────────────────
 function HotelInventory({ destinationId, destinationName }) {
   const all = hotelPartners[destinationId] || []
@@ -469,7 +405,7 @@ function HotelInventory({ destinationId, destinationName }) {
   const filtered = filter === 'all' ? all : all.filter((h) => h.stars === filter)
 
   return (
-    <section className="dp-section" id="hotels">
+    <section className="dp-section dp-section--alt" id="hotels">
       <div className="container">
         <header className="dp-head">
           <span className="dp-eyebrow">Hotel inventory</span>
@@ -520,7 +456,7 @@ function HotelInventory({ destinationId, destinationName }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// PHOTO JOURNEY — uses /api/galleries with fallback to dest.galleryImages
+// PHOTO JOURNEY (kept extra) — /api/galleries with dest fallback
 // ────────────────────────────────────────────────────────────────
 function PhotoJourney({ destination }) {
   const [apiImages, setApiImages] = useState(null)
@@ -552,10 +488,10 @@ function PhotoJourney({ destination }) {
   if (images.length === 0) return null
 
   return (
-    <section className="dp-section dp-section--alt" id="moments">
+    <section className="dp-section" id="moments">
       <div className="container">
         <header className="dp-head">
-          <span className="dp-eyebrow">Real client moments</span>
+          <span className="dp-eyebrow">On the ground</span>
           <h2>{destination.name} through our travellers' lenses</h2>
         </header>
         <div className="dp-photo-grid">
@@ -572,33 +508,7 @@ function PhotoJourney({ destination }) {
 }
 
 // ────────────────────────────────────────────────────────────────
-// TRUST STRIP
-// ────────────────────────────────────────────────────────────────
-function TrustStrip({ points }) {
-  if (!points?.length) return null
-  return (
-    <section className="dp-section" id="trust">
-      <div className="container">
-        <header className="dp-head">
-          <span className="dp-eyebrow dp-eyebrow--gold">
-            <ShieldCheck size={13} aria-hidden /> Why we own this destination
-          </span>
-        </header>
-        <div className="dp-trust-grid">
-          {points.map((p) => (
-            <article key={p.title} className="dp-trust">
-              <h3>{p.title}</h3>
-              <p>{p.desc}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ────────────────────────────────────────────────────────────────
-// STICKY QUOTE RAIL  (desktop right rail / mobile bottom bar)
+// STICKY QUOTE RAIL (kept)
 // ────────────────────────────────────────────────────────────────
 function StickyQuoteRail({ destination, brief, intent }) {
   const [form, setForm] = useState({ name: '', phone: '', email: '', notes: '' })
@@ -638,7 +548,7 @@ function StickyQuoteRail({ destination, brief, intent }) {
           <MessageCircle size={13} aria-hidden /> Get a live quote
         </p>
         <h3>{destination.flag} {destination.name}</h3>
-        <p className="dp-rail__sub">Avg quote response within 2 hours. Indicative tiers above; we'll send firm rates for your actual pax + dates.</p>
+        <p className="dp-rail__sub">Avg quote response within 2 hours. We'll send firm net rates for your actual pax + dates.</p>
 
         {done ? (
           <p className="dp-rail__done">
@@ -760,44 +670,26 @@ export default function DestinationPage() {
     '--dp-accent': brief.accentColor || '#1f3b75',
     '--dp-accent-ink': brief.accentInk || '#ffffff',
   }
-  const hotelCount = (hotelPartners[destination.id] || []).length
-  const experienceCount = brief.experiences?.length || 0
 
-  // Photos for the full-bleed cinematic bands — only when a destination
-  // actually has enough real photos (avoids repeating the hero on
-  // destinations that don't have a photo folder yet).
+  // Photo for the closing cinematic CTA band — only when a destination
+  // actually has enough real photos (avoids repeating the hero).
   const gallery = destination.galleryImages || []
-  const bandFeature = gallery.length >= 3 ? gallery[2] : null
   const bandCta = gallery.length >= 3 ? gallery[gallery.length - 1] : null
 
   return (
     <main className="dp" style={accentStyle}>
       <Hero destination={destination} brief={brief} />
 
-      <ByTheNumbers
-        destination={destination}
-        brief={brief}
-        hotelCount={hotelCount}
-        experienceCount={experienceCount}
-      />
-
-      <CinematicBand
-        image={bandFeature}
-        eyebrow={`Experience ${destination.name}`}
-        title={brief.story?.[0]?.heading || destination.tagline}
-        subtitle={destination.shortDesc}
-        variant="feature"
-      />
-
       <div className="dp-body container">
         <div className="dp-body__main">
-          <Story chapters={brief.story} destination={destination} />
-          <SignatureMoments
-            moments={brief.signatureMoments}
-            destinationName={destination.name}
+          <WhatWeDo items={brief.whatWeDo} destinationName={destination.name} />
+          <WhyOurRates points={brief.trustPoints} />
+          <TopSellingProducts
+            experiences={brief.experiences}
+            destination={destination}
+            onQuote={openQuote}
           />
           <PricingTiers tiers={brief.pricingTiers} onQuote={openQuote} />
-          <TripTypeSection brief={brief} onQuote={openQuote} />
           <ItinerarySection
             itineraries={brief.itineraries}
             destinationName={destination.name}
@@ -808,7 +700,6 @@ export default function DestinationPage() {
             destinationName={destination.name}
           />
           <PhotoJourney destination={destination} />
-          <TrustStrip points={brief.trustPoints} />
         </div>
 
         <div className="dp-body__rail" ref={railRef}>

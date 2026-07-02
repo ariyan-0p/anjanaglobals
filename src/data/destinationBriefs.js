@@ -519,6 +519,46 @@ export const destinationBriefs = {
   bali,
 }
 
+// ── What we do for travel agents ────────────────────────────────
+// Four ground-handling service boxes per destination. icon keys map
+// to lucide icons in DestinationPage.jsx (transfers/hotels/attractions/visa).
+const whatWeDoByDest = {
+  dubai: [
+    { icon: 'transfers', title: 'Transfers', text: 'Airport, intercity, private & group. Own fleet — fixed B2B rates, no surge.' },
+    { icon: 'hotels', title: 'Hotels', text: '3★ to 5★ across Downtown, Marina & JBR. Direct contracts, no markup surprises.' },
+    { icon: 'attractions', title: 'Attractions', text: 'Burj Khalifa, Desert Safari, Dhow Cruise, theme parks — all pre-ticketed.' },
+    { icon: 'visa', title: 'Visa', text: 'UAE visa for Indian passports. 30 & 60-day. Fast, tracked processing.' },
+  ],
+  azerbaijan: [
+    { icon: 'transfers', title: 'Transfers', text: 'Airport & intercity to Baku, Gabala, Shahdag. Local Azeri fleet, fixed rates.' },
+    { icon: 'hotels', title: 'Hotels', text: '3★ to 5★ across Baku city centre and mountain resorts. Direct-contracted.' },
+    { icon: 'attractions', title: 'Attractions', text: 'Gobustan, Flame Towers, Sheki, mud volcanoes — guided and ticketed.' },
+    { icon: 'visa', title: 'Visa', text: 'ASAN e-visa processed for you. Agents just share passport scans.' },
+  ],
+  singapore: [
+    { icon: 'transfers', title: 'Transfers', text: 'Airport, city & Sentosa — private or SIC coach. Fixed B2B rates.' },
+    { icon: 'hotels', title: 'Hotels', text: '16 partners 3★–5★ across Marina Bay, Orchard & Little India. Direct.' },
+    { icon: 'attractions', title: 'Attractions', text: 'Universal Studios, Gardens by the Bay, SEA Aquarium, Night Safari — bulk allotment.' },
+    { icon: 'visa', title: 'Visa', text: 'Singapore e-visa handled end to end for your clients.' },
+  ],
+  malaysia: [
+    { icon: 'transfers', title: 'Transfers', text: 'KL, Langkawi & Genting transfers. Domestic flight legs bundled in.' },
+    { icon: 'hotels', title: 'Hotels', text: '3★ to 5★ across KL, Langkawi & Penang. All direct contracts.' },
+    { icon: 'attractions', title: 'Attractions', text: 'Petronas Skybridge, Batu Caves, Genting Skyway, island hopping — ticketed.' },
+    { icon: 'visa', title: 'Visa', text: 'Visa-free for Indian passports (90 days) — zero pre-trip friction.' },
+  ],
+  bali: [
+    { icon: 'transfers', title: 'Transfers', text: 'Airport & inter-area Ubud ↔ Seminyak ↔ Nusa Dua. Private cars.' },
+    { icon: 'hotels', title: 'Hotels', text: 'Villas & 4★–5★ beach resorts across Ubud, Seminyak & Nusa Dua. Direct.' },
+    { icon: 'attractions', title: 'Attractions', text: 'Uluwatu, Nusa Penida, rice terraces, Mt Batur trek — guided and ticketed.' },
+    { icon: 'visa', title: 'Visa', text: 'Visa on Arrival / e-VoA guidance for your clients.' },
+  ],
+}
+
+Object.values(destinationBriefs).forEach((d) => {
+  d.whatWeDo = whatWeDoByDest[d.id] || []
+})
+
 // ── Real per-destination photos ────────────────────────────────
 // Drop images into src/assets/destinations/<id>/ (jpg/png/webp).
 // They are auto-loaded here (alphabetical order) and drive the
