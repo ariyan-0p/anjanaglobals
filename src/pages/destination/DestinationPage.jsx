@@ -52,7 +52,7 @@ function Hero({ destination, brief, onQuote }) {
         </div>
 
         <span className="dpx-hero__badge">
-          <ShieldCheck size={13} aria-hidden /> Anjna Global · On-ground DMC
+          <ShieldCheck size={13} aria-hidden /> Anjna Global · Your DMC for travel agents
         </span>
 
         <h1 className="dpx-hero__title">
@@ -60,15 +60,17 @@ function Hero({ destination, brief, onQuote }) {
           {destination.name}
         </h1>
         <p className="dpx-hero__tag">{destination.tagline}</p>
-        <p className="dpx-hero__sub">{destination.shortDesc}</p>
+        <p className="dpx-hero__sub">
+          Net B2B rates, own ground handling and 2-hour quotes for travel agents — plus tailor-made trips for direct travellers.
+        </p>
 
         <div className="dpx-hero__cta">
-          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('')}>
-            Get a live quote <ArrowRight size={16} aria-hidden />
+          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — net rates')}>
+            Get net B2B rates <ArrowRight size={16} aria-hidden />
           </button>
-          <a href="#dpx-products" className="dpx-btn dpx-btn--glass">
-            View products
-          </a>
+          <button type="button" className="dpx-btn dpx-btn--glass" onClick={() => onQuote('')}>
+            Plan a trip
+          </button>
         </div>
 
         {chips.length > 0 && (
@@ -369,6 +371,44 @@ function Gallery({ destination }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// TRAVEL-AGENT PARTNER BAND (B2B focus)
+// ═══════════════════════════════════════════════════════════════
+function AgentBand({ destinationName, onQuote }) {
+  const perks = [
+    { ic: <TrendingUp size={18} aria-hidden />, t: 'Net B2B rates', d: 'Direct contracts — real margin, no consolidator markup.' },
+    { ic: <Clock size={18} aria-hidden />, t: '2-hour quotes', d: 'Fast turnaround so you can close the client.' },
+    { ic: <ShieldCheck size={18} aria-hidden />, t: 'Dedicated desk', d: 'A named ops contact for every file, 24/7 on-ground support.' },
+    { ic: <Boxes size={18} aria-hidden />, t: 'Ready inventory', d: 'Held hotel allotments and pre-booked attraction tickets.' },
+  ]
+  return (
+    <section className="dpx-agent" id="dpx-agents">
+      <div className="dpx-agent__mesh" aria-hidden />
+      <div className="container dpx-agent__inner">
+        <div className="dpx-agent__head">
+          <span className="dpx-eyebrow is-light">For travel agents</span>
+          <h2>Sell {destinationName} on our rates, not someone else's</h2>
+          <p>We're the DMC on the ground — you keep the client, we handle everything from arrival to departure.</p>
+        </div>
+        <div className="dpx-agent__grid">
+          {perks.map((p) => (
+            <div key={p.t} className="dpx-agent__perk">
+              <span className="dpx-agent__ic">{p.ic}</span>
+              <div><strong>{p.t}</strong><span>{p.d}</span></div>
+            </div>
+          ))}
+        </div>
+        <div className="dpx-agent__cta">
+          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — net rates')}>
+            Get net rates <ArrowRight size={15} aria-hidden />
+          </button>
+          <Link to="/b2b" className="dpx-btn dpx-btn--glass">Become a partner</Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
 // FULL-WIDTH QUOTE SECTION (replaces the rail)
 // ═══════════════════════════════════════════════════════════════
 function QuoteSection({ destination, intent, sectionRef }) {
@@ -399,12 +439,12 @@ function QuoteSection({ destination, intent, sectionRef }) {
       <div className="dpx-quote__mesh" aria-hidden />
       <div className="container dpx-quote__inner">
         <div className="dpx-quote__left">
-          <span className="dpx-eyebrow is-light">Request a live quote</span>
+          <span className="dpx-eyebrow is-light">Request a quote</span>
           <h2>Let's build your {destination.flag} {destination.name} quote</h2>
-          <p>Send your requirement — our {destination.name} desk replies with firm net rates for your actual pax and dates.</p>
+          <p>Travel agents get firm net B2B rates; direct travellers get a tailor-made plan — either way our {destination.name} desk replies fast for your actual pax and dates.</p>
           <ul className="dpx-quote__usp">
             <li><Clock size={16} aria-hidden /> Avg. response within 2 hours</li>
-            <li><Boxes size={16} aria-hidden /> Direct contracts · net B2B rates</li>
+            <li><TrendingUp size={16} aria-hidden /> Net B2B rates for travel agents</li>
             <li><ShieldCheck size={16} aria-hidden /> On-ground team, dependable ops</li>
           </ul>
           <div className="dpx-quote__alt">
@@ -485,6 +525,7 @@ export default function DestinationPage() {
       <Hero destination={destination} brief={brief} onQuote={openQuote} />
       <WhatWeDo items={brief.whatWeDo} destinationName={destination.name} />
       <WhyRates points={brief.trustPoints} />
+      <AgentBand destinationName={destination.name} onQuote={openQuote} />
       <TopProducts experiences={brief.experiences} onQuote={openQuote} />
       <Tiers tiers={brief.pricingTiers} onQuote={openQuote} />
       <Itineraries itineraries={brief.itineraries} destinationName={destination.name} onQuote={openQuote} />
