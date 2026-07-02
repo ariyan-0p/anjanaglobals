@@ -313,7 +313,7 @@ const azerbaijan = {
   trustPoints: [
     { title: 'Local Azeri ground team', desc: 'Native-language operators handle every transfer and pickup.' },
     { title: 'Hotel inventory across Baku + mountains', desc: 'Direct contracts with 9 properties from city centre to Shahdag.' },
-    { title: 'Visa handling included', desc: 'We process the e-visa for you — agents only share passport scans.' },
+    { title: 'Visa handling included', desc: 'We process the e-visa for you — you only share passport scans.' },
   ],
   quoteIntent: 'Azerbaijan',
 }
@@ -524,7 +524,7 @@ export const destinationBriefs = {
 // to lucide icons in DestinationPage.jsx (transfers/hotels/attractions/visa).
 const whatWeDoByDest = {
   dubai: [
-    { icon: 'transfers', title: 'Transfers', text: 'Airport, intercity, private & group. Own fleet — fixed agent rates, no surge.' },
+    { icon: 'transfers', title: 'Transfers', text: 'Airport, intercity, private & group. Own fleet — fixed rates, no surge.' },
     { icon: 'hotels', title: 'Hotels', text: '3★ to 5★ across Downtown, Marina & JBR. Direct contracts, no markup surprises.' },
     { icon: 'attractions', title: 'Attractions', text: 'Burj Khalifa, Desert Safari, Dhow Cruise, theme parks — all pre-ticketed.' },
     { icon: 'visa', title: 'Visa', text: 'UAE visa for Indian passports. 30 & 60-day. Fast, tracked processing.' },
@@ -533,10 +533,10 @@ const whatWeDoByDest = {
     { icon: 'transfers', title: 'Transfers', text: 'Airport & intercity to Baku, Gabala, Shahdag. Local Azeri fleet, fixed rates.' },
     { icon: 'hotels', title: 'Hotels', text: '3★ to 5★ across Baku city centre and mountain resorts. Direct-contracted.' },
     { icon: 'attractions', title: 'Attractions', text: 'Gobustan, Flame Towers, Sheki, mud volcanoes — guided and ticketed.' },
-    { icon: 'visa', title: 'Visa', text: 'ASAN e-visa processed for you. Agents just share passport scans.' },
+    { icon: 'visa', title: 'Visa', text: 'ASAN e-visa processed for you. You just share passport scans.' },
   ],
   singapore: [
-    { icon: 'transfers', title: 'Transfers', text: 'Airport, city & Sentosa — private or shared coach. Fixed agent rates.' },
+    { icon: 'transfers', title: 'Transfers', text: 'Airport, city & Sentosa — private or shared coach. Fixed rates.' },
     { icon: 'hotels', title: 'Hotels', text: '16 partners 3★–5★ across Marina Bay, Orchard & Little India. Direct.' },
     { icon: 'attractions', title: 'Attractions', text: 'Universal Studios, Gardens by the Bay, SEA Aquarium, Night Safari — pre-booked tickets.' },
     { icon: 'visa', title: 'Visa', text: 'Singapore e-visa handled end to end for your clients.' },

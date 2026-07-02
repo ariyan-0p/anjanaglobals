@@ -61,12 +61,12 @@ function Hero({ destination, brief, onQuote }) {
         </h1>
         <p className="dpx-hero__tag">{destination.tagline}</p>
         <p className="dpx-hero__sub">
-          Special agent rates, our own ground team and 2-hour quotes for travel agents — plus tailor-made trips for holidaymakers.
+          Special partner rates, our own ground team and 2-hour quotes for travel partners — plus tailor-made trips for holidaymakers.
         </p>
 
         <div className="dpx-hero__cta">
-          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — agent rates')}>
-            Get agent rates <ArrowRight size={16} aria-hidden />
+          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Partner — special rates')}>
+            Get partner rates <ArrowRight size={16} aria-hidden />
           </button>
           <button type="button" className="dpx-btn dpx-btn--glass" onClick={() => onQuote('')}>
             Plan a trip
@@ -111,7 +111,7 @@ function WhatWeDo({ items, destinationName }) {
     <section className="dpx-section" id="dpx-services">
       <div className="container">
         <Heading
-          eyebrow="What we do for travel agents"
+          eyebrow="What we handle on the ground"
           title={`Your ground handling in ${destinationName}`}
           sub="One partner for transfers, stays, attractions and visas — direct contracts, best rates."
         />
@@ -164,8 +164,8 @@ function TopProducts({ experiences, onQuote }) {
       <div className="container">
         <Heading
           eyebrow="Top-selling products"
-          title="What agents actually book"
-          sub="Starting agent rates — request a quote for your group and dates."
+          title="Most-booked experiences"
+          sub="Starting partner rates — request a quote for your group and dates."
         />
         <div className="dpx-prod-grid">
           {experiences.map((e) => (
@@ -234,7 +234,7 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
     const l = []
     l.push(`${destinationName ? destinationName + ' — ' : ''}${itinerary.name}`)
     l.push(`${itinerary.nights} · ${itinerary.hotelCategory || ''}`)
-    if (itinerary.price) l.push(`Starting agent rate: ${itinerary.price}`)
+    if (itinerary.price) l.push(`Starting partner rate: ${itinerary.price}`)
     l.push('')
     if (itinerary.summary) { l.push(itinerary.summary); l.push('') }
     itinerary.days?.forEach((d) => {
@@ -291,7 +291,7 @@ function Itineraries({ itineraries, destinationName, onQuote }) {
   return (
     <section className="dpx-section" id="dpx-itin">
       <div className="container">
-        <Heading eyebrow="Ready-to-quote itineraries" title="Copy-paste into your client proposal" sub="Day-by-day plans your agents can drop straight into a quote." />
+        <Heading eyebrow="Ready-to-quote itineraries" title="Copy-paste into your client proposal" sub="Day-by-day plans you can drop straight into a client quote." />
         <div className="dpx-itin-list">
           {itineraries.map((it, i) => (
             <ItineraryCard key={it.key} itinerary={it} destinationName={destinationName} onQuote={onQuote} defaultOpen={i === 0} />
@@ -375,7 +375,7 @@ function Gallery({ destination }) {
 // ═══════════════════════════════════════════════════════════════
 function AgentBand({ destinationName, onQuote }) {
   const perks = [
-    { ic: <TrendingUp size={18} aria-hidden />, t: 'Special agent rates', d: 'Direct contracts — real margin, no middleman markup.' },
+    { ic: <TrendingUp size={18} aria-hidden />, t: 'Special partner rates', d: 'Direct contracts — real margin, no middleman markup.' },
     { ic: <Clock size={18} aria-hidden />, t: '2-hour quotes', d: 'Fast turnaround so you can close the client.' },
     { ic: <ShieldCheck size={18} aria-hidden />, t: 'Dedicated desk', d: 'A named ops contact for every file, 24/7 on-ground support.' },
     { ic: <Boxes size={18} aria-hidden />, t: 'Ready availability', d: 'Rooms and attraction tickets held ready — faster confirmations.' },
@@ -385,7 +385,7 @@ function AgentBand({ destinationName, onQuote }) {
       <div className="dpx-agent__mesh" aria-hidden />
       <div className="container dpx-agent__inner">
         <div className="dpx-agent__head">
-          <span className="dpx-eyebrow is-light">For travel agents</span>
+          <span className="dpx-eyebrow is-light">For our partners</span>
           <h2>Sell {destinationName} on our rates, not someone else's</h2>
           <p>We're your team on the ground — you keep the client, we handle everything from arrival to departure.</p>
         </div>
@@ -398,8 +398,8 @@ function AgentBand({ destinationName, onQuote }) {
           ))}
         </div>
         <div className="dpx-agent__cta">
-          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — agent rates')}>
-            Get net rates <ArrowRight size={15} aria-hidden />
+          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Partner — special rates')}>
+            Get partner rates <ArrowRight size={15} aria-hidden />
           </button>
           <Link to="/b2b" className="dpx-btn dpx-btn--glass">Become a partner</Link>
         </div>
@@ -441,10 +441,10 @@ function QuoteSection({ destination, intent, sectionRef }) {
         <div className="dpx-quote__left">
           <span className="dpx-eyebrow is-light">Request a quote</span>
           <h2>Let's build your {destination.flag} {destination.name} quote</h2>
-          <p>Travel agents get special agent rates; holidaymakers get a tailor-made plan — either way our {destination.name} team replies fast for your dates and group size.</p>
+          <p>Partners get special rates; holidaymakers get a tailor-made plan — either way our {destination.name} team replies fast for your dates and group size.</p>
           <ul className="dpx-quote__usp">
             <li><Clock size={16} aria-hidden /> Avg. response within 2 hours</li>
-            <li><TrendingUp size={16} aria-hidden /> Special rates for travel agents</li>
+            <li><TrendingUp size={16} aria-hidden /> Special rates for travel partners</li>
             <li><ShieldCheck size={16} aria-hidden /> On-ground team, dependable ops</li>
           </ul>
           <div className="dpx-quote__alt">
