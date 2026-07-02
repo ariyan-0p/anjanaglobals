@@ -80,7 +80,7 @@ const dubai = {
       name: 'Budget',
       subtitle: '3★ hotels · centrally located',
       price: '₹18,000',
-      perPaxNote: 'per pax · 4N/5D · twin sharing',
+      perPaxNote: 'per person · 4N/5D · twin sharing',
       includes: ['Airport transfers', 'Daily breakfast', 'Half-day Dubai city tour', 'Desert Safari with BBQ'],
       image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80',
     },
@@ -88,8 +88,8 @@ const dubai = {
       name: 'Standard',
       subtitle: '4★ hotels · prime areas',
       price: '₹28,000',
-      perPaxNote: 'per pax · 4N/5D · twin sharing',
-      includes: ['All Budget features', 'Burj Khalifa 124th floor', 'Dhow Cruise Marina dinner', 'Private SIC transfers'],
+      perPaxNote: 'per person · 4N/5D · twin sharing',
+      includes: ['All Budget features', 'Burj Khalifa 124th floor', 'Dhow Cruise Marina dinner', 'Private transfers'],
       isPopular: true,
       image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80',
     },
@@ -97,7 +97,7 @@ const dubai = {
       name: 'Premium',
       subtitle: '5★ hotels · views or beach',
       price: '₹45,000',
-      perPaxNote: 'per pax · 5N/6D · twin sharing',
+      perPaxNote: 'per person · 5N/6D · twin sharing',
       includes: ['All Standard features', '5★ hotel category (Atlantis / similar)', 'Private chauffeur transfers', 'Atlantis Aquaventure or theme park'],
       image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80',
     },
@@ -229,7 +229,7 @@ const dubai = {
   trustPoints: [
     { title: 'Direct hotel contracts', desc: 'No middleman. Faster confirmation, no margin leakage.' },
     { title: 'Own transport fleet', desc: "Sedans, SUVs, vans, coaches — we don't outsource ground transport." },
-    { title: 'Bulk attraction allotments', desc: 'Pre-purchased tickets. Faster confirmation, better B2B rates.' },
+    { title: 'Attraction tickets in bulk', desc: 'Pre-booked tickets — faster confirmation, better rates.' },
     { title: 'On-ground English-speaking guides', desc: 'Indian-passport-friendly. Familiar with first-time travellers.' },
   ],
   quoteIntent: 'Dubai',
@@ -238,9 +238,9 @@ const dubai = {
 // Helpers for placeholder destinations
 function placeholderTiers(currency = 'INR') {
   return [
-    { name: 'Budget', subtitle: '3★ hotels', price: TBD, perPaxNote: 'per pax · request quote', includes: ['Airport transfers', 'Daily breakfast', 'Half-day city tour'] },
-    { name: 'Standard', subtitle: '4★ hotels', price: TBD, perPaxNote: 'per pax · request quote', includes: ['All Budget features', 'Two signature experiences', 'Private SIC transfers'], isPopular: true },
-    { name: 'Premium', subtitle: '5★ hotels', price: TBD, perPaxNote: 'per pax · request quote', includes: ['All Standard features', '5★ stay category', 'Private chauffeur transfers'] },
+    { name: 'Budget', subtitle: '3★ hotels', price: TBD, perPaxNote: 'per person · request quote', includes: ['Airport transfers', 'Daily breakfast', 'Half-day city tour'] },
+    { name: 'Standard', subtitle: '4★ hotels', price: TBD, perPaxNote: 'per person · request quote', includes: ['All Budget features', 'Two signature experiences', 'Private transfers'], isPopular: true },
+    { name: 'Premium', subtitle: '5★ hotels', price: TBD, perPaxNote: 'per person · request quote', includes: ['All Standard features', '5★ stay category', 'Private chauffeur transfers'] },
   ]
 }
 
@@ -375,7 +375,7 @@ const singapore = {
   tripTypes: placeholderTripTypes(['gardens', 'sentosa', 'city-tour-sg', 'night-safari', 'sg-river'], 'classic-sg'),
   trustPoints: [
     { title: '16 hotel partners contracted directly', desc: 'Marina Bay, Orchard, Little India, Lavender — all star tiers.' },
-    { title: 'Theme-park ticket allotments', desc: 'Pre-purchased Universal Studios + SEA Aquarium bulk slots.' },
+    { title: 'Theme-park tickets ready', desc: 'Pre-booked Universal Studios + SEA Aquarium tickets.' },
     { title: 'Multi-destination twins', desc: 'Easy combo with Malaysia or Bali for week-plus itineraries.' },
   ],
   quoteIntent: 'Singapore',
@@ -524,7 +524,7 @@ export const destinationBriefs = {
 // to lucide icons in DestinationPage.jsx (transfers/hotels/attractions/visa).
 const whatWeDoByDest = {
   dubai: [
-    { icon: 'transfers', title: 'Transfers', text: 'Airport, intercity, private & group. Own fleet — fixed B2B rates, no surge.' },
+    { icon: 'transfers', title: 'Transfers', text: 'Airport, intercity, private & group. Own fleet — fixed agent rates, no surge.' },
     { icon: 'hotels', title: 'Hotels', text: '3★ to 5★ across Downtown, Marina & JBR. Direct contracts, no markup surprises.' },
     { icon: 'attractions', title: 'Attractions', text: 'Burj Khalifa, Desert Safari, Dhow Cruise, theme parks — all pre-ticketed.' },
     { icon: 'visa', title: 'Visa', text: 'UAE visa for Indian passports. 30 & 60-day. Fast, tracked processing.' },
@@ -536,9 +536,9 @@ const whatWeDoByDest = {
     { icon: 'visa', title: 'Visa', text: 'ASAN e-visa processed for you. Agents just share passport scans.' },
   ],
   singapore: [
-    { icon: 'transfers', title: 'Transfers', text: 'Airport, city & Sentosa — private or SIC coach. Fixed B2B rates.' },
+    { icon: 'transfers', title: 'Transfers', text: 'Airport, city & Sentosa — private or shared coach. Fixed agent rates.' },
     { icon: 'hotels', title: 'Hotels', text: '16 partners 3★–5★ across Marina Bay, Orchard & Little India. Direct.' },
-    { icon: 'attractions', title: 'Attractions', text: 'Universal Studios, Gardens by the Bay, SEA Aquarium, Night Safari — bulk allotment.' },
+    { icon: 'attractions', title: 'Attractions', text: 'Universal Studios, Gardens by the Bay, SEA Aquarium, Night Safari — pre-booked tickets.' },
     { icon: 'visa', title: 'Visa', text: 'Singapore e-visa handled end to end for your clients.' },
   ],
   malaysia: [

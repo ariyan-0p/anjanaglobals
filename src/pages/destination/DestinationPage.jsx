@@ -52,7 +52,7 @@ function Hero({ destination, brief, onQuote }) {
         </div>
 
         <span className="dpx-hero__badge">
-          <ShieldCheck size={13} aria-hidden /> Anjna Global · Your DMC for travel agents
+          <ShieldCheck size={13} aria-hidden /> Anjna Global · Your travel partner on the ground
         </span>
 
         <h1 className="dpx-hero__title">
@@ -61,12 +61,12 @@ function Hero({ destination, brief, onQuote }) {
         </h1>
         <p className="dpx-hero__tag">{destination.tagline}</p>
         <p className="dpx-hero__sub">
-          Net B2B rates, own ground handling and 2-hour quotes for travel agents — plus tailor-made trips for direct travellers.
+          Special agent rates, our own ground team and 2-hour quotes for travel agents — plus tailor-made trips for holidaymakers.
         </p>
 
         <div className="dpx-hero__cta">
-          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — net rates')}>
-            Get net B2B rates <ArrowRight size={16} aria-hidden />
+          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — agent rates')}>
+            Get agent rates <ArrowRight size={16} aria-hidden />
           </button>
           <button type="button" className="dpx-btn dpx-btn--glass" onClick={() => onQuote('')}>
             Plan a trip
@@ -113,7 +113,7 @@ function WhatWeDo({ items, destinationName }) {
         <Heading
           eyebrow="What we do for travel agents"
           title={`Your ground handling in ${destinationName}`}
-          sub="One DMC for transfers, stays, attractions and visas — direct-contracted, net B2B rates."
+          sub="One partner for transfers, stays, attractions and visas — direct contracts, best rates."
         />
         <div className="dpx-do-grid">
           {items.map((it, i) => (
@@ -165,7 +165,7 @@ function TopProducts({ experiences, onQuote }) {
         <Heading
           eyebrow="Top-selling products"
           title="What agents actually book"
-          sub="Starting net B2B rates — request a live quote for your pax and dates."
+          sub="Starting agent rates — request a quote for your group and dates."
         />
         <div className="dpx-prod-grid">
           {experiences.map((e) => (
@@ -201,7 +201,7 @@ function Tiers({ tiers, onQuote }) {
   return (
     <section className="dpx-section dpx-section--tint" id="dpx-tiers">
       <div className="container">
-        <Heading eyebrow="Package tiers" title="Pick a tier, build your quote" sub="Net rates · twin sharing · indicative — we confirm live." />
+        <Heading eyebrow="Package tiers" title="Pick a tier, build your quote" sub="Per person · twin sharing · indicative — we confirm on request." />
         <div className="dpx-tier-grid">
           {tiers.map((t, idx) => (
             <article key={t.name} className={`dpx-tier${t.isPopular ? ' is-pop' : ''}`}>
@@ -234,7 +234,7 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
     const l = []
     l.push(`${destinationName ? destinationName + ' — ' : ''}${itinerary.name}`)
     l.push(`${itinerary.nights} · ${itinerary.hotelCategory || ''}`)
-    if (itinerary.price) l.push(`Starting B2B rate: ${itinerary.price}`)
+    if (itinerary.price) l.push(`Starting agent rate: ${itinerary.price}`)
     l.push('')
     if (itinerary.summary) { l.push(itinerary.summary); l.push('') }
     itinerary.days?.forEach((d) => {
@@ -315,7 +315,7 @@ function HotelInventory({ destinationId, destinationName }) {
   return (
     <section className="dpx-section dpx-section--tint" id="dpx-hotels">
       <div className="container">
-        <Heading eyebrow="Hotel inventory" title={`${all.length} partner hotels in ${destinationName}`} sub="All direct contracts — allotments held, no consolidators." />
+        <Heading eyebrow="Where you'll stay" title={`${all.length} partner hotels in ${destinationName}`} sub="Direct contracts with every property — rooms held for you, no middlemen." />
         {hasStars && (
           <div className="dpx-pills">
             <button type="button" className={`dpx-pill${filter === 'all' ? ' is-on' : ''}`} onClick={() => setFilter('all')}>All</button>
@@ -375,10 +375,10 @@ function Gallery({ destination }) {
 // ═══════════════════════════════════════════════════════════════
 function AgentBand({ destinationName, onQuote }) {
   const perks = [
-    { ic: <TrendingUp size={18} aria-hidden />, t: 'Net B2B rates', d: 'Direct contracts — real margin, no consolidator markup.' },
+    { ic: <TrendingUp size={18} aria-hidden />, t: 'Special agent rates', d: 'Direct contracts — real margin, no middleman markup.' },
     { ic: <Clock size={18} aria-hidden />, t: '2-hour quotes', d: 'Fast turnaround so you can close the client.' },
     { ic: <ShieldCheck size={18} aria-hidden />, t: 'Dedicated desk', d: 'A named ops contact for every file, 24/7 on-ground support.' },
-    { ic: <Boxes size={18} aria-hidden />, t: 'Ready inventory', d: 'Held hotel allotments and pre-booked attraction tickets.' },
+    { ic: <Boxes size={18} aria-hidden />, t: 'Ready availability', d: 'Rooms and attraction tickets held ready — faster confirmations.' },
   ]
   return (
     <section className="dpx-agent" id="dpx-agents">
@@ -387,7 +387,7 @@ function AgentBand({ destinationName, onQuote }) {
         <div className="dpx-agent__head">
           <span className="dpx-eyebrow is-light">For travel agents</span>
           <h2>Sell {destinationName} on our rates, not someone else's</h2>
-          <p>We're the DMC on the ground — you keep the client, we handle everything from arrival to departure.</p>
+          <p>We're your team on the ground — you keep the client, we handle everything from arrival to departure.</p>
         </div>
         <div className="dpx-agent__grid">
           {perks.map((p) => (
@@ -398,7 +398,7 @@ function AgentBand({ destinationName, onQuote }) {
           ))}
         </div>
         <div className="dpx-agent__cta">
-          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — net rates')}>
+          <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Travel agent — agent rates')}>
             Get net rates <ArrowRight size={15} aria-hidden />
           </button>
           <Link to="/b2b" className="dpx-btn dpx-btn--glass">Become a partner</Link>
@@ -441,10 +441,10 @@ function QuoteSection({ destination, intent, sectionRef }) {
         <div className="dpx-quote__left">
           <span className="dpx-eyebrow is-light">Request a quote</span>
           <h2>Let's build your {destination.flag} {destination.name} quote</h2>
-          <p>Travel agents get firm net B2B rates; direct travellers get a tailor-made plan — either way our {destination.name} desk replies fast for your actual pax and dates.</p>
+          <p>Travel agents get special agent rates; holidaymakers get a tailor-made plan — either way our {destination.name} team replies fast for your dates and group size.</p>
           <ul className="dpx-quote__usp">
             <li><Clock size={16} aria-hidden /> Avg. response within 2 hours</li>
-            <li><TrendingUp size={16} aria-hidden /> Net B2B rates for travel agents</li>
+            <li><TrendingUp size={16} aria-hidden /> Special rates for travel agents</li>
             <li><ShieldCheck size={16} aria-hidden /> On-ground team, dependable ops</li>
           </ul>
           <div className="dpx-quote__alt">
@@ -470,7 +470,7 @@ function QuoteSection({ destination, intent, sectionRef }) {
                 <label>Phone / WhatsApp<input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} placeholder="+91…" /></label>
                 <label>Email<input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="you@agency.com" /></label>
               </div>
-              <label>Pax, dates, hotel category<textarea rows={3} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} placeholder="e.g. 2 adults, Dec 12–16, 4★ twin" /></label>
+              <label>Guests, dates, hotel category<textarea rows={3} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} placeholder="e.g. 2 adults, Dec 12–16, 4★ twin" /></label>
               {error && <p className="dpx-quote__err">{error}</p>}
               <button type="submit" className="dpx-btn dpx-btn--grad dpx-btn--block" disabled={sending}>
                 {sending ? 'Sending…' : 'Request live quote'} <ArrowRight size={15} aria-hidden />
