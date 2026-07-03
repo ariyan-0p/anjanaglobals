@@ -4,7 +4,8 @@
    ╚══════════════════════════════════════════════════════════════╝ */
 
 .dpx {
-  --dp-accent: #6d28d9;
+  --dp-accent: #C8102E;
+  --dp-accent-2: #27406F;
   --dp-accent-ink: #ffffff;
   --dpx-ink: #0b1020;
   --dpx-dim: #55607a;
@@ -12,7 +13,7 @@
   --dpx-bg: #f6f7fc;
   --dpx-surface: #ffffff;
   --dpx-border: rgba(15, 23, 42, 0.08);
-  --dpx-grad: linear-gradient(135deg, var(--dp-accent) 0%, color-mix(in srgb, var(--dp-accent) 78%, #0b1020) 100%);
+  --dpx-grad: linear-gradient(135deg, var(--dp-accent) 0%, var(--dp-accent-2) 100%);
   --dpx-glow: color-mix(in srgb, var(--dp-accent) 45%, transparent);
   --dpx-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
   --dpx-shadow-lg: 0 30px 80px rgba(15, 23, 42, 0.18);
@@ -43,8 +44,8 @@
   filter: blur(80px);
   opacity: 0.55;
 }
-.dpx-hero__mesh::before { top: -12%; right: -8%; background: var(--dp-accent); opacity: 0.35; }
-.dpx-hero__mesh::after { bottom: -18%; left: -10%; background: color-mix(in srgb, var(--dp-accent) 60%, #0b1020); opacity: 0.3; }
+.dpx-hero__mesh::before { top: -12%; right: -8%; background: var(--dp-accent); opacity: 0.32; }
+.dpx-hero__mesh::after { bottom: -18%; left: -10%; background: var(--dp-accent-2); opacity: 0.34; }
 
 /* ═══ HERO ═══════════════════════════════════════════════════ */
 .dpx-hero {
@@ -661,7 +662,7 @@
   overflow: hidden;
 }
 .dpx-quote__mesh::before { content:''; position:absolute; width:50vw; height:50vw; border-radius:50%; filter: blur(90px); opacity:0.5; top:-20%; left:-10%; background: var(--dp-accent); }
-.dpx-quote__mesh::after { content:''; position:absolute; width:40vw; height:40vw; border-radius:50%; filter: blur(90px); opacity:0.3; bottom:-25%; right:-8%; background: color-mix(in srgb, var(--dp-accent) 55%, #0b1020); }
+.dpx-quote__mesh::after { content:''; position:absolute; width:40vw; height:40vw; border-radius:50%; filter: blur(90px); opacity:0.34; bottom:-25%; right:-8%; background: var(--dp-accent-2); }
 .dpx-quote__inner {
   position: relative;
   z-index: 1;

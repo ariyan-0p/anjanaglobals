@@ -563,9 +563,11 @@ export default function DestinationPage() {
     }
   }
 
+  // Company brand accent (red → navy) applied consistently across all destinations.
   const accentStyle = {
-    '--dp-accent': brief.accentColor || '#6d28d9',
-    '--dp-accent-ink': brief.accentInk || '#ffffff',
+    '--dp-accent': '#C8102E',
+    '--dp-accent-2': '#27406F',
+    '--dp-accent-ink': '#ffffff',
   }
 
   return (
