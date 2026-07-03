@@ -371,6 +371,54 @@ function Gallery({ destination }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// FAQ — partner questions (city-templated)
+// ═══════════════════════════════════════════════════════════════
+function buildFaqs(city) {
+  return [
+    { q: `Why should I choose Anjna Global for my ${city} bookings?`, a: `Because we understand what matters to you — competitive pricing, quick replies, smooth operations and reliable support. We've spent over 13 years working exclusively with travel partners, and our focus is simple: help you close more bookings while ensuring your clients travel without hassle.` },
+    { q: `How fast can you share a ${city} quotation?`, a: `Most individual quotations are shared within 2 hours. Customised itineraries and group proposals may take a little longer, but we always work with urgency because we know every minute counts when your client is ready to book.` },
+    { q: `Can you customise packages according to my client's budget?`, a: `Absolutely. Every client has different expectations. Whether it's a budget holiday, honeymoon, luxury trip, family vacation or corporate travel, we'll design an itinerary that fits both your client's budget and your business goals.` },
+    { q: `Do you work only with travel partners?`, a: `Yes. Anjna Global is a specialist destination company that works exclusively with travel partners and tour operators — and we're committed to protecting your client relationships.` },
+    { q: `Will you contact my client directly?`, a: `Never. Your client is your client. We communicate through you unless you specifically ask us to coordinate directly for operational reasons. Maintaining your trust is more important than any single booking.` },
+    { q: `What if my client faces an issue while travelling in ${city}?`, a: `Our support doesn't end after confirmation. Our operations team stays available throughout the trip to help with transfers, hotel concerns, flight changes or any on-ground requirement — so you always have someone to rely on.` },
+    { q: `Can I book only hotels, transfers or sightseeing with you?`, a: `Of course. Whether you need a complete package or just a hotel, airport transfer, attraction tickets, visa or sightseeing, we're happy to help. Book only what you need.` },
+    { q: `Do you handle group departures and large events?`, a: `Yes. From family groups and student tours to corporate incentives, conferences, exhibitions and destination weddings, our team has the experience to manage groups of all sizes with seamless execution.` },
+    { q: `I'm a small travel agency. Will I get the same support?`, a: `Definitely. Every successful partnership starts with one booking. Whether you send one passenger or one hundred, you'll receive the same attention, quick responses and dedicated support from our team.` },
+    { q: `What makes Anjna Global different from other ${city} companies?`, a: `We don't believe in overpromising. We believe in answering calls, replying on time, offering honest advice and delivering exactly what we've committed. That's how we've built lasting relationships with travel partners across India.` },
+    { q: `This is my first booking with Anjna Global. What if something goes wrong?`, a: `Every long-term partnership starts with a first booking. We'll guide you through every step — from quotation to your client's return — and if any operational challenge arises, our team resolves it quickly. Our job is to make your first experience smooth enough that you confidently send us your second.` },
+  ]
+}
+
+function FaqItem({ item, open, onToggle }) {
+  return (
+    <article className={`dpx-faq${open ? ' is-open' : ''}`}>
+      <button type="button" className="dpx-faq__q" onClick={onToggle} aria-expanded={open}>
+        <span>{item.q}</span>
+        <ChevronDown size={18} className="dpx-faq__chev" aria-hidden />
+      </button>
+      {open && <div className="dpx-faq__a"><p>{item.a}</p></div>}
+    </article>
+  )
+}
+
+function Faq({ city }) {
+  const faqs = buildFaqs(city)
+  const [open, setOpen] = useState(0)
+  return (
+    <section className="dpx-section dpx-section--tint" id="dpx-faq">
+      <div className="container">
+        <Heading eyebrow="Partner FAQ" title="Working with us on your bookings" sub="Straight answers to the questions travel partners ask us most." />
+        <div className="dpx-faq-list">
+          {faqs.map((f, i) => (
+            <FaqItem key={f.q} item={f} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
 // TRAVEL-AGENT PARTNER BAND (B2B focus)
 // ═══════════════════════════════════════════════════════════════
 function AgentBand({ destinationName, onQuote }) {
@@ -531,6 +579,7 @@ export default function DestinationPage() {
       <Itineraries itineraries={brief.itineraries} destinationName={destination.name} onQuote={openQuote} />
       <HotelInventory destinationId={destination.id} destinationName={destination.name} />
       <Gallery destination={destination} />
+      <Faq city={destination.name} />
       <QuoteSection destination={destination} intent={quoteIntent} sectionRef={quoteRef} />
 
       <div className="dpx-bar">

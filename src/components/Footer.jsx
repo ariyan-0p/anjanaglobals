@@ -263,6 +263,32 @@ export default function Footer() {
                 </div>
               ))}
 
+              {/* Dubai office */}
+              <div style={{ marginTop: '18px', paddingTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', margin: 0 }}>
+                  Dubai Office
+                </p>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'rgba(255,255,255,0.55)', fontSize: '14px' }}>
+                  <span style={{ color: '#C8102E' }}><MapPin size={15} style={{ flexShrink: 0, marginTop: '2px' }} /></span>
+                  <span style={{ lineHeight: '1.6' }}>Anjana Global Tourism LLC — Sabha Building, Jabal Ali, Plot No. 1414-0, Dubai, UAE</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'rgba(255,255,255,0.55)', fontSize: '14px' }}>
+                  <span style={{ color: '#C8102E' }}><Phone size={15} style={{ flexShrink: 0 }} /></span>
+                  <a href="tel:+971565954997" style={{ color: 'rgba(255,255,255,0.55)' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'white'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+                  >+971-565954997</a>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'rgba(255,255,255,0.55)', fontSize: '14px' }}>
+                  <span style={{ color: '#C8102E' }}><Mail size={15} style={{ flexShrink: 0 }} /></span>
+                  <a href="mailto:res@anjnaglobal.com" style={{ color: 'rgba(255,255,255,0.55)' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'white'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+                  >res@anjnaglobal.com</a>
+                </div>
+                <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', margin: 0 }}>Trade Licence No. 773256</p>
+              </div>
+
             </div>
           </div>
         </div>

@@ -607,6 +607,51 @@
 .dpx-agent .dpx-btn--grad { background: #fff; color: var(--dp-accent); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
 .dpx-agent .dpx-btn--grad:hover { background: #fff; transform: translateY(-2px); }
 
+/* ═══ FAQ ════════════════════════════════════════════════════ */
+.dpx-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 860px;
+}
+.dpx-faq {
+  background: var(--dpx-surface);
+  border: 1px solid var(--dpx-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+.dpx-faq.is-open { box-shadow: var(--dpx-shadow); }
+.dpx-faq__q {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dpx-ink);
+}
+.dpx-faq__chev { color: var(--dp-accent); flex-shrink: 0; transition: transform 0.25s ease; }
+.dpx-faq.is-open .dpx-faq__chev { transform: rotate(180deg); }
+.dpx-faq__a {
+  padding: 0 22px 20px;
+  border-top: 1px dashed var(--dpx-border);
+}
+.dpx-faq__a p {
+  margin: 14px 0 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--dpx-dim);
+}
+
 /* ═══ QUOTE SECTION (full-width) ═════════════════════════════ */
 .dpx-quote {
   position: relative;
