@@ -4,6 +4,7 @@ import { api, getToken, apiBase } from '../../lib/api'
 import './admin.css'
 
 const DESTINATIONS = [
+  { id: 'moments', name: 'Client moments', flag: '⭐' },
   { id: 'dubai', name: 'Dubai', flag: '🇦🇪' },
   { id: 'azerbaijan', name: 'Azerbaijan', flag: '🇦🇿' },
   { id: 'singapore', name: 'Singapore', flag: '🇸🇬' },

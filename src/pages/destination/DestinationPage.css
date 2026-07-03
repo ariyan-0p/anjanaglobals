@@ -547,6 +547,96 @@
 }
 .dpx-mason__item img { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
 .dpx-mason__item:hover img { transform: scale(1.06); }
+.dpx-mason__item.is-clickable { cursor: zoom-in; }
+.dpx-mason__zoom {
+  position: absolute;
+  top: 10px; right: 12px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+.dpx-mason__item.is-clickable:hover .dpx-mason__zoom { opacity: 1; }
+
+.dpx-moments__more { text-align: center; margin-top: 28px; }
+
+/* Lightbox */
+.dpx-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(7, 10, 22, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 48px);
+  backdrop-filter: blur(6px);
+}
+.dpx-lb__fig {
+  margin: 0;
+  max-width: min(1100px, 92vw);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.dpx-lb__fig img {
+  max-width: 100%;
+  max-height: 82vh;
+  border-radius: 14px;
+  object-fit: contain;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+}
+.dpx-lb__fig figcaption { color: rgba(255,255,255,0.85); font-size: 14px; text-align: center; }
+.dpx-lb__count {
+  position: fixed;
+  bottom: 22px; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.dpx-lb__x {
+  position: fixed;
+  top: 18px; right: 22px;
+  width: 44px; height: 44px;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dpx-lb__x:hover { background: rgba(255,255,255,0.25); }
+.dpx-lb__nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px; height: 52px;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dpx-lb__nav:hover { background: rgba(255,255,255,0.25); }
+.dpx-lb__nav--prev { left: 18px; }
+.dpx-lb__nav--next { right: 18px; }
+@media (max-width: 600px) {
+  .dpx-lb__nav { width: 42px; height: 42px; font-size: 24px; }
+  .dpx-lb__nav--prev { left: 8px; }
+  .dpx-lb__nav--next { right: 8px; }
+}
 .dpx-mason__item figcaption {
   position: absolute; bottom: 0; left: 0; right: 0;
   padding: 24px 14px 12px;

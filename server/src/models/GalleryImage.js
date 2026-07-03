@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
-const ALLOWED_DESTINATIONS = ['dubai', 'azerbaijan', 'singapore', 'malaysia', 'bali'];
+// 'moments' is a shared, destination-agnostic bucket for client/testimonial
+// photos shown across all destination pages and the testimonials page.
+const ALLOWED_DESTINATIONS = ['dubai', 'azerbaijan', 'singapore', 'malaysia', 'bali', 'moments'];
 
 const galleryImageSchema = new mongoose.Schema(
   {

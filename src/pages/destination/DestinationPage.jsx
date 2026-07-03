@@ -337,35 +337,95 @@ function HotelInventory({ destinationId, destinationName }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PHOTO GALLERY — masonry
+// HAPPY TRAVELLERS — shared client-photo trust gallery
+// (masonry + lightbox + load-more). Reads the shared 'moments' bucket,
+// falls back to this destination's own gallery photos.
 // ═══════════════════════════════════════════════════════════════
-function Gallery({ destination }) {
+const HAPPY_INITIAL = 24
+
+function HappyTravellers({ destination }) {
   const [apiImages, setApiImages] = useState(null)
+  const [shown, setShown] = useState(HAPPY_INITIAL)
+  const [lightbox, setLightbox] = useState(-1)
+
   useEffect(() => {
     let alive = true
-    api.get(`/galleries/${destination.id}`).then((r) => alive && setApiImages(r.items || [])).catch(() => alive && setApiImages([]))
+    api.get('/galleries/moments')
+      .then((r) => alive && setApiImages(r.items || []))
+      .catch(() => alive && setApiImages([]))
     return () => { alive = false }
-  }, [destination.id])
+  }, [])
 
   const images = useMemo(() => {
-    if (apiImages && apiImages.length > 0) return apiImages.map((i) => ({ src: absoluteUrl(i.url), alt: i.alt || i.caption || `${destination.name}`, caption: i.caption || '' }))
+    if (apiImages && apiImages.length > 0) {
+      return apiImages.map((i) => ({ src: absoluteUrl(i.url), alt: i.alt || i.caption || 'Happy traveller with Anjna Global', caption: i.caption || '' }))
+    }
+    // Fallback to this destination's photos until the shared gallery is filled.
     return (destination.galleryImages || []).map((src, idx) => ({ src, alt: `${destination.name} ${idx + 1}`, caption: '' }))
   }, [apiImages, destination])
 
+  // Keyboard nav for the lightbox
+  useEffect(() => {
+    if (lightbox < 0) return
+    function onKey(e) {
+      if (e.key === 'Escape') setLightbox(-1)
+      else if (e.key === 'ArrowRight') setLightbox((i) => (i + 1) % images.length)
+      else if (e.key === 'ArrowLeft') setLightbox((i) => (i - 1 + images.length) % images.length)
+    }
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+  }, [lightbox, images.length])
+
   if (images.length === 0) return null
+  const visible = images.slice(0, shown)
+
   return (
-    <section className="dpx-section" id="dpx-gallery">
+    <section className="dpx-section dpx-section--tint" id="dpx-moments">
       <div className="container">
-        <Heading eyebrow="On the ground" title={`${destination.name} in frames`} />
+        <Heading
+          eyebrow="Happy travellers"
+          title="Real moments from real trips"
+          sub={`${images.length}+ travellers have explored the world with Anjna Global — here are some of their moments.`}
+        />
         <div className="dpx-mason">
-          {images.map((img, idx) => (
-            <figure key={`${img.src}-${idx}`} className="dpx-mason__item">
+          {visible.map((img, idx) => (
+            <figure
+              key={`${img.src}-${idx}`}
+              className="dpx-mason__item is-clickable"
+              onClick={() => setLightbox(idx)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter') setLightbox(idx) }}
+            >
               <img src={img.src} alt={img.alt} loading="lazy" />
               {img.caption && <figcaption>{img.caption}</figcaption>}
+              <span className="dpx-mason__zoom" aria-hidden>⤢</span>
             </figure>
           ))}
         </div>
+
+        {shown < images.length && (
+          <div className="dpx-moments__more">
+            <button type="button" className="dpx-btn dpx-btn--glass-dark" onClick={() => setShown((s) => s + 24)}>
+              Show more moments <ChevronDown size={15} aria-hidden />
+            </button>
+          </div>
+        )}
       </div>
+
+      {lightbox >= 0 && (
+        <div className="dpx-lb" role="dialog" aria-modal="true" onClick={() => setLightbox(-1)}>
+          <button type="button" className="dpx-lb__x" onClick={() => setLightbox(-1)} aria-label="Close">✕</button>
+          <button type="button" className="dpx-lb__nav dpx-lb__nav--prev" onClick={(e) => { e.stopPropagation(); setLightbox((i) => (i - 1 + images.length) % images.length) }} aria-label="Previous">‹</button>
+          <figure className="dpx-lb__fig" onClick={(e) => e.stopPropagation()}>
+            <img src={images[lightbox].src} alt={images[lightbox].alt} />
+            {images[lightbox].caption && <figcaption>{images[lightbox].caption}</figcaption>}
+            <span className="dpx-lb__count">{lightbox + 1} / {images.length}</span>
+          </figure>
+          <button type="button" className="dpx-lb__nav dpx-lb__nav--next" onClick={(e) => { e.stopPropagation(); setLightbox((i) => (i + 1) % images.length) }} aria-label="Next">›</button>
+        </div>
+      )}
     </section>
   )
 }
@@ -580,7 +640,7 @@ export default function DestinationPage() {
       <Tiers tiers={brief.pricingTiers} onQuote={openQuote} />
       <Itineraries itineraries={brief.itineraries} destinationName={destination.name} onQuote={openQuote} />
       <HotelInventory destinationId={destination.id} destinationName={destination.name} />
-      <Gallery destination={destination} />
+      <HappyTravellers destination={destination} />
       <Faq city={destination.name} />
       <QuoteSection destination={destination} intent={quoteIntent} sectionRef={quoteRef} />
 
