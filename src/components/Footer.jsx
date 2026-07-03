@@ -281,10 +281,10 @@ export default function Footer() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'rgba(255,255,255,0.55)', fontSize: '14px' }}>
                   <span style={{ color: '#C8102E' }}><Mail size={15} style={{ flexShrink: 0 }} /></span>
-                  <a href="mailto:res@anjnaglobal.com" style={{ color: 'rgba(255,255,255,0.55)' }}
+                  <a href="mailto:info@anjnaglobal.com" style={{ color: 'rgba(255,255,255,0.55)' }}
                     onMouseEnter={e => e.currentTarget.style.color = 'white'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
-                  >res@anjnaglobal.com</a>
+                  >info@anjnaglobal.com</a>
                 </div>
                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', margin: 0 }}>Trade Licence No. 773256</p>
               </div>
