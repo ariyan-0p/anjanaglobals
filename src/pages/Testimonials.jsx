@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, MapPin, Camera, Star, Play, Video as VideoIcon, Sparkles, Quote } from 'lucide-react'
+import { ArrowRight, MapPin, Camera, Star, Play, Video as VideoIcon, Sparkles, Quote, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { useAllGalleries } from '../hooks/useGalleries'
 import { api, apiBase } from '../lib/api'
@@ -54,6 +54,122 @@ function ReviewCard({ review }) {
         )}
       </div>
     </article>
+  )
+}
+
+const MOMENTS_INITIAL = 28
+
+function MomentsShowcase() {
+  const [items, setItems] = useState(null)
+  const [shown, setShown] = useState(MOMENTS_INITIAL)
+  const [lightbox, setLightbox] = useState(-1)
+
+  useEffect(() => {
+    let alive = true
+    api
+      .get('/galleries/moments')
+      .then((r) => alive && setItems(r.items || []))
+      .catch(() => alive && setItems([]))
+    return () => { alive = false }
+  }, [])
+
+  const photos = useMemo(
+    () =>
+      (items || []).map((i) => ({
+        src: absoluteUrl(i.url),
+        alt: i.alt || i.caption || 'Happy traveller with Anjna Global',
+        caption: i.caption || '',
+      })),
+    [items]
+  )
+
+  useEffect(() => {
+    if (lightbox < 0) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') setLightbox(-1)
+      else if (e.key === 'ArrowRight') setLightbox((i) => (i + 1) % photos.length)
+      else if (e.key === 'ArrowLeft') setLightbox((i) => (i - 1 + photos.length) % photos.length)
+    }
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [lightbox, photos.length])
+
+  // Only render when we actually have client photos in the shared bucket.
+  if (!items || items.length === 0) return null
+
+  const visible = photos.slice(0, shown)
+
+  return (
+    <section className="t-moments">
+      <div className="container">
+        <header className="t-section-head">
+          <span className="tag">Happy travellers</span>
+          <h2>Real moments from real trips</h2>
+          <p>Faces, smiles and memories from journeys we've put together — a small window into the trips we're proud of.</p>
+        </header>
+
+        <div className="t-moments__mason">
+          {visible.map((img, idx) => (
+            <button
+              key={`${idx}-${img.src}`}
+              type="button"
+              className="t-moments__item"
+              onClick={() => setLightbox(idx)}
+              aria-label="View photo"
+            >
+              <img src={img.src} alt={img.alt} loading="lazy" />
+              {img.caption ? <span className="t-moments__cap">{img.caption}</span> : null}
+            </button>
+          ))}
+        </div>
+
+        {shown < photos.length ? (
+          <div className="t-moments__more-wrap">
+            <button
+              type="button"
+              className="t-moments__more"
+              onClick={() => setShown((s) => s + MOMENTS_INITIAL)}
+            >
+              Show more moments
+            </button>
+          </div>
+        ) : null}
+      </div>
+
+      {lightbox >= 0 ? (
+        <div className="t-lb" role="dialog" aria-modal="true" onClick={() => setLightbox(-1)}>
+          <button className="t-lb__x" type="button" aria-label="Close" onClick={() => setLightbox(-1)}>
+            <X size={22} />
+          </button>
+          <button
+            className="t-lb__nav t-lb__nav--prev"
+            type="button"
+            aria-label="Previous"
+            onClick={(e) => { e.stopPropagation(); setLightbox((i) => (i - 1 + photos.length) % photos.length) }}
+          >
+            <ChevronLeft size={26} />
+          </button>
+          <figure className="t-lb__fig" onClick={(e) => e.stopPropagation()}>
+            <img src={photos[lightbox].src} alt={photos[lightbox].alt} />
+            {photos[lightbox].caption ? <figcaption>{photos[lightbox].caption}</figcaption> : null}
+          </figure>
+          <button
+            className="t-lb__nav t-lb__nav--next"
+            type="button"
+            aria-label="Next"
+            onClick={(e) => { e.stopPropagation(); setLightbox((i) => (i + 1) % photos.length) }}
+          >
+            <ChevronRight size={26} />
+          </button>
+          <span className="t-lb__count">{lightbox + 1} / {photos.length}</span>
+        </div>
+      ) : null}
+    </section>
   )
 }
 
@@ -211,6 +327,9 @@ export default function Testimonials() {
           </p>
         </div>
       </section>
+
+      {/* Shared happy-traveller moments */}
+      <MomentsShowcase />
 
       {/* Agent video testimonials */}
       <AgentVoicesSection />
