@@ -26,3 +26,6 @@ anjnaglobal-deploy.zip
 
 # Local drop folder for bulk 'moments' gallery import (not committed)
 moments-drop/
+
+# Local Claude Code settings (machine-specific)
+.claude/settings.local.json

@@ -6,17 +6,22 @@
 // photos then show in /admin/galleries (Client moments), on every destination
 // page (Happy travellers) and on /testimonials.
 //
-// Usage:
-//   node scripts/importMoments.mjs                    (uses defaults below)
-//   API_BASE=https://anjnaglobal.com node scripts/importMoments.mjs
+// Usage (credentials are read from the environment, never hard-coded):
+//   ADMIN_EMAIL=admin@anjnaglobal.com ADMIN_PASSWORD=*** node scripts/importMoments.mjs
+//   API_BASE=https://anjnaglobal.com ADMIN_EMAIL=... ADMIN_PASSWORD=... node scripts/importMoments.mjs
 //
 import { readdir, readFile } from 'node:fs/promises'
 import { extname, join, basename } from 'node:path'
 
 const API_BASE = process.env.API_BASE || 'https://anjnaglobal.com'
-const EMAIL = process.env.ADMIN_EMAIL || 'admin@anjnaglobal.com'
-const PASSWORD = process.env.ADMIN_PASSWORD || 'global@4321'
+const EMAIL = process.env.ADMIN_EMAIL
+const PASSWORD = process.env.ADMIN_PASSWORD
 const DROP_DIR = process.env.DROP_DIR || 'moments-drop'
+
+if (!EMAIL || !PASSWORD) {
+  console.error('Set ADMIN_EMAIL and ADMIN_PASSWORD env vars before running.')
+  process.exit(1)
+}
 const BATCH = 15
 
 const MIME = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.gif': 'image/gif' }
