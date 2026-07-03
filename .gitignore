@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 anjnaglobal-deploy.zip
+
+# Local drop folder for bulk 'moments' gallery import (not committed)
+moments-drop/

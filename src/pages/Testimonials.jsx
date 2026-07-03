@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Camera, Star, Play, Video as VideoIcon, Sparkles, Quote, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { destinations } from '../data/destinations'
@@ -141,7 +142,7 @@ function MomentsShowcase() {
         ) : null}
       </div>
 
-      {lightbox >= 0 ? (
+      {lightbox >= 0 ? createPortal(
         <div className="t-lb" role="dialog" aria-modal="true" onClick={() => setLightbox(-1)}>
           <button className="t-lb__x" type="button" aria-label="Close" onClick={() => setLightbox(-1)}>
             <X size={22} />
@@ -167,7 +168,8 @@ function MomentsShowcase() {
             <ChevronRight size={26} />
           </button>
           <span className="t-lb__count">{lightbox + 1} / {photos.length}</span>
-        </div>
+        </div>,
+        document.body
       ) : null}
     </section>
   )

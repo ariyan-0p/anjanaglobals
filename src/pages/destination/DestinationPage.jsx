@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowRight, Calendar, MapPin, ShieldCheck, Clock, Globe, Plane, FileCheck,
@@ -414,7 +415,7 @@ function HappyTravellers({ destination }) {
         )}
       </div>
 
-      {lightbox >= 0 && (
+      {lightbox >= 0 && createPortal(
         <div className="dpx-lb" role="dialog" aria-modal="true" onClick={() => setLightbox(-1)}>
           <button type="button" className="dpx-lb__x" onClick={() => setLightbox(-1)} aria-label="Close">✕</button>
           <button type="button" className="dpx-lb__nav dpx-lb__nav--prev" onClick={(e) => { e.stopPropagation(); setLightbox((i) => (i - 1 + images.length) % images.length) }} aria-label="Previous">‹</button>
@@ -424,7 +425,8 @@ function HappyTravellers({ destination }) {
             <span className="dpx-lb__count">{lightbox + 1} / {images.length}</span>
           </figure>
           <button type="button" className="dpx-lb__nav dpx-lb__nav--next" onClick={(e) => { e.stopPropagation(); setLightbox((i) => (i + 1) % images.length) }} aria-label="Next">›</button>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   )
