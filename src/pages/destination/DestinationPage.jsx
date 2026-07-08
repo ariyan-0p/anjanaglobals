@@ -316,7 +316,7 @@ function HotelInventory({ destinationId, destinationName }) {
   return (
     <section className="dpx-section dpx-section--tint" id="dpx-hotels">
       <div className="container">
-        <Heading eyebrow="Where you'll stay" title={`${all.length} partner hotels in ${destinationName}`} sub="Direct contracts with every property — rooms held for you, no middlemen." />
+        <Heading eyebrow="Where you'll stay" title={destinationId === 'dubai' ? '150+ Hotel partners in Dubai and Abu Dhabi' : `${all.length} partner hotels in ${destinationName}`} sub="Direct contracts with every property — rooms held for you, no middlemen." />
         {hasStars && (
           <div className="dpx-pills">
             <button type="button" className={`dpx-pill${filter === 'all' ? ' is-on' : ''}`} onClick={() => setFilter('all')}>All</button>
@@ -351,11 +351,14 @@ function HappyTravellers({ destination }) {
 
   useEffect(() => {
     let alive = true
-    api.get('/galleries/moments')
+    setApiImages(null)
+    // Each destination shows its OWN client photos (per-destination bucket),
+    // not a mixed set. Manage these under Admin → Galleries → the matching tab.
+    api.get(`/galleries/${destination.id}`)
       .then((r) => alive && setApiImages(r.items || []))
       .catch(() => alive && setApiImages([]))
     return () => { alive = false }
-  }, [])
+  }, [destination.id])
 
   const images = useMemo(() => {
     if (apiImages && apiImages.length > 0) {
