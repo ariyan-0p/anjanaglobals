@@ -180,7 +180,7 @@ function TopProducts({ experiences, onQuote }) {
                 <h3>{e.name}</h3>
                 <p className="dpx-prod__meta">{[e.duration, e.includes].filter(Boolean).join(' · ')}</p>
                 <div className="dpx-prod__foot">
-                  <span className="dpx-prod__price"><span>from</span> {e.price || 'On request'}</span>
+                  <span className="dpx-prod__price"><span>Starting from</span> {e.price || 'On request'}</span>
                   <button type="button" className="dpx-btn dpx-btn--mini" onClick={() => onQuote(`Quote ${e.name}`)}>
                     Quote <ArrowRight size={12} aria-hidden />
                   </button>
