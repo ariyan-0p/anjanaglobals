@@ -34,8 +34,8 @@ const dubai = {
   accentColor: '#C9A84C',
   accentInk: '#1a1500',
   atGlance: {
-    bestMonths: 'Nov – Apr',
-    visa: 'Visa on Arrival',
+    bestMonths: 'Sept – Apr',
+    visa: 'E-visa',
     currency: 'AED',
     timezone: 'GMT +4',
     language: 'Arabic, English',
