@@ -610,9 +610,11 @@ Object.values(destinationBriefs).forEach((d) => {
       ...m,
       image: photos[i % photos.length],
     }))
+    // Experience cards keep their curated per-tour image (which actually
+    // matches the tour); only fall back to a local photo when none is set.
     d.experiences = (d.experiences || []).map((e, i) => ({
       ...e,
-      image: photos[i % photos.length],
+      image: e.image || photos[i % photos.length],
     }))
     d.pricingTiers = (d.pricingTiers || []).map((t, i) => ({
       ...t,
