@@ -17,6 +17,7 @@ const API_BASE = process.env.API_BASE || 'https://anjnaglobal.com'
 const EMAIL = process.env.ADMIN_EMAIL
 const PASSWORD = process.env.ADMIN_PASSWORD
 const DROP_DIR = process.env.DROP_DIR || 'moments-drop'
+const BUCKET = process.env.BUCKET || 'moments'
 
 if (!EMAIL || !PASSWORD) {
   console.error('Set ADMIN_EMAIL and ADMIN_PASSWORD env vars before running.')
@@ -59,7 +60,7 @@ async function main() {
       const blob = new Blob([buf], { type: MIME[extname(name).toLowerCase()] })
       form.append('images', blob, basename(name))
     }
-    const res = await fetch(`${API_BASE}/api/galleries/moments/images`, {
+    const res = await fetch(`${API_BASE}/api/galleries/${BUCKET}/images`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: form,
