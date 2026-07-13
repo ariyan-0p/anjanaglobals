@@ -351,6 +351,12 @@ function HotelInventory({ destinationId, destinationName }) {
 // ═══════════════════════════════════════════════════════════════
 const HAPPY_INITIAL = 24
 
+// Per-destination traveller counts for the "Happy travellers" subtitle
+// (marketing figures, not the number of photos we display).
+const HAPPY_TRAVELLER_COUNTS = {
+  azerbaijan: '1200+',
+}
+
 function HappyTravellers({ destination }) {
   const [apiImages, setApiImages] = useState(null)
   const [shown, setShown] = useState(HAPPY_INITIAL)
@@ -397,7 +403,9 @@ function HappyTravellers({ destination }) {
         <Heading
           eyebrow="Happy travellers"
           title="Real moments from real trips"
-          sub={`${images.length}+ travellers have explored the world with Anjna Global — here are some of their moments.`}
+          sub={HAPPY_TRAVELLER_COUNTS[destination.id]
+            ? `${HAPPY_TRAVELLER_COUNTS[destination.id]} travellers have explored ${destination.name} with Anjna Global — here are a few of their favourite moments.`
+            : `Travellers keep exploring ${destination.name} with Anjna Global — here are a few of their favourite moments.`}
         />
         <div className="dpx-mason">
           {visible.map((img, idx) => (
