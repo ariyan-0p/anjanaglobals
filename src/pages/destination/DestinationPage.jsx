@@ -354,6 +354,7 @@ const HAPPY_INITIAL = 24
 // Per-destination traveller counts for the "Happy travellers" subtitle
 // (marketing figures, not the number of photos we display).
 const HAPPY_TRAVELLER_COUNTS = {
+  dubai: '10000+',
   azerbaijan: '1200+',
 }
 
