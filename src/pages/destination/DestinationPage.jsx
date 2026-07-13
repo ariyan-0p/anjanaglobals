@@ -306,6 +306,13 @@ function Itineraries({ itineraries, destinationName, onQuote }) {
 // ═══════════════════════════════════════════════════════════════
 // HOTEL INVENTORY
 // ═══════════════════════════════════════════════════════════════
+// Curated headline overrides — show the real partner count, not just the
+// number of logos we display on the page.
+const HOTEL_HEADLINES = {
+  dubai: '150+ Hotel partners in Dubai and Abu Dhabi',
+  azerbaijan: '45+ Hotel partners in Azerbaijan',
+}
+
 function HotelInventory({ destinationId, destinationName }) {
   const all = hotelPartners[destinationId] || []
   const hasStars = all.some((h) => typeof h.stars === 'number')
@@ -316,7 +323,7 @@ function HotelInventory({ destinationId, destinationName }) {
   return (
     <section className="dpx-section dpx-section--tint" id="dpx-hotels">
       <div className="container">
-        <Heading eyebrow="Where you'll stay" title={destinationId === 'dubai' ? '150+ Hotel partners in Dubai and Abu Dhabi' : `${all.length} partner hotels in ${destinationName}`} sub="Direct contracts with every property — rooms held for you, no middlemen." />
+        <Heading eyebrow="Where you'll stay" title={HOTEL_HEADLINES[destinationId] || `${all.length} partner hotels in ${destinationName}`} sub="Direct contracts with every property — rooms held for you, no middlemen." />
         {hasStars && (
           <div className="dpx-pills">
             <button type="button" className={`dpx-pill${filter === 'all' ? ' is-on' : ''}`} onClick={() => setFilter('all')}>All</button>
