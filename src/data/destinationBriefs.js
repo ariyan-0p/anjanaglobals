@@ -315,6 +315,8 @@ const azerbaijan = {
     { key: 'gobustan', name: 'Gobustan + mud volcanoes', duration: 'Half day', includes: 'Ancient petroglyphs · short 4WD to volcanoes', price: TBD },
     { key: 'sheki', name: 'Sheki Khan Palace day trip', duration: 'Full day', includes: '3hr drive · 18th-century palace · halva tasting', price: TBD },
     { key: 'gabala', name: 'Gabala Mountain Resort', duration: 'Full / overnight', includes: 'Tufandag cable car · forest trails', price: TBD },
+    { key: 'shahdag', name: 'Shahdag + Candy Cane Mountain', duration: 'Full day', includes: 'Striped Candy Cane Mountains · Shahdag alpine resort', price: TBD },
+    { key: 'absheron', name: 'Absheron Peninsula tour', duration: 'Half day', includes: 'Yanar Dag fire mountain · Ateshgah fire temple', price: TBD },
   ],
   itineraries: [
     {
