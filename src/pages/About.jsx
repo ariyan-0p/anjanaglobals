@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle, Award, Users, Globe, Heart } from 'lucide-react'
+import EventsGallery from '../components/EventsGallery'
 
 const milestones = [
   { year: '2013', event: 'Anjna Global founded in Gurugram, India — starting with Dubai as our first destination.' },
@@ -229,6 +230,9 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* Events & Exhibitions gallery (hidden until photos are added) */}
+      <EventsGallery />
 
       {/* CTA */}
       <section style={{ padding: '80px 0', background: 'linear-gradient(135deg, #C8102E 0%, #8B0A1F 100%)' }}>

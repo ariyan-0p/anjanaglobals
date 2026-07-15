@@ -1,0 +1,125 @@
+.evg-section {
+  padding: clamp(56px, 9vw, 100px) 0;
+  background: #ffffff;
+}
+.evg-mason {
+  columns: 4 240px;
+  column-gap: 16px;
+}
+.evg-item {
+  display: block;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: zoom-in;
+  background: #eef1f5;
+  position: relative;
+  break-inside: avoid;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.evg-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
+}
+.evg-item img { display: block; width: 100%; height: auto; }
+.evg-cap {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 1.4rem 0.85rem 0.7rem;
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: left;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.evg-item:hover .evg-cap { opacity: 1; }
+.evg-more-wrap { text-align: center; margin-top: 2rem; }
+.evg-more {
+  border: 1.5px solid #27406F;
+  background: #fff;
+  color: #27406F;
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.evg-more:hover {
+  background: linear-gradient(135deg, #C8102E 0%, #27406F 100%);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Lightbox */
+.evg-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(8, 11, 20, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1rem;
+}
+.evg-lb__fig {
+  margin: 0;
+  max-width: min(1100px, 92vw);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.evg-lb__fig img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.evg-lb__fig figcaption {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  margin-top: 0.85rem;
+  text-align: center;
+}
+.evg-lb__x,
+.evg-lb__nav {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.12);
+  border: 0;
+  color: #fff;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.evg-lb__x:hover,
+.evg-lb__nav:hover { background: rgba(255, 255, 255, 0.25); }
+.evg-lb__x { top: 1.25rem; right: 1.25rem; }
+.evg-lb__nav { top: 50%; transform: translateY(-50%); }
+.evg-lb__nav--prev { left: 1.25rem; }
+.evg-lb__nav--next { right: 1.25rem; }
+.evg-lb__count {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+@media (max-width: 640px) {
+  .evg-mason { columns: 2 150px; column-gap: 10px; }
+  .evg-item { margin-bottom: 10px; }
+  .evg-lb__nav { width: 40px; height: 40px; }
+  .evg-lb__nav--prev { left: 0.5rem; }
+  .evg-lb__nav--next { right: 0.5rem; }
+}
