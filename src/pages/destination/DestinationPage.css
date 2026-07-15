@@ -856,3 +856,143 @@
 @media (prefers-reduced-motion: reduce) {
   .dpx-hero__bg { animation: none; }
 }
+
+/* ---- Rich itinerary / package card ---- */
+.dpx-itin__bestfor {
+  margin: -0.25rem 0 0.5rem;
+  color: #475569;
+  font-style: italic;
+  font-size: 0.92rem;
+}
+.dpx-itin__block { margin-top: 1.5rem; }
+.dpx-itin__h {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dp-accent, #C8102E);
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+.dpx-itin__fine { margin-top: 0.6rem; font-size: 0.78rem; color: #94a3b8; }
+
+/* Hotel rate table */
+.dpx-hoteltable {
+  border: 1px solid #e7ebf1;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.dpx-hoteltable__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  background: #fff;
+}
+.dpx-hoteltable__row:nth-child(even) { background: #f8fafc; }
+.dpx-hoteltable__name { font-weight: 600; color: #1e293b; }
+.dpx-hoteltable__stars { color: #d4a017; font-style: normal; font-size: 0.85em; }
+.dpx-hoteltable__price {
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--dp-accent, #C8102E);
+}
+
+/* Day-by-day expandable tabs */
+.dpx-daytabs { display: flex; flex-direction: column; gap: 0.6rem; }
+.dpx-day {
+  border: 1px solid #e7ebf1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.dpx-day.is-open { border-color: color-mix(in srgb, var(--dp-accent, #C8102E) 40%, #e7ebf1); }
+.dpx-day__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.dpx-day__badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--dpx-grad, linear-gradient(135deg, #C8102E, #27406F));
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+.dpx-day__title { flex: 1; color: #1e293b; font-size: 0.98rem; }
+.dpx-day__chev { color: #94a3b8; transition: transform 0.2s ease; }
+.dpx-day.is-open .dpx-day__chev { transform: rotate(180deg); }
+.dpx-day__body { padding: 0 1rem 1rem; }
+.dpx-day__body > p { color: #475569; line-height: 1.6; margin: 0 0 0.7rem; }
+.dpx-day__hl {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.dpx-day__hl li {
+  font-size: 0.82rem;
+  color: #334155;
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+}
+.dpx-day__overnight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0.4rem 0 0;
+  font-weight: 600;
+}
+
+/* Includes / excludes / tickets columns */
+.dpx-itin__cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.dpx-inclist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+.dpx-inclist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #334155;
+}
+.dpx-inclist--yes svg { color: #16a34a; flex-shrink: 0; margin-top: 2px; }
+.dpx-inclist--tix svg { color: var(--dp-accent, #C8102E); flex-shrink: 0; margin-top: 2px; }
+.dpx-inclist--no li { color: #64748b; padding-left: 1.1rem; position: relative; }
+.dpx-inclist--no li::before {
+  content: '✕';
+  position: absolute;
+  left: 0;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+/* Why-choose chips */
+.dpx-why { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.dpx-why__chip {
+  font-size: 0.82rem;
+  color: #27406F;
+  background: color-mix(in srgb, #27406F 8%, #fff);
+  border: 1px solid color-mix(in srgb, #27406F 18%, #fff);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+}

@@ -229,20 +229,34 @@ function Tiers({ tiers, onQuote }) {
 // ═══════════════════════════════════════════════════════════════
 function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen)
+  const [openDay, setOpenDay] = useState(itinerary.days?.[0]?.day ?? null)
   const [copied, setCopied] = useState(false)
+
+  const isRich = !!(itinerary.hotels?.length || itinerary.includes?.length || itinerary.overview)
 
   function buildCopyText() {
     const l = []
     l.push(`${destinationName ? destinationName + ' — ' : ''}${itinerary.name}`)
-    l.push(`${itinerary.nights} · ${itinerary.hotelCategory || ''}`)
-    if (itinerary.price) l.push(`Starting partner rate: ${itinerary.price}`)
+    l.push(`${itinerary.nights}${itinerary.price ? ` · Starting from ${itinerary.price}` : ''}`)
     l.push('')
-    if (itinerary.summary) { l.push(itinerary.summary); l.push('') }
+    if (itinerary.overview) { l.push(itinerary.overview); l.push('') }
+    else if (itinerary.summary) { l.push(itinerary.summary); l.push('') }
+    if (itinerary.hotels?.length) {
+      l.push('HOTEL OPTIONS')
+      itinerary.hotels.forEach((h) => l.push(`• ${h.name}${h.stars ? ` (${h.stars}★)` : ''} — Starting from ${h.price}`))
+      l.push('')
+    }
+    l.push('ITINERARY')
     itinerary.days?.forEach((d) => {
       l.push(`Day ${d.day} — ${d.title}`)
+      if (d.desc) l.push(d.desc)
       d.items?.forEach((it) => l.push(`• ${it}`))
+      if (d.overnight) l.push(`Overnight: ${d.overnight}`)
       l.push('')
     })
+    if (itinerary.includes?.length) { l.push('PACKAGE INCLUDES'); itinerary.includes.forEach((it) => l.push(`✔ ${it}`)); l.push('') }
+    if (itinerary.entryTickets?.length) { l.push('ENTRY TICKETS INCLUDED'); itinerary.entryTickets.forEach((it) => l.push(`• ${it}`)); l.push('') }
+    if (itinerary.excludes?.length) { l.push('EXCLUDES'); itinerary.excludes.forEach((it) => l.push(`✘ ${it}`)); l.push('') }
     l.push('— Quote prepared by Anjna Global · anjnaglobal.com')
     return l.join('\n')
   }
@@ -251,7 +265,7 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
   }
 
   return (
-    <article className={`dpx-itin${open ? ' is-open' : ''}`}>
+    <article className={`dpx-itin${open ? ' is-open' : ''}${isRich ? ' dpx-itin--rich' : ''}`}>
       <button type="button" className="dpx-itin__sum" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
         <div className="dpx-itin__title">
           <strong>{itinerary.name}</strong>
@@ -264,18 +278,106 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
       </button>
       {open && (
         <div className="dpx-itin__body">
-          {itinerary.summary && <p className="dpx-itin__lead">{itinerary.summary}</p>}
-          <ol className="dpx-itin__days">
-            {itinerary.days?.map((d) => (
-              <li key={d.day}>
-                <span className="dpx-itin__day">Day {d.day}</span>
-                <div><strong>{d.title}</strong><ul>{d.items?.map((it) => <li key={it}>{it}</li>)}</ul></div>
-              </li>
-            ))}
-          </ol>
+          {itinerary.overview && <p className="dpx-itin__lead">{itinerary.overview}</p>}
+          {!itinerary.overview && itinerary.summary && <p className="dpx-itin__lead">{itinerary.summary}</p>}
+          {itinerary.bestFor && <p className="dpx-itin__bestfor">{itinerary.bestFor}</p>}
+
+          {itinerary.hotels?.length > 0 && (
+            <div className="dpx-itin__block">
+              <h4 className="dpx-itin__h">Hotel options & rates</h4>
+              <div className="dpx-hoteltable">
+                {itinerary.hotels.map((h) => (
+                  <div key={h.name} className="dpx-hoteltable__row">
+                    <span className="dpx-hoteltable__name">{h.name}{h.stars ? <em className="dpx-hoteltable__stars"> {'★'.repeat(h.stars)}</em> : null}</span>
+                    <span className="dpx-hoteltable__price">from {h.price}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="dpx-itin__fine">Rates are per person on twin sharing, indicative — final quote confirmed on request.</p>
+            </div>
+          )}
+
+          <div className="dpx-itin__block">
+            <h4 className="dpx-itin__h">Day-by-day itinerary</h4>
+            {isRich ? (
+              <div className="dpx-daytabs">
+                {itinerary.days?.map((d) => {
+                  const dopen = openDay === d.day
+                  return (
+                    <div key={d.day} className={`dpx-day${dopen ? ' is-open' : ''}`}>
+                      <button type="button" className="dpx-day__head" onClick={() => setOpenDay(dopen ? null : d.day)} aria-expanded={dopen}>
+                        <span className="dpx-day__badge">Day {d.day}</span>
+                        <strong className="dpx-day__title">{d.title}</strong>
+                        <ChevronDown size={16} className="dpx-day__chev" aria-hidden />
+                      </button>
+                      {dopen && (
+                        <div className="dpx-day__body">
+                          {d.desc && <p>{d.desc}</p>}
+                          {d.items?.length > 0 && (
+                            <ul className="dpx-day__hl">
+                              {d.items.map((it) => <li key={it}>{it}</li>)}
+                            </ul>
+                          )}
+                          {d.overnight && <p className="dpx-day__overnight"><MapPin size={13} aria-hidden /> Overnight stay: {d.overnight}</p>}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <ol className="dpx-itin__days">
+                {itinerary.days?.map((d) => (
+                  <li key={d.day}>
+                    <span className="dpx-itin__day">Day {d.day}</span>
+                    <div><strong>{d.title}</strong><ul>{d.items?.map((it) => <li key={it}>{it}</li>)}</ul></div>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+
+          {(itinerary.includes?.length > 0 || itinerary.excludes?.length > 0 || itinerary.entryTickets?.length > 0) && (
+            <div className="dpx-itin__cols">
+              {itinerary.includes?.length > 0 && (
+                <div className="dpx-itin__block">
+                  <h4 className="dpx-itin__h">Package includes</h4>
+                  <ul className="dpx-inclist dpx-inclist--yes">
+                    {itinerary.includes.map((it) => <li key={it}><Check size={14} aria-hidden /> {it}</li>)}
+                  </ul>
+                </div>
+              )}
+              {itinerary.entryTickets?.length > 0 && (
+                <div className="dpx-itin__block">
+                  <h4 className="dpx-itin__h">Entry tickets included</h4>
+                  <ul className="dpx-inclist dpx-inclist--tix">
+                    {itinerary.entryTickets.map((it) => <li key={it}><Ticket size={14} aria-hidden /> {it}</li>)}
+                  </ul>
+                </div>
+              )}
+              {itinerary.excludes?.length > 0 && (
+                <div className="dpx-itin__block">
+                  <h4 className="dpx-itin__h">Excludes</h4>
+                  <ul className="dpx-inclist dpx-inclist--no">
+                    {itinerary.excludes.map((it) => <li key={it}>{it}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {itinerary.whyChoose?.length > 0 && (
+            <div className="dpx-itin__block">
+              <h4 className="dpx-itin__h">Why this package works</h4>
+              <div className="dpx-why">
+                {itinerary.whyChoose.map((w) => <span key={w} className="dpx-why__chip">{w}</span>)}
+              </div>
+            </div>
+          )}
+
           <div className="dpx-itin__act">
             <button type="button" className="dpx-btn dpx-btn--glass-dark dpx-btn--mini" onClick={copy}>
-              {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy itinerary'}
+              {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy package'}
             </button>
             <button type="button" className="dpx-btn dpx-btn--grad dpx-btn--mini" onClick={() => onQuote(`Quote ${itinerary.name}`)}>
               Request quote <ArrowRight size={13} aria-hidden />
