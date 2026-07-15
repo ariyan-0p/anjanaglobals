@@ -336,7 +336,7 @@ const azerbaijan = {
   tripTypes: placeholderTripTypes(['old-city', 'flame-towers', 'gobustan', 'sheki', 'gabala'], 'classic'),
   trustPoints: [
     { title: 'Local Azeri ground team', desc: 'Native-language operators handle every transfer and pickup.' },
-    { title: 'Hotel inventory across Baku + mountains', desc: 'Direct contracts with 9 properties from city centre to Shahdag.' },
+    { title: 'Hotel inventory across Baku + mountains', desc: 'Direct contracts with 45+ properties from Baku city centre to Shahdag.' },
     { title: 'Visa handling included', desc: 'We process the e-visa for you — you only share passport scans.' },
   ],
   quoteIntent: 'Azerbaijan',
