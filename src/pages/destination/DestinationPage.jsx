@@ -460,6 +460,11 @@ const HAPPY_TRAVELLER_COUNTS = {
   azerbaijan: '1200+',
 }
 
+// Full per-destination subtitle overrides (win over the generic count line).
+const HAPPY_SUBTITLES = {
+  azerbaijan: '1200+ travellers explore Baku with us every month — and have done since we launched in 2022. Here are a few of their favourite moments.',
+}
+
 function HappyTravellers({ destination }) {
   const [apiImages, setApiImages] = useState(null)
   const [shown, setShown] = useState(HAPPY_INITIAL)
@@ -506,9 +511,10 @@ function HappyTravellers({ destination }) {
         <Heading
           eyebrow="Happy travellers"
           title="Real moments from real trips"
-          sub={HAPPY_TRAVELLER_COUNTS[destination.id]
-            ? `${HAPPY_TRAVELLER_COUNTS[destination.id]} travellers have explored ${destination.name} with Anjna Global — here are a few of their favourite moments.`
-            : `Travellers keep exploring ${destination.name} with Anjna Global — here are a few of their favourite moments.`}
+          sub={HAPPY_SUBTITLES[destination.id]
+            || (HAPPY_TRAVELLER_COUNTS[destination.id]
+              ? `${HAPPY_TRAVELLER_COUNTS[destination.id]} travellers have explored ${destination.name} with Anjna Global — here are a few of their favourite moments.`
+              : `Travellers keep exploring ${destination.name} with Anjna Global — here are a few of their favourite moments.`)}
         />
         <div className="dpx-mason">
           {visible.map((img, idx) => (
