@@ -462,6 +462,7 @@ const HAPPY_TRAVELLER_COUNTS = {
 
 // Full per-destination subtitle overrides (win over the generic count line).
 const HAPPY_SUBTITLES = {
+  dubai: '1 lakh+ travellers have explored Dubai with us since 2013 — here are a few of their favourite moments.',
   azerbaijan: '1200+ travellers explore Baku with us every month — and have done since we launched in 2022. Here are a few of their favourite moments.',
 }
 
