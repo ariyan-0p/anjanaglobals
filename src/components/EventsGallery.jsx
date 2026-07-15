@@ -12,9 +12,9 @@ function absoluteUrl(url) {
 
 const INITIAL = 12
 
-// Events & Exhibitions gallery for the About page. Reads the shared
-// 'events' gallery bucket (managed in Admin → Galleries → Events).
-// Renders nothing until the bucket has photos.
+// Events & Exhibitions gallery for the About page. Reuses the shared
+// 'moments' bucket (same photos as the /testimonials page), managed in
+// Admin → Galleries → Client moments. Renders nothing until it has photos.
 export default function EventsGallery() {
   const [items, setItems] = useState(null)
   const [shown, setShown] = useState(INITIAL)
@@ -22,7 +22,7 @@ export default function EventsGallery() {
 
   useEffect(() => {
     let alive = true
-    api.get('/galleries/events')
+    api.get('/galleries/moments')
       .then((r) => alive && setItems(r.items || []))
       .catch(() => alive && setItems([]))
     return () => { alive = false }
