@@ -996,3 +996,9 @@
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
 }
+
+.dpx-why__chip--addon {
+  color: #C8102E;
+  background: color-mix(in srgb, #C8102E 7%, #fff);
+  border-color: color-mix(in srgb, #C8102E 20%, #fff);
+}

@@ -375,6 +375,16 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
             </div>
           )}
 
+          {itinerary.addOns?.length > 0 && (
+            <div className="dpx-itin__block">
+              <h4 className="dpx-itin__h">Optional add-ons</h4>
+              <p className="dpx-itin__fine" style={{ marginTop: 0, marginBottom: '0.6rem' }}>Extend this package with any of the below — just add them to your quote request.</p>
+              <div className="dpx-why">
+                {itinerary.addOns.map((a) => <span key={a} className="dpx-why__chip dpx-why__chip--addon">{a}</span>)}
+              </div>
+            </div>
+          )}
+
           <div className="dpx-itin__act">
             <button type="button" className="dpx-btn dpx-btn--glass-dark dpx-btn--mini" onClick={copy}>
               {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy package'}
