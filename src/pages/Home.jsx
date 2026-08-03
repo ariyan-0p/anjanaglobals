@@ -235,7 +235,11 @@ export default function Home() {
     intervalRef.current = setInterval(() => setCurrentSlide(s => (s + 1) % heroSlides.length), 6000)
   }
 
-  const featuredPackages = packages.slice(0, 3)
+  // B2B / agent specials lead the section, then the retail favourites.
+  const featuredPackages = [
+    ...packages.filter((p) => p.b2b),
+    ...packages.filter((p) => !p.b2b).slice(0, 3),
+  ]
 
   const handleHomeQuerySubmit = async (e) => {
     e.preventDefault()
@@ -776,12 +780,12 @@ function PackageCard({ pkg }) {
           <MapPin size={13} color="#6B7280" aria-hidden />
           <span style={{ fontWeight: 600 }}>{pkg.destinationName}</span>
           <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            <Clock size={12} aria-hidden /> {pkg.duration}
+            {pkg.landOnly ? <Sparkles size={12} aria-hidden /> : <Clock size={12} aria-hidden />} {pkg.duration}
           </span>
         </div>
         <h3>{pkg.title}</h3>
         <div className="home-card-pkg__highlights">
-          {pkg.highlights.slice(0, 3).map(h => (
+          {pkg.highlights.slice(0, pkg.maxHighlights || 3).map(h => (
             <div key={h}>
               <CheckCircle size={13} color="#10B981" aria-hidden />
               <span>{h}</span>

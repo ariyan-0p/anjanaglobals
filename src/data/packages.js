@@ -1,4 +1,101 @@
+import dubaiAgentImg from '../assets/destinations/dubai/08.jpg'
+import azerbaijanB2bImg from '../assets/destinations/azerbaijan/02.jpg'
+import singaporeSaverImg from '../assets/destinations/singapore/02.jpg'
+
 export const packages = [
+  // ── B2B / travel-agent specials (featured on the homepage) ──────
+  // Rates quoted in USD/SGD as supplied by the sales desk. Dubai and
+  // Singapore are ground-services packages (transfers + tours, no hotel);
+  // Azerbaijan includes 4 nights' accommodation.
+  {
+    id: 'dubai-agent-special',
+    destination: 'dubai',
+    destinationName: 'Dubai',
+    title: "Dubai Classic — Travel Agent's Special",
+    duration: 'Land services only',
+    landOnly: true,
+    b2b: true,
+    price: 'USD 99',
+    priceNote: 'per person · no hotel included',
+    image: dubaiAgentImg,
+    highlights: [
+      'Return Airport Transfers',
+      'DXB City Tour',
+      'Desert Safari with BBQ Dinner',
+      'Marina Dhow Cruise Dinner',
+    ],
+    inclusions: [
+      'Return airport transfers',
+      'Dubai city tour',
+      'Desert safari with BBQ dinner',
+      'Marina dhow cruise with dinner',
+    ],
+    maxHighlights: 4,
+    tag: "Travel Agent's Special",
+    tagColor: '#C8102E',
+    category: 'group',
+    type: 'B2B Ground Package',
+  },
+  {
+    id: 'azerbaijan-escape-b2b',
+    destination: 'azerbaijan',
+    destinationName: 'Azerbaijan',
+    title: 'Azerbaijan Escape — Most Selling B2B Package',
+    duration: '5 Days / 4 Nights',
+    nights: 4,
+    b2b: true,
+    price: 'USD 175',
+    priceNote: 'per person (twin sharing)',
+    image: azerbaijanB2bImg,
+    highlights: [
+      'Arrival',
+      'Baku City Tour',
+      'Gobustan and Mud Volcano Tour',
+      'Gabala Day Tour with Cable Car',
+      'Departure',
+    ],
+    inclusions: [
+      'Hotel accommodation with breakfast',
+      'Airport round transfers',
+      'Baku city tour',
+      'Gobustan and mud volcano tour',
+      'Gabala day tour with cable car',
+    ],
+    maxHighlights: 5,
+    tag: 'Most Selling B2B',
+    tagColor: '#0092BC',
+    category: 'group',
+    type: 'B2B Package',
+  },
+  {
+    id: 'singapore-super-saver',
+    destination: 'singapore',
+    destinationName: 'Singapore',
+    title: 'Singapore Super Saver',
+    duration: 'Land services only',
+    landOnly: true,
+    b2b: true,
+    price: 'SGD 199',
+    priceNote: 'per person · no hotel included',
+    image: singaporeSaverImg,
+    highlights: [
+      'Airport Transfers',
+      'City Tour with Singapore Flyer',
+      'Night Safari',
+      'Sentosa Cable Car + Wings of Time combo',
+    ],
+    inclusions: [
+      'Airport transfers',
+      'City tour with Singapore Flyer',
+      'Night Safari',
+      'Sentosa cable car and Wings of Time combo',
+    ],
+    maxHighlights: 4,
+    tag: 'Super Saver',
+    tagColor: '#EF4444',
+    category: 'group',
+    type: 'B2B Ground Package',
+  },
   {
     id: 'dubai-classic',
     destination: 'dubai',
