@@ -13,8 +13,15 @@ import heroImgBali from '../assets/Bali.jpg'
 import heroImgSingapore from '../assets/singapore.jpg'
 import heroImgBaku from '../assets/baku.jpg'
 import heroImgKualaLumpur from '../assets/Kualalumpur.jpg'
+import dubaiMarinaDusk from '../assets/destinations/dubai/03.jpg'
 import { api, apiBase } from '../lib/api'
 import './Home.css'
+
+// Per-destination override for the "Client moments" card image only
+// (does not affect destination-page gallery order or heroes).
+const MOMENT_IMAGE_OVERRIDE = {
+  dubai: dubaiMarinaDusk,
+}
 
 function absoluteUrl(url) {
   if (!url) return ''
@@ -109,7 +116,7 @@ const homeMoments = destinations.map((dest) => ({
   flag: dest.flag,
   country: dest.country,
   tagline: dest.tagline,
-  image: dest.galleryImages?.[0] || dest.image,
+  image: MOMENT_IMAGE_OVERRIDE[dest.id] || dest.galleryImages?.[0] || dest.image,
 }))
 
 function useCounter(target, enabled, isVisible) {
