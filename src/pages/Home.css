@@ -1330,6 +1330,9 @@
 }
 
 .home-card-pkg {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border-radius: var(--home-radius);
   overflow: hidden;
   background: rgba(255, 255, 255, 0.92);
@@ -1365,6 +1368,7 @@
 .home-card-pkg__img {
   position: relative;
   height: 190px;
+  flex-shrink: 0;
   overflow: hidden;
 }
 
@@ -1393,6 +1397,9 @@
 
 .home-card-pkg__body {
   padding: 1.35rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .home-card-pkg__meta {
@@ -1413,8 +1420,11 @@
   line-height: 1.35;
 }
 
+/* Absorbs leftover space so the price + Enquire footer stays pinned to the
+   card bottom and lines up across cards with differing inclusion counts. */
 .home-card-pkg__highlights {
   margin-bottom: 1.1rem;
+  flex: 1;
 }
 
 .home-card-pkg__highlights > div {
@@ -1431,6 +1441,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
+  margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid var(--gray-light);
 }
