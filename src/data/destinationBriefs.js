@@ -16,6 +16,7 @@
 
 import bakuLocal from '../assets/baku.jpg'
 import kualalumpurLocal from '../assets/Kualalumpur.jpg'
+import { packages } from './packages'
 
 const TBD = 'On request'
 
@@ -755,6 +756,46 @@ Object.values(destinationBriefs).forEach((d) => {
     d.experiences = (d.experiences || []).map((e) => ({ ...e, image: undefined }))
     d.pricingTiers = (d.pricingTiers || []).map((t) => ({ ...t, image: undefined }))
   }
+})
+
+// ── Single source of truth for package headline facts ──────────
+// packages.js owns every package's title, duration and price. Here we:
+//   1. overwrite the linked rich itinerary's headline facts with the
+//      canonical ones, so a price can never disagree between the
+//      destination page and the homepage / packages page; and
+//   2. append any B2B package for this destination that has no rich
+//      itinerary, so the destination page lists the same catalogue.
+// Retail ₹ packages are deliberately excluded — they stay on /packages.
+Object.values(destinationBriefs).forEach((d) => {
+  const destPackages = packages.filter((p) => p.destination === d.id && p.b2b)
+  const itineraries = d.itineraries || []
+
+  // All these rates are per person, and the destination page shows the bare
+  // `price` string, so re-attach the "PP" marker the cards there expect.
+  const perPax = (pkg) => `${pkg.price} PP`
+
+  const synced = itineraries.map((it) => {
+    const pkg = destPackages.find((p) => p.briefKey && p.briefKey === it.key)
+    if (!pkg) return it
+    return { ...it, name: pkg.title, price: perPax(pkg) }
+  })
+
+  const extras = destPackages
+    .filter((p) => !p.briefKey && !itineraries.some((it) => it.key === p.id))
+    .map((p) => ({
+      key: p.id,
+      name: p.title,
+      nights: p.duration,
+      price: perPax(p),
+      summary: p.landOnly
+        ? 'Ground services only — transfers and tours, no accommodation.'
+        : undefined,
+      includes: p.inclusions,
+      days: p.days,
+    }))
+
+  // Rich, day-by-day packages first; service bundles after.
+  d.itineraries = [...synced, ...extras]
 })
 
 export function getDestinationBrief(id) {

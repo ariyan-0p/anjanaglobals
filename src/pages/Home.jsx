@@ -237,7 +237,7 @@ export default function Home() {
 
   // B2B / agent specials lead the section, then the retail favourites.
   const featuredPackages = [
-    ...packages.filter((p) => p.b2b),
+    ...packages.filter((p) => p.homeFeatured),
     ...packages.filter((p) => !p.b2b).slice(0, 3),
   ]
 

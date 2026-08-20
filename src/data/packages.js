@@ -1,7 +1,20 @@
 import dubaiAgentImg from '../assets/destinations/dubai/08.jpg'
 import azerbaijanB2bImg from '../assets/destinations/azerbaijan/02.jpg'
 import singaporeSaverImg from '../assets/destinations/singapore/02.jpg'
+import dubaiBestSellerImg from '../assets/destinations/dubai/05.jpg'
+import azerbaijanClassicImg from '../assets/destinations/azerbaijan/03.jpg'
 
+// This file is the single source of truth for every package's headline
+// facts (title, duration, price). Destination pages render the rich
+// day-by-day detail from destinationBriefs.js, but inherit those headline
+// facts from here via `briefKey` — so a price can only ever be changed in
+// one place and the two pages cannot disagree.
+//
+// Flags:
+//   b2b          — a B2B/agent product; also listed on its destination page
+//   homeFeatured — shown in the homepage "Popular journeys" grid
+//   briefKey     — key of the matching rich itinerary in destinationBriefs.js
+//   landOnly     — ground services only (transfers + tours, no hotel)
 export const packages = [
   // ── B2B / travel-agent specials (featured on the homepage) ──────
   // Rates quoted in USD/SGD as supplied by the sales desk. Dubai and
@@ -15,6 +28,7 @@ export const packages = [
     duration: 'Land services only',
     landOnly: true,
     b2b: true,
+    homeFeatured: true,
     price: 'USD 99',
     priceNote: 'per person · no hotel included',
     image: dubaiAgentImg,
@@ -44,6 +58,7 @@ export const packages = [
     duration: '5 Days / 4 Nights',
     nights: 4,
     b2b: true,
+    homeFeatured: true,
     price: 'USD 175',
     priceNote: 'per person (twin sharing)',
     image: azerbaijanB2bImg,
@@ -61,6 +76,14 @@ export const packages = [
       'Gobustan and mud volcano tour',
       'Gabala day tour with cable car',
     ],
+    // Day-wise plan exactly as supplied by the sales desk.
+    days: [
+      { day: 1, title: 'Arrival' },
+      { day: 2, title: 'Baku City Tour' },
+      { day: 3, title: 'Gobustan and Mud Volcano Tour' },
+      { day: 4, title: 'Gabala Day Tour with Cable Car' },
+      { day: 5, title: 'Departure' },
+    ],
     maxHighlights: 5,
     tag: 'Most Selling B2B',
     tagColor: '#0092BC',
@@ -75,6 +98,7 @@ export const packages = [
     duration: 'Land services only',
     landOnly: true,
     b2b: true,
+    homeFeatured: true,
     price: 'SGD 199',
     priceNote: 'per person · no hotel included',
     image: singaporeSaverImg,
@@ -95,6 +119,72 @@ export const packages = [
     tagColor: '#EF4444',
     category: 'group',
     type: 'B2B Ground Package',
+  },
+  // ── Full B2B packages whose day-by-day detail lives in
+  // destinationBriefs.js (linked by briefKey). Prices here are canonical;
+  // the destination page inherits them.
+  {
+    id: 'dubai-best-seller',
+    destination: 'dubai',
+    destinationName: 'Dubai',
+    title: 'Dubai Best Seller Package',
+    duration: '6 Days / 5 Nights',
+    nights: 5,
+    b2b: true,
+    briefKey: 'best-seller',
+    price: 'USD 450',
+    priceNote: 'per person · 3★ twin sharing',
+    image: dubaiBestSellerImg,
+    highlights: [
+      'Marina Dhow Cruise Dinner',
+      'Dubai City Tour & Burj Khalifa (124th Floor)',
+      'Desert Safari with BBQ Dinner',
+      'Miracle Garden & Global Village',
+      'Full-Day Abu Dhabi City Tour',
+    ],
+    inclusions: [
+      'Hotel accommodation with breakfast',
+      'All airport and sightseeing transfers',
+      'Burj Khalifa 124th floor entry',
+      'Desert safari with BBQ dinner',
+      'Abu Dhabi city tour with Grand Mosque',
+    ],
+    maxHighlights: 5,
+    tag: 'Best Seller',
+    tagColor: '#B8963E',
+    category: 'group',
+    type: 'B2B Package',
+  },
+  {
+    id: 'azerbaijan-classic-tour',
+    destination: 'azerbaijan',
+    destinationName: 'Azerbaijan',
+    title: 'Azerbaijan Classic Tour Package',
+    duration: '5 Days / 4 Nights',
+    nights: 4,
+    b2b: true,
+    briefKey: 'classic',
+    price: 'USD 270',
+    priceNote: 'per person · 3★ twin sharing',
+    image: azerbaijanClassicImg,
+    highlights: [
+      'Baku City Tour & Old City Experience',
+      'Absheron Peninsula Tour & Shopping',
+      'Gobustan National Park & Mud Volcano',
+      'Burning Mountain (Yanar Dag)',
+    ],
+    inclusions: [
+      'Hotel accommodation with breakfast',
+      'Airport round transfers',
+      'Baku city tour with UNESCO Old City',
+      'Absheron peninsula tour',
+      'Gobustan National Park and mud volcanoes',
+    ],
+    maxHighlights: 4,
+    tag: 'Most Popular',
+    tagColor: '#0092BC',
+    category: 'group',
+    type: 'B2B Package',
   },
   {
     id: 'dubai-classic',

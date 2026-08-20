@@ -297,6 +297,7 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
             </div>
           )}
 
+          {itinerary.days?.length > 0 && (
           <div className="dpx-itin__block">
             <h4 className="dpx-itin__h">Day-by-day itinerary</h4>
             {isRich ? (
@@ -336,6 +337,7 @@ function ItineraryCard({ itinerary, destinationName, onQuote, defaultOpen = fals
               </ol>
             )}
           </div>
+          )}
 
           {(itinerary.includes?.length > 0 || itinerary.excludes?.length > 0 || itinerary.entryTickets?.length > 0) && (
             <div className="dpx-itin__cols">
