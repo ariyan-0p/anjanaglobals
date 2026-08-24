@@ -14,13 +14,22 @@ import heroImgSingapore from '../assets/singapore.jpg'
 import heroImgBaku from '../assets/baku.jpg'
 import heroImgKualaLumpur from '../assets/Kualalumpur.jpg'
 import dubaiMarinaDusk from '../assets/destinations/dubai/03.jpg'
+import bakuOldCityFlameTowers from '../assets/destinations/azerbaijan/03.jpg'
+import sgSupertreeGrove from '../assets/destinations/singapore/05.jpg'
+import myBlueMosque from '../assets/destinations/malaysia/03.jpg'
+import baliTempleGates from '../assets/destinations/bali/03.jpg'
 import { api, apiBase } from '../lib/api'
 import './Home.css'
 
 // Per-destination override for the "Client moments" card image only
 // (does not affect destination-page gallery order or heroes).
+// Each shot is chosen to match that destination's tagline.
 const MOMENT_IMAGE_OVERRIDE = {
-  dubai: dubaiMarinaDusk,
+  dubai: dubaiMarinaDusk,          // Marina at dusk — "Where Dreams Touch the Sky"
+  azerbaijan: bakuOldCityFlameTowers, // Old City + Flame Towers — "Land of Fire & Heritage"
+  singapore: sgSupertreeGrove,     // Supertree Grove — "The Garden City of Asia"
+  malaysia: myBlueMosque,          // Blue Mosque — "Truly Asia — Infinitely Diverse"
+  bali: baliTempleGates,           // Temple gates — "Island of the Gods"
 }
 
 function absoluteUrl(url) {
