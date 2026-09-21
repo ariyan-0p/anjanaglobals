@@ -304,7 +304,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Anjna Global. All rights reserved. |{' '}
             <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.25)' }}>Fabulously Planned... Remembered Always</span>
           </p>
-          <div style={{ display: 'flex', gap: isMobile ? '12px' : '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
             {['Privacy Policy', 'Terms of Service', 'Sitemap'].map(item => (
               <Link
                 key={item}
@@ -316,6 +316,16 @@ export default function Footer() {
                 {item}
               </Link>
             ))}
+            <a
+              href="https://ariyan-0p.github.io/Ariyan-portlio/"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
+            >
+              Powered by <span style={{ color: '#6FCF97', fontWeight: 600 }}>Ariyan Samal</span>
+            </a>
           </div>
         </div>
       </div>
