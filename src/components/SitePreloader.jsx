@@ -10,10 +10,18 @@ export default function SitePreloader() {
   useEffect(() => {
     const onLoaded = () => setSiteLoaded(true)
 
+    // The window `load` event waits for every image, video and third-party tag,
+    // so on a slow connection it can hold the preloader at 96% for ages. Release
+    // once fonts are ready, or after a hard cap, whichever comes first.
+    const MAX_WAIT_MS = 2500
+    const cap = window.setTimeout(onLoaded, MAX_WAIT_MS)
+    if (document.fonts?.ready) document.fonts.ready.then(onLoaded)
+
     if (document.readyState === 'complete') onLoaded()
     else window.addEventListener('load', onLoaded, { once: true })
 
     return () => {
+      window.clearTimeout(cap)
       window.removeEventListener('load', onLoaded)
     }
   }, [])
@@ -25,7 +33,7 @@ export default function SitePreloader() {
       setProgress((prev) => {
         const cap = siteLoaded ? 100 : 96
         if (prev >= cap) return cap
-        return prev + 1
+        return Math.min(cap, prev + (siteLoaded ? 4 : 1))
       })
     }, 22)
 
