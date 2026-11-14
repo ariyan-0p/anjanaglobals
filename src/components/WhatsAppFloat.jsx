@@ -1,13 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { X, MessageCircle } from 'lucide-react'
 import './WhatsAppFloat.css'
 
 export default function WhatsAppFloat() {
   const [show, setShow] = useState(false)
   const [tooltip, setTooltip] = useState(true)
+  const [away, setAway] = useState(false)
+
+  // On phones the button tucks away while reading down the page, so it never sits on top
+  // of a package's Enquire button; it comes back as soon as you scroll up.
+  useEffect(() => {
+    let last = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      const dy = y - last
+      if (window.innerWidth <= 768) {
+        if (dy > 6 && y > 200) setAway(true)
+        else if (dy < -6 || y < 200) setAway(false)
+      } else setAway(false)
+      last = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <div className="wa">
+    <div className={`wa${away && !show ? ' is-away' : ''}`}>
       {tooltip && !show && (
         <div className="wa__tip">
           <button type="button" onClick={() => setTooltip(false)} aria-label="Dismiss"><X size={12} /></button>

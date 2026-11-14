@@ -744,6 +744,16 @@ export default function DestinationPage() {
   const brief = getDestinationBrief(slug)
   const [quoteIntent, setQuoteIntent] = useState('')
   const quoteRef = useRef(null)
+  const [barHidden, setBarHidden] = useState(false)
+
+  // The floating quote bar duplicates the form's own button, so hide it while the form is on screen.
+  useEffect(() => {
+    const el = quoteRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined
+    const io = new IntersectionObserver(([entry]) => setBarHidden(entry.isIntersecting), { threshold: 0.12 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [destination?.id])
 
   useEffect(() => {
     if (!destination) navigate('/destinations', { replace: true })
@@ -787,7 +797,7 @@ export default function DestinationPage() {
       <Faq city={destination.name} />
       <QuoteSection destination={destination} intent={quoteIntent} sectionRef={quoteRef} />
 
-      <div className="dpx-bar">
+      <div className={`dpx-bar${barHidden ? ' is-hidden' : ''}`} aria-hidden={barHidden}>
         <span><MapPin size={14} aria-hidden /> {destination.flag} {destination.name}</span>
         <button type="button" className="dpx-btn dpx-btn--grad dpx-btn--mini" onClick={() => openQuote('')}>
           Get live quote <ArrowRight size={13} aria-hidden />

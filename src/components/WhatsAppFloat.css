@@ -8,6 +8,8 @@
   align-items: flex-end;
   gap: 12px;
 }
+.wa { transition: transform 0.6s var(--ease), opacity 0.4s; }
+.wa.is-away { transform: translateY(180%); opacity: 0; pointer-events: none; }
 .wa__tip {
   position: relative;
   max-width: 210px;
