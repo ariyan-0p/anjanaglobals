@@ -8,6 +8,7 @@
   overflow: hidden;
 }
 .hero__slides, .hero__slide { position: absolute; inset: 0; }
+.hero__slides { inset: -28px; will-change: transform; }
 .hero__slide { overflow: hidden; }
 .hero__img {
   position: absolute;
@@ -370,4 +371,31 @@
   .hero__foot { flex-direction: column; align-items: flex-start; }
   .pillar { grid-template-columns: 40px 1fr; }
   .pillar__arrow { display: none; }
+}
+
+/* ═══ HERO — logo portal + cursor trail ══════════════════ */
+.hero__veil { position: absolute; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
+.hero__veil-bg { position: absolute; inset: 0; background: var(--cream); }
+.hero__veil-bg.has-hole {
+  -webkit-mask-image: url('../assets/Anjna Global Logo final.png'), linear-gradient(#000, #000);
+  mask-image: url('../assets/Anjna Global Logo final.png'), linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.hero__veil-logo { position: absolute; max-width: none; will-change: transform, opacity; opacity: 0; }
+html.intro-playing .nav { opacity: 0; pointer-events: none; }
+.nav { transition: transform 0.7s var(--ease), background-color 0.5s var(--ease), color 0.4s, box-shadow 0.5s, opacity 0.8s var(--ease); }
+
+.hero__trail { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+.trail {
+  position: absolute;
+  width: clamp(130px, 13vw, 210px);
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 24px 60px rgba(10, 16, 32, 0.45);
+  will-change: transform, opacity;
 }

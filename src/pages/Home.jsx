@@ -9,6 +9,10 @@ import { homepagePartners } from '../data/hotelPartners'
 import HotelPartners from '../components/HotelPartners'
 import { gsap, prefersReducedMotion } from '../motion/gsap'
 import { onReady } from '../motion/ready'
+import { lockScroll, unlockScroll } from '../motion/scrollLock'
+import { layoutPortal, playPortal } from '../motion/heroPortal'
+import { startTrail } from '../motion/imageTrail'
+import logoColor from '../assets/Anjna Global Logo final.png'
 import heroImgDubai from '../assets/Dubai.jpg'
 import heroImgBali from '../assets/Bali.jpg'
 import heroImgSingapore from '../assets/singapore.jpg'
@@ -37,6 +41,12 @@ function absoluteUrl(url) {
   if (!url) return ''
   if (url.startsWith('http')) return url
   return `${apiBase}${url}`
+}
+
+// The logo-portal opening plays once per session, never on later visits to Home.
+let portalPlayed = false
+const portalSeen = () => {
+  try { return portalPlayed || window.sessionStorage.getItem('anjna:portal') === '1' } catch { return portalPlayed }
 }
 
 const heroImgBaliFresh = `${heroImgBali}?v=2`
@@ -163,6 +173,11 @@ export default function Home() {
   const agentVideoRefs = useRef({})
 
   const heroRef = useRef(null)
+  const veilBgRef = useRef(null)
+  const veilLogoRef = useRef(null)
+  const trailRef = useRef(null)
+  const slidesRef = useRef(null)
+  const [withPortal] = useState(() => !prefersReducedMotion() && !portalSeen())
   const headRef = useRef(null)
   const slideEls = useRef([])
   const timer = useRef(null)
@@ -269,8 +284,11 @@ export default function Home() {
     return () => clearTimeout(timer.current)
   }, [current, goTo])
 
-  // First-load intro, held until the preloader lifts.
+  // First-load intro, held until the preloader lifts. With the portal, the logo
+  // zoom runs first and the headline reveal fires as the photo floods the screen.
   useEffect(() => {
+    let locked = false
+    const html = document.documentElement
     const ctx = gsap.context(() => {
       const words = headRef.current?.querySelectorAll('.hw__i')
       const bg = slideEls.current[0]?.firstElementChild
@@ -278,14 +296,63 @@ export default function Home() {
       gsap.set(words, { yPercent: 118 })
       gsap.set('.hero [data-hero-in]', { opacity: 0, y: 28 })
       if (bg) gsap.set(bg, { scale: 1.3 })
-      onReady(() => {
+
+      const reveal = () => {
         const tl = gsap.timeline({ onComplete: () => { introDone.current = true } })
         if (bg) tl.to(bg, { scale: 1.02, duration: 2.6, ease: 'expo.out' }, 0)
         tl.to(words, { yPercent: 0, duration: 1.4, stagger: 0.06, ease: 'expo.out' }, 0.1)
         tl.to('.hero [data-hero-in]', { opacity: 1, y: 0, duration: 1.1, stagger: 0.09, ease: 'power3.out' }, 0.5)
+      }
+
+      const veilBg = veilBgRef.current
+      const logo = veilLogoRef.current
+      if (!withPortal || !veilBg || !logo) { onReady(reveal); return }
+
+      portalPlayed = true
+      try { window.sessionStorage.setItem('anjna:portal', '1') } catch { /* private mode */ }
+      const geo = layoutPortal(veilBg, logo)
+      html.classList.add('intro-playing')
+      onReady(() => {
+        lockScroll()
+        locked = true
+        playPortal({
+          veilBg,
+          logo,
+          geo,
+          onZoom: reveal,
+          onDone: () => {
+            locked = false
+            unlockScroll()
+            html.classList.remove('intro-playing')
+            veilBg.parentElement.style.display = 'none'
+          },
+        })
       })
     }, heroRef)
-    return () => ctx.revert()
+    return () => {
+      ctx.revert()
+      html.classList.remove('intro-playing')
+      if (locked) unlockScroll()
+    }
+  }, [withPortal])
+
+  // Cursor photo trail + gentle depth parallax on the slideshow (fine pointers only).
+  useEffect(() => {
+    const host = heroRef.current
+    if (!host) return undefined
+    const stopTrail = startTrail(host, trailRef.current, heroSlides.map((x) => x.image))
+    let stopParallax = () => {}
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion() && slidesRef.current) {
+      const qx = gsap.quickTo(slidesRef.current, 'x', { duration: 1.2, ease: 'power3' })
+      const qy = gsap.quickTo(slidesRef.current, 'y', { duration: 1.2, ease: 'power3' })
+      const move = (e) => {
+        qx((e.clientX / window.innerWidth - 0.5) * -26)
+        qy((e.clientY / window.innerHeight - 0.5) * -18)
+      }
+      window.addEventListener('pointermove', move, { passive: true })
+      stopParallax = () => window.removeEventListener('pointermove', move)
+    }
+    return () => { stopTrail(); stopParallax() }
   }, [])
 
   /* ── Horizontal destinations (desktop): the section is made tall, the inner
@@ -350,7 +417,7 @@ export default function Home() {
     <main className="home">
       {/* ── HERO ─────────────────────────────────────────── */}
       <section className="hero" ref={heroRef} data-nav="dark">
-        <div className="hero__slides" aria-hidden>
+        <div className="hero__slides" ref={slidesRef} aria-hidden>
           {heroSlides.map((s, i) => (
             <div
               key={s.image}
@@ -363,6 +430,7 @@ export default function Home() {
           ))}
         </div>
         <div className="hero__shade" />
+        <div className="hero__trail" ref={trailRef} aria-hidden />
 
         <div className="wrap hero__inner">
           <p className="hero__tag mono" data-hero-in key={`tag-${current}`}>
@@ -403,6 +471,13 @@ export default function Home() {
         <div className="hero__scroll mono" data-hero-in aria-hidden>
           Scroll <span />
         </div>
+
+        {withPortal ? (
+          <div className="hero__veil" aria-hidden>
+            <div className="hero__veil-bg" ref={veilBgRef} />
+            <img className="hero__veil-logo" ref={veilLogoRef} src={logoColor} alt="" />
+          </div>
+        ) : null}
       </section>
 
       {/* ── TRUST MARQUEE ─────────────────────────────────── */}
