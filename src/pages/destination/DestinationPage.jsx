@@ -11,6 +11,7 @@ import { getDestination } from '../../data/destinations'
 import { getDestinationBrief } from '../../data/destinationBriefs'
 import { hotelPartners } from '../../data/hotelPartners'
 import { api, apiBase } from '../../lib/api'
+import { lockScroll, unlockScroll } from '../../motion/scrollLock'
 import './DestinationPage.css'
 
 function absoluteUrl(url) {
@@ -40,7 +41,7 @@ function Hero({ destination, brief, onQuote }) {
   ].filter(Boolean)
 
   return (
-    <header className="dpx-hero">
+    <header className="dpx-hero" data-nav="dark">
       <div className="dpx-hero__bg" style={{ backgroundImage: `url(${heroImage})` }} />
       <div className="dpx-hero__mesh" aria-hidden />
       <div className="dpx-hero__scrim" aria-hidden />
@@ -56,16 +57,16 @@ function Hero({ destination, brief, onQuote }) {
           <ShieldCheck size={13} aria-hidden /> Anjna Global · Your travel partner on the ground
         </span>
 
-        <h1 className="dpx-hero__title">
+        <h1 className="dpx-hero__title" data-split data-intro>
           <span className="dpx-hero__flag">{destination.flag}</span>
           {destination.name}
         </h1>
-        <p className="dpx-hero__tag">{destination.tagline}</p>
+        <p className="dpx-hero__tag" data-fade data-intro data-delay="0.2">{destination.tagline}</p>
         <p className="dpx-hero__sub">
           Special partner rates, our own ground team and 2-hour quotes for travel partners — plus tailor-made trips for holidaymakers.
         </p>
 
-        <div className="dpx-hero__cta">
+        <div className="dpx-hero__cta" data-fade data-intro data-delay="0.45">
           <button type="button" className="dpx-btn dpx-btn--grad" onClick={() => onQuote('Partner — special rates')}>
             Get partner rates <ArrowRight size={16} aria-hidden />
           </button>
@@ -75,7 +76,7 @@ function Hero({ destination, brief, onQuote }) {
         </div>
 
         {chips.length > 0 && (
-          <div className="dpx-hero__chips">
+          <div className="dpx-hero__chips" data-stagger="0.08">
             {chips.map((c) => (
               <div key={c.label} className="dpx-chip">
                 <span className="dpx-chip__ic">{c.icon}</span>
@@ -97,8 +98,8 @@ function Heading({ eyebrow, title, sub, light }) {
   return (
     <header className={`dpx-head${light ? ' is-light' : ''}`}>
       {eyebrow && <span className="dpx-eyebrow">{eyebrow}</span>}
-      {title && <h2>{title}</h2>}
-      {sub && <p>{sub}</p>}
+      {title && <h2 data-split>{title}</h2>}
+      {sub && <p data-fade>{sub}</p>}
     </header>
   )
 }
@@ -116,7 +117,7 @@ function WhatWeDo({ items, destinationName }) {
           title={`Your ground handling in ${destinationName}`}
           sub="One partner for transfers, stays, attractions and visas — direct contracts, best rates."
         />
-        <div className="dpx-do-grid">
+        <div className="dpx-do-grid" data-stagger="0.08">
           {items.map((it, i) => (
             <article key={it.title} className="dpx-do" style={{ '--i': i }}>
               <span className="dpx-do__icon">{WHATWEDO_ICON[it.icon] || <Sparkles size={22} />}</span>
@@ -140,7 +141,7 @@ function WhyRates({ points }) {
     <section className="dpx-section dpx-section--tint">
       <div className="container">
         <Heading eyebrow="Why our rates are better" title="We own the product — no middlemen" />
-        <div className="dpx-why-grid">
+        <div className="dpx-why-grid" data-stagger="0.1">
           {points.map((p, i) => (
             <article key={p.title} className="dpx-why">
               <span className="dpx-why__num">{String(i + 1).padStart(2, '0')}</span>
@@ -168,7 +169,7 @@ function TopProducts({ experiences, onQuote }) {
           title="Most-booked experiences"
           sub="Starting partner rates — request a quote for your group and dates."
         />
-        <div className="dpx-prod-grid">
+        <div className="dpx-prod-grid" data-stagger="0.07">
           {experiences.map((e) => (
             <article key={e.key} className="dpx-prod">
               {e.image ? (
@@ -203,7 +204,7 @@ function Tiers({ tiers, onQuote }) {
     <section className="dpx-section dpx-section--tint" id="dpx-tiers">
       <div className="container">
         <Heading eyebrow="Package tiers" title="Pick a tier, build your quote" sub="Per person · twin sharing · indicative — we confirm on request." />
-        <div className="dpx-tier-grid">
+        <div className="dpx-tier-grid" data-stagger="0.1">
           {tiers.map((t, idx) => (
             <article key={t.name} className={`dpx-tier${t.isPopular ? ' is-pop' : ''}`}>
               {t.isPopular && <span className="dpx-tier__flag"><Crown size={12} aria-hidden /> Most booked</span>}
@@ -446,7 +447,7 @@ function HotelInventory({ destinationId, destinationName }) {
             ))}
           </div>
         )}
-        <div className="dpx-hotel-grid">
+        <div className="dpx-hotel-grid" data-stagger="0.04">
           {filtered.map((h) => (
             <div key={h.name} className="dpx-hotel" title={h.name}>
               {h.logo ? <img src={h.logo} alt={h.name} loading="lazy" /> : <span>{h.name}</span>}
@@ -511,8 +512,8 @@ function HappyTravellers({ destination }) {
       else if (e.key === 'ArrowLeft') setLightbox((i) => (i - 1 + images.length) % images.length)
     }
     window.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
-    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+    lockScroll()
+    return () => { window.removeEventListener('keydown', onKey); unlockScroll() }
   }, [lightbox, images.length])
 
   if (images.length === 0) return null
@@ -610,7 +611,7 @@ function Faq({ city }) {
     <section className="dpx-section dpx-section--tint" id="dpx-faq">
       <div className="container">
         <Heading eyebrow="Partner FAQ" title="Working with us on your bookings" sub="Straight answers to the questions travel partners ask us most." />
-        <div className="dpx-faq-list">
+        <div className="dpx-faq-list" data-stagger="0.06">
           {faqs.map((f, i) => (
             <FaqItem key={f.q} item={f} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />
           ))}
@@ -631,7 +632,7 @@ function AgentBand({ destinationName, onQuote }) {
     { ic: <Boxes size={18} aria-hidden />, t: 'Ready availability', d: 'Rooms and attraction tickets held ready — faster confirmations.' },
   ]
   return (
-    <section className="dpx-agent" id="dpx-agents">
+    <section className="dpx-agent" id="dpx-agents" data-nav="dark">
       <div className="dpx-agent__mesh" aria-hidden />
       <div className="container dpx-agent__inner">
         <div className="dpx-agent__head">
@@ -685,7 +686,7 @@ function QuoteSection({ destination, intent, sectionRef }) {
   }
 
   return (
-    <section className="dpx-quote" id="dpx-quote" ref={sectionRef}>
+    <section className="dpx-quote" id="dpx-quote" ref={sectionRef} data-nav="dark">
       <div className="dpx-quote__mesh" aria-hidden />
       <div className="container dpx-quote__inner">
         <div className="dpx-quote__left">
@@ -773,7 +774,7 @@ export default function DestinationPage() {
   }
 
   return (
-    <main className="dpx" style={accentStyle}>
+    <main className="dpx" style={accentStyle} key={destination.id}>
       <Hero destination={destination} brief={brief} onQuote={openQuote} />
       <WhatWeDo items={brief.whatWeDo} destinationName={destination.name} />
       <WhyRates points={brief.trustPoints} />

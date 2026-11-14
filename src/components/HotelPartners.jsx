@@ -1,62 +1,16 @@
 import { useState } from 'react'
+import './HotelPartners.css'
 
 function HotelTile({ hotel }) {
   const [errored, setErrored] = useState(false)
   const showLogo = hotel.logo && !errored
 
   return (
-    <div
-      style={{
-        flex: '0 0 auto',
-        width: 'clamp(200px, 26vw, 260px)',
-        height: '150px',
-        background: 'white',
-        border: '1px solid #EFEDE8',
-        borderRadius: '14px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '14px 18px',
-        transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-3px)'
-        e.currentTarget.style.borderColor = '#7C3AED'
-        e.currentTarget.style.boxShadow = '0 10px 28px rgba(124,58,237,0.10)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.borderColor = '#EFEDE8'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
-      title={hotel.name}
-    >
+    <div className="hp__tile" title={hotel.name}>
       {showLogo ? (
-        <img
-          src={hotel.logo}
-          alt={hotel.name}
-          loading="lazy"
-          onError={() => setErrored(true)}
-          style={{
-            maxWidth: '100%',
-            maxHeight: '100%',
-            objectFit: 'contain',
-          }}
-        />
+        <img src={hotel.logo} alt={hotel.name} loading="lazy" onError={() => setErrored(true)} />
       ) : (
-        <span
-          style={{
-            fontSize: '13px',
-            fontWeight: 700,
-            color: '#0A0F1E',
-            textAlign: 'center',
-            lineHeight: 1.3,
-            letterSpacing: '0.02em',
-            fontFamily: 'var(--font-body)',
-          }}
-        >
-          {hotel.name}
-        </span>
+        <span>{hotel.name}</span>
       )}
     </div>
   )
@@ -67,69 +21,36 @@ export default function HotelPartners({
   eyebrow = 'Hospitality partners',
   heading = 'A few of our hotel partners',
   subtitle,
-  background = '#F8F7F4',
+  background = 'paper',
 }) {
   if (!hotels || hotels.length === 0) return null
 
+  // Two rows drifting in opposite directions; split so each row has its own set.
+  const mid = Math.ceil(hotels.length / 2)
+  const rows = hotels.length > 6 ? [hotels.slice(0, mid), hotels.slice(mid)] : [hotels]
+  const tone = background === 'white' || background === '#fff' || background === '#ffffff' ? 'white' : 'paper'
+
   return (
-    <section style={{ padding: 'clamp(48px, 8vw, 80px) 0', background }}>
-      <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <span
-            className="tag"
-            style={{ display: 'inline-block', marginBottom: '12px' }}
-          >
-            {eyebrow}
-          </span>
-          <h2
-            style={{
-              fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-              color: '#0A0F1E',
-              margin: 0,
-              fontWeight: 700,
-            }}
-          >
-            {heading}
-          </h2>
-          {subtitle && (
-            <p
-              style={{
-                marginTop: '12px',
-                fontSize: '15px',
-                color: '#6B7280',
-                maxWidth: '620px',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                lineHeight: 1.6,
-              }}
-            >
-              {subtitle}
-            </p>
-          )}
+    <section className={`hp hp--${tone}`}>
+      <div className="wrap">
+        <div className="hp__head" data-fade>
+          <span className="eyebrow">{eyebrow}</span>
+          <h2 className="d-m">{heading}</h2>
+          {subtitle ? <p className="lead">{subtitle}</p> : null}
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '14px',
-            justifyContent: 'center',
-          }}
-        >
-          {hotels.map(h => (
-            <HotelTile key={h.name} hotel={h} />
-          ))}
-        </div>
-        <p
-          style={{
-            marginTop: '24px',
-            fontSize: '12px',
-            color: '#9CA3AF',
-            textAlign: 'center',
-            fontStyle: 'italic',
-          }}
-        >
-          Logos and names belong to their respective owners. Shown for reference only.
-        </p>
+      </div>
+
+      <div className="hp__rows">
+        {rows.map((row, r) => (
+          <div key={r} className={`marquee hp__row${r % 2 ? ' marquee--rev' : ''}`}>
+            <div className="marquee__track">{row.map((h) => <HotelTile key={h.name} hotel={h} />)}</div>
+            <div className="marquee__track" aria-hidden>{row.map((h) => <HotelTile key={`b-${h.name}`} hotel={h} />)}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="wrap">
+        <p className="hp__note">Logos and names belong to their respective owners. Shown for reference only.</p>
       </div>
     </section>
   )

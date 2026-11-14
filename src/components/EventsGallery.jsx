@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { api, apiBase } from '../lib/api'
+import { lockScroll, unlockScroll } from '../motion/scrollLock'
 import './EventsGallery.css'
 
 function absoluteUrl(url) {
@@ -44,11 +45,10 @@ export default function EventsGallery() {
       else if (e.key === 'ArrowLeft') setLightbox((i) => (i - 1 + photos.length) % photos.length)
     }
     document.addEventListener('keydown', onKey)
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    lockScroll()
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
+      unlockScroll()
     }
   }, [lightbox, photos.length])
 
@@ -58,14 +58,16 @@ export default function EventsGallery() {
 
   return (
     <section className="evg-section">
-      <div className="container">
-        <div className="text-center" style={{ marginBottom: '48px' }}>
-          <span className="tag">Out & About</span>
-          <h2 className="section-heading">Events & Exhibitions</h2>
-          <p className="section-sub" style={{ margin: '0 auto' }}>
+      <div className="wrap">
+        <header className="head head--split">
+          <div>
+            <span className="eyebrow">Out & About</span>
+            <h2 className="d-m" data-split>Events &amp; <em>Exhibitions</em></h2>
+          </div>
+          <p className="lead" data-fade>
             From travel trade shows to partner meets — moments from where we show up for our partners and the industry.
           </p>
-        </div>
+        </header>
 
         <div className="evg-mason">
           {visible.map((img, idx) => (

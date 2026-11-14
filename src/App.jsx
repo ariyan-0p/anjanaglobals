@@ -1,33 +1,34 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import WhatsAppFloat from './components/WhatsAppFloat'
-import ScrollToTop from './components/ScrollToTop'
-import SectionAnimator from './components/SectionAnimator'
 import LeadPopup from './components/LeadPopup'
 import SitePreloader from './components/SitePreloader'
-import Home from './pages/Home'
-import About from './pages/About'
-import Destinations from './pages/Destinations'
-import DestinationPage from './pages/destination/DestinationPage'
-import Services from './pages/Services'
-import UAEVisaPage from './pages/UAEVisaPage'
-import B2B from './pages/B2B'
-import Packages from './pages/Packages'
-import Contact from './pages/Contact'
-import Testimonials from './pages/Testimonials'
-import Blog from './pages/Blog'
-import BlogPostPage from './pages/BlogPost'
-import AdminLayout from './pages/admin/AdminLayout'
-import AdminLogin from './pages/admin/AdminLogin'
-import AdminDashboard from './pages/admin/AdminDashboard'
-import AdminGalleries from './pages/admin/AdminGalleries'
-import AdminAgentVoices from './pages/admin/AdminAgentVoices'
-import AdminTestimonials from './pages/admin/AdminTestimonials'
-import AdminLeads from './pages/admin/AdminLeads'
-import AdminBlogs from './pages/admin/AdminBlogs'
-import AdminBlogEdit from './pages/admin/AdminBlogEdit'
+import MotionRoot from './motion/MotionRoot'
 import { AuthProvider } from './context/AuthContext'
+
+const Home = lazy(() => import('./pages/Home'))
+const About = lazy(() => import('./pages/About'))
+const Destinations = lazy(() => import('./pages/Destinations'))
+const DestinationPage = lazy(() => import('./pages/destination/DestinationPage'))
+const Services = lazy(() => import('./pages/Services'))
+const UAEVisaPage = lazy(() => import('./pages/UAEVisaPage'))
+const B2B = lazy(() => import('./pages/B2B'))
+const Packages = lazy(() => import('./pages/Packages'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Testimonials = lazy(() => import('./pages/Testimonials'))
+const Blog = lazy(() => import('./pages/Blog'))
+const BlogPostPage = lazy(() => import('./pages/BlogPost'))
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
+const AdminGalleries = lazy(() => import('./pages/admin/AdminGalleries'))
+const AdminAgentVoices = lazy(() => import('./pages/admin/AdminAgentVoices'))
+const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials'))
+const AdminLeads = lazy(() => import('./pages/admin/AdminLeads'))
+const AdminBlogs = lazy(() => import('./pages/admin/AdminBlogs'))
+const AdminBlogEdit = lazy(() => import('./pages/admin/AdminBlogEdit'))
 
 function PublicChrome({ children }) {
   const { pathname } = useLocation()
@@ -41,7 +42,7 @@ function PublicChrome({ children }) {
           <Navbar />
         </>
       )}
-      {children}
+      <Suspense fallback={<div className="route-fallback" />}>{children}</Suspense>
       {!isAdmin && (
         <>
           <Footer />
@@ -56,8 +57,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <ScrollToTop />
-        <SectionAnimator />
+        <MotionRoot />
         <PublicChrome>
           <Routes>
             <Route path="/" element={<Home />} />

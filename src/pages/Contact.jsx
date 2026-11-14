@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, CheckCircle } from 'lucide-react'
+import { useState } from 'react'
+import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowUpRight, Check } from 'lucide-react'
 import { api } from '../lib/api'
+import PageHero from '../components/PageHero'
+import './pages.css'
 
 const offices = [
   {
@@ -43,18 +44,17 @@ const enquiryTypes = [
   'Other',
 ]
 
+const quick = [
+  { icon: <Phone size={16} />, label: 'Call Us', value: '+91-124-2786999', href: 'tel:+911242786999' },
+  { icon: <MessageCircle size={16} />, label: 'WhatsApp', value: '+91 99588 01627', href: 'https://wa.me/919958801627' },
+  { icon: <Mail size={16} />, label: 'Email Us', value: 'info@anjnaglobal.com', href: 'mailto:info@anjnaglobal.com' },
+  { icon: <Clock size={16} />, label: 'Response Time', value: 'Within 2 Hours', href: null },
+]
+
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 900)
-    onResize()
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -94,277 +94,151 @@ export default function Contact() {
     }
   }
 
-  const inputStyle = {
-    width: '100%', padding: '13px 16px',
-    border: '1.5px solid #E5E7EB', borderRadius: '8px',
-    fontSize: '14px', fontFamily: 'var(--font-body)',
-    outline: 'none', background: 'white',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-    color: '#1A1A2E',
-  }
-
-  const labelStyle = {
-    fontSize: '12px', fontWeight: '700', color: '#374151',
-    letterSpacing: '0.5px', display: 'block', marginBottom: '6px',
-    fontFamily: 'var(--font-body)',
-  }
-
-  const focusStyle = (e) => {
-    e.target.style.borderColor = '#C8102E'
-    e.target.style.boxShadow = '0 0 0 3px rgba(200,16,46,0.08)'
-  }
-  const blurStyle = (e) => {
-    e.target.style.borderColor = '#E5E7EB'
-    e.target.style.boxShadow = 'none'
-  }
-
   return (
     <main>
-      {/* Hero */}
-      <div
-        className="page-hero"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80)' }}
-      >
-        <div className="container page-hero-content">
-          <div className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>›</span>
-            <span>Contact Us</span>
-          </div>
-          <h1>Let's Start Planning</h1>
-          <p>Get in touch — our travel experts will respond within 2 hours.</p>
-        </div>
-      </div>
+      <PageHero
+        eyebrow="Contact Us"
+        title={<>Let&apos;s Start <em>Planning</em></>}
+        sub="Get in touch — our travel experts will respond within 2 hours."
+        image="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80"
+        crumbs={[{ label: 'Home', to: '/' }, { label: 'Contact Us' }]}
+      />
 
-      {/* Quick contact bar */}
-      <div style={{ background: '#C8102E', padding: '18px 0' }}>
-        <div className="container">
-          <div style={{ display: 'flex', gap: isMobile ? '18px' : '40px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {[
-              { icon: <Phone size={16} />, label: 'Call Us', value: '+91-124-2786999', href: 'tel:+911242786999' },
-              { icon: <MessageCircle size={16} />, label: 'WhatsApp', value: '+91 99588 01627', href: 'https://wa.me/919958801627' },
-              { icon: <Mail size={16} />, label: 'Email Us', value: 'info@anjnaglobal.com', href: 'mailto:info@anjnaglobal.com' },
-              { icon: <Clock size={16} />, label: 'Response Time', value: 'Within 2 Hours', href: null },
-            ].map((item, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ color: 'rgba(255,255,255,0.7)' }}>{item.icon}</div>
-                <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }}>{item.label}</p>
-                  {item.href ? (
-                    <a href={item.href} style={{ fontSize: '15px', color: 'white', fontWeight: '700', fontFamily: 'var(--font-body)', textDecoration: 'none' }}>{item.value}</a>
-                  ) : (
-                    <p style={{ fontSize: '15px', color: 'white', fontWeight: '700', fontFamily: 'var(--font-body)' }}>{item.value}</p>
-                  )}
-                </div>
+      {/* Quick contact */}
+      <section className="quickbar" aria-label="Quick contact">
+        <div className="wrap quickbar__grid" data-stagger="0.07">
+          {quick.map((item) => (
+            <div key={item.label} className="quickbar__item">
+              <span className="quickbar__ic">{item.icon}</span>
+              <div>
+                <p className="mono">{item.label}</p>
+                {item.href ? <a href={item.href}>{item.value}</a> : <strong>{item.value}</strong>}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </div>
+      </section>
 
-      {/* Main section */}
-      <section style={{ padding: 'clamp(56px, 9vw, 100px) 0', background: 'white' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr minmax(320px, 480px)', gap: isMobile ? '28px' : '80px', alignItems: 'start' }}>
+      <section className="sec">
+        <div className="wrap split split--start contact__split">
+          {/* Form */}
+          <div>
+            <span className="eyebrow">Send Us a Message</span>
+            <h2 className="d-m" data-split>How can we <em>help you?</em></h2>
+            <p className="lead" data-fade>
+              Whether you need a quote, want to plan a trip, or are interested in becoming a trade partner — we&apos;re here for you.
+            </p>
 
-            {/* Form */}
-            <div>
-              <span className="tag">Send Us a Message</span>
-              <h2 className="section-heading">How Can We Help You?</h2>
-              <p className="section-sub" style={{ marginBottom: '40px' }}>
-                Whether you need a quote, want to plan a trip, or are interested in becoming a trade partner — we're here for you.
-              </p>
-
-              {submitted ? (
-                <div style={{
-                  padding: '48px', background: '#F0FFF4', border: '2px solid #10B981',
-                  borderRadius: '16px', textAlign: 'center',
-                }}>
-                  <CheckCircle size={48} color="#10B981" style={{ margin: '0 auto 16px' }} />
-                  <h3 style={{ fontSize: '22px', color: '#065F46', marginBottom: '12px' }}>Message Received!</h3>
-                  <p style={{ color: '#047857', fontSize: '15px', lineHeight: '1.7', fontFamily: 'var(--font-body)' }}>
-                    Thank you for reaching out. Our team will get back to you within 2 hours during business hours.
-                  </p>
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="btn-primary"
-                    style={{ marginTop: '24px' }}
-                  >
-                    Send Another Message
-                  </button>
+            {submitted ? (
+              <div className="formok formok--lg">
+                <Check size={34} aria-hidden />
+                <h3 className="d-s">Message Received!</h3>
+                <p>Thank you for reaching out. Our team will get back to you within 2 hours during business hours.</p>
+                <button type="button" onClick={() => setSubmitted(false)} className="btn btn--plain">Send Another Message</button>
+              </div>
+            ) : (
+              <form className="form contact__form" onSubmit={handleSubmit}>
+                <div className="form__row">
+                  <label className="field"><span>First Name *</span><input name="firstName" type="text" required placeholder="Your first name" /></label>
+                  <label className="field"><span>Last Name *</span><input name="lastName" type="text" required placeholder="Your last name" /></label>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={labelStyle}>First Name *</label>
-                      <input name="firstName" type="text" required placeholder="Your first name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Last Name *</label>
-                      <input name="lastName" type="text" required placeholder="Your last name" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={labelStyle}>Email Address *</label>
-                      <input name="email" type="email" required placeholder="you@example.com" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Phone / WhatsApp *</label>
-                      <input name="phone" type="tel" required placeholder="+91 98765 43210" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={labelStyle}>Type of Enquiry</label>
-                    <select name="enquiryType" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
-                      {enquiryTypes.map(t => <option key={t}>{t}</option>)}
+                <div className="form__row">
+                  <label className="field"><span>Email Address *</span><input name="email" type="email" required placeholder="you@example.com" /></label>
+                  <label className="field"><span>Phone / WhatsApp *</span><input name="phone" type="tel" required placeholder="+91 98765 43210" /></label>
+                </div>
+                <label className="field">
+                  <span>Type of Enquiry</span>
+                  <select name="enquiryType">{enquiryTypes.map((t) => <option key={t}>{t}</option>)}</select>
+                </label>
+                <div className="form__row">
+                  <label className="field">
+                    <span>Destination</span>
+                    <select name="destination">
+                      <option value="">Select destination</option>
+                      {['Dubai, UAE', 'Azerbaijan', 'Singapore', 'Malaysia', 'Bali, Indonesia', 'Multiple Destinations'].map((d) => <option key={d}>{d}</option>)}
                     </select>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={labelStyle}>Destination</label>
-                      <select name="destination" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
-                        <option value="">Select destination</option>
-                        {['Dubai, UAE', 'Azerbaijan', 'Singapore', 'Malaysia', 'Bali, Indonesia', 'Multiple Destinations'].map(d => <option key={d}>{d}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Number of Travellers</label>
-                      <select name="travellers" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
-                        <option>1 – 2 persons</option>
-                        <option>3 – 5 persons</option>
-                        <option>6 – 15 persons</option>
-                        <option>16 – 50 persons</option>
-                        <option>50+ persons</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label style={labelStyle}>Approximate Travel Dates</label>
-                      <input name="travelDates" type="text" placeholder="e.g. Dec 2025, flexible" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle} />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Budget per Person</label>
-                      <select name="budget" style={inputStyle} onFocus={focusStyle} onBlur={blurStyle}>
-                        <option>Under ₹50,000</option>
-                        <option>₹50,000 – ₹1,00,000</option>
-                        <option>₹1,00,000 – ₹2,00,000</option>
-                        <option>₹2,00,000+</option>
-                        <option>Flexible</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={labelStyle}>Message / Special Requirements</label>
-                    <textarea
-                      name="message"
-                      rows={5}
-                      placeholder="Tell us about your travel plans, any special requirements, or questions you have..."
-                      style={{ ...inputStyle, resize: 'vertical' }}
-                      onFocus={focusStyle}
-                      onBlur={blurStyle}
-                    />
-                  </div>
-
-                  {error ? (
-                    <p style={{ margin: 0, padding: '10px 14px', background: 'rgba(200,16,46,0.08)', border: '1px solid rgba(200,16,46,0.3)', borderRadius: '8px', color: '#c8102e', fontSize: '13px' }}>
-                      {error}
-                    </p>
-                  ) : null}
-
-                  <button type="submit" className="btn-primary" disabled={submitting} style={{ justifyContent: 'center', padding: '16px', fontSize: '14px', opacity: submitting ? 0.6 : 1 }}>
-                    {submitting ? 'Sending…' : 'Send Enquiry'} <ArrowRight size={16} />
-                  </button>
-
-                  <p style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', fontFamily: 'var(--font-body)' }}>
-                    🔒 Your information is safe with us. We never share your data with third parties.
-                  </p>
-                </form>
-              )}
-            </div>
-
-            {/* Sidebar */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Offices */}
-              {offices.map((office, i) => (
-                <div key={i} style={{ background: '#F8F7F4', borderRadius: '16px', padding: isMobile ? '22px' : '32px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                    <span style={{ fontSize: '28px' }}>{office.flag}</span>
-                    <div>
-                      <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A2E', fontFamily: 'var(--font-body)' }}>{office.city}</h3>
-                      <p style={{ fontSize: '12px', color: '#9CA3AF', fontFamily: 'var(--font-body)' }}>{office.country}</p>
-                    </div>
-                  </div>
-                  {[
-                    { icon: <MapPin size={14} />, value: office.address, href: null },
-                    { icon: <Phone size={14} />, value: office.phone, href: `tel:${office.phone.replace(/\s/g, '')}` },
-                    { icon: <Mail size={14} />, value: office.email, href: `mailto:${office.email}` },
-                    { icon: <Clock size={14} />, value: office.hours, href: null },
-                  ].map((item, j) => (
-                    <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 0', borderBottom: j < 3 ? '1px solid rgba(0,0,0,0.06)' : 'none' }}>
-                      <span style={{ color: '#C8102E', flexShrink: 0, marginTop: '2px' }}>{item.icon}</span>
-                      {item.href ? (
-                        <a href={item.href} style={{ fontSize: '14px', color: '#374151', fontFamily: 'var(--font-body)', transition: 'color 0.2s' }}
-                          onMouseEnter={e => e.currentTarget.style.color = '#C8102E'}
-                          onMouseLeave={e => e.currentTarget.style.color = '#374151'}
-                        >{item.value}</a>
-                      ) : (
-                        <span style={{ fontSize: '14px', color: '#374151', fontFamily: 'var(--font-body)', lineHeight: '1.5' }}>{item.value}</span>
-                      )}
-                    </div>
-                  ))}
+                  </label>
+                  <label className="field">
+                    <span>Number of Travellers</span>
+                    <select name="travellers">
+                      <option>1 – 2 persons</option>
+                      <option>3 – 5 persons</option>
+                      <option>6 – 15 persons</option>
+                      <option>16 – 50 persons</option>
+                      <option>50+ persons</option>
+                    </select>
+                  </label>
                 </div>
-              ))}
-
-              {/* WhatsApp CTA */}
-              <a
-                href="https://wa.me/919958801627?text=Hi%20Anjna%20Global%2C%20I%27d%20like%20to%20enquire%20about%20a%20trip."
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '16px',
-                  background: '#25D366', borderRadius: '16px', padding: isMobile ? '20px' : '24px 28px',
-                  color: 'white', textDecoration: 'none',
-                  transition: 'all 0.3s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(37,211,102,0.4)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
-              >
-                <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <MessageCircle size={24} />
+                <div className="form__row">
+                  <label className="field"><span>Approximate Travel Dates</span><input name="travelDates" type="text" placeholder="e.g. Dec 2025, flexible" /></label>
+                  <label className="field">
+                    <span>Budget per Person</span>
+                    <select name="budget">
+                      <option>Under ₹50,000</option>
+                      <option>₹50,000 – ₹1,00,000</option>
+                      <option>₹1,00,000 – ₹2,00,000</option>
+                      <option>₹2,00,000+</option>
+                      <option>Flexible</option>
+                    </select>
+                  </label>
                 </div>
-                <div>
-                  <p style={{ fontWeight: '700', fontSize: '16px', marginBottom: '4px', fontFamily: 'var(--font-body)' }}>Chat on WhatsApp</p>
-                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)' }}>Fastest way to reach us — we're online now!</p>
-                </div>
-                <ArrowRight size={20} style={{ marginLeft: 'auto', flexShrink: 0 }} />
-              </a>
+                <label className="field">
+                  <span>Message / Special Requirements</span>
+                  <textarea name="message" rows={4} placeholder="Tell us about your travel plans, any special requirements, or questions you have..." />
+                </label>
 
-              {/* Assurances */}
-              <div style={{ background: '#0A0F1E', borderRadius: '16px', padding: '28px' }}>
-                <p style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.4)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '16px', fontFamily: 'var(--font-body)' }}>
-                  Our Promise to You
-                </p>
-                {[
-                  '⚡ 2-Hour response guarantee',
-                  '🔒 100% secure enquiry process',
-                  '💰 No hidden fees, ever',
-                  '⭐ Trusted DMC since 2013',
-                ].map((item, i) => (
-                  <p key={i} style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', padding: '8px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', fontFamily: 'var(--font-body)' }}>
-                    {item}
-                  </p>
-                ))}
-              </div>
-            </div>
+                {error ? <p className="form__error">{error}</p> : null}
+
+                <button type="submit" className="btn" disabled={submitting}>
+                  {submitting ? 'Sending…' : 'Send Enquiry'} <ArrowUpRight size={14} aria-hidden />
+                </button>
+                <p className="form__note">🔒 Your information is safe with us. We never share your data with third parties.</p>
+              </form>
+            )}
           </div>
+
+          {/* Sidebar */}
+          <aside className="contact__side">
+            {offices.map((office) => (
+              <article key={office.city} className="office" data-fade>
+                <header>
+                  <span className="office__flag">{office.flag}</span>
+                  <div>
+                    <h3>{office.city}</h3>
+                    <p className="mono">{office.country}</p>
+                  </div>
+                </header>
+                <ul>
+                  <li><MapPin size={14} aria-hidden /><span>{office.address}</span></li>
+                  <li><Phone size={14} aria-hidden /><a href={`tel:${office.phone.replace(/\s/g, '')}`}>{office.phone}</a></li>
+                  <li><Mail size={14} aria-hidden /><a href={`mailto:${office.email}`}>{office.email}</a></li>
+                  <li><Clock size={14} aria-hidden /><span>{office.hours}</span></li>
+                </ul>
+              </article>
+            ))}
+
+            <a
+              href="https://wa.me/919958801627?text=Hi%20Anjna%20Global%2C%20I%27d%20like%20to%20enquire%20about%20a%20trip."
+              target="_blank"
+              rel="noreferrer"
+              className="wa-card"
+              data-fade
+            >
+              <span className="wa-card__ic"><MessageCircle size={24} /></span>
+              <div>
+                <strong>Chat on WhatsApp</strong>
+                <p>Fastest way to reach us — we&apos;re online now!</p>
+              </div>
+              <ArrowUpRight size={22} aria-hidden />
+            </a>
+
+            <div className="promise on-ink" data-fade>
+              <p className="mono">Our Promise to You</p>
+              {['⚡ 2-Hour response guarantee', '🔒 100% secure enquiry process', '💰 No hidden fees, ever', '⭐ Trusted DMC since 2013'].map((item) => (
+                <p key={item} className="promise__row">{item}</p>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
     </main>

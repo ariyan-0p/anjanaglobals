@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, startTransition } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronDown, Phone } from 'lucide-react'
+import { ChevronDown, Phone, ArrowUpRight } from 'lucide-react'
+import { gsap, prefersReducedMotion } from '../motion/gsap'
+import { lockScroll, unlockScroll } from '../motion/scrollLock'
 import logoColor from '../assets/Anjna Global Logo final.png'
 import './Navbar.css'
 
@@ -11,11 +13,11 @@ const navLinks = [
     label: 'Destinations',
     path: '/destinations',
     children: [
-      { label: '🇦🇪 Dubai', path: '/destinations/dubai' },
-      { label: '🇦🇿 Azerbaijan', path: '/destinations/azerbaijan' },
-      { label: '🇸🇬 Singapore', path: '/destinations/singapore' },
-      { label: '🇲🇾 Malaysia', path: '/destinations/malaysia' },
-      { label: '🇮🇩 Bali', path: '/destinations/bali' },
+      { label: 'Dubai', flag: '🇦🇪', path: '/destinations/dubai' },
+      { label: 'Azerbaijan', flag: '🇦🇿', path: '/destinations/azerbaijan' },
+      { label: 'Singapore', flag: '🇸🇬', path: '/destinations/singapore' },
+      { label: 'Malaysia', flag: '🇲🇾', path: '/destinations/malaysia' },
+      { label: 'Bali', flag: '🇮🇩', path: '/destinations/bali' },
     ],
   },
   { label: 'Services', path: '/services' },
@@ -27,267 +29,164 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState(null)
-  const [mobileExpanded, setMobileExpanded] = useState(null)
+  const [open, setOpen] = useState(false)
+  const [dark, setDark] = useState(true)
+  const [hidden, setHidden] = useState(false)
+  const [atTop, setAtTop] = useState(true)
+  const [dd, setDd] = useState(false)
   const location = useLocation()
-  const dropdownTimeout = useRef(null)
+  const menu = useRef(null)
+  const ddTimer = useRef(null)
+  const lastY = useRef(0)
+  const didMount = useRef(false)
 
-  const isHome = location.pathname === '/'
-  const transparent = isHome && !scrolled
-
+  /* Theme under the header + hide-on-scroll-down */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 48)
+    let raf = 0
+    const check = () => {
+      raf = 0
+      const y = window.scrollY
+      setAtTop(y < 40)
+      const dy = y - lastY.current
+      if (y < 160) setHidden(false)
+      else if (dy > 4) setHidden(true)
+      else if (dy < -4) setHidden(false)
+      lastY.current = y
+      const stack = document.elementsFromPoint(window.innerWidth / 2, 36)
+      const host = stack.find((el) => !el.closest('.nav') && el.closest('[data-nav]'))
+      setDark(host ? host.closest('[data-nav]').dataset.nav === 'dark' : false)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(check) }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    window.addEventListener('resize', onScroll)
+    // Lazy pages mount after this effect — re-check as content arrives.
+    const timers = [60, 300, 800, 1600, 3200].map((ms) => setTimeout(check, ms))
+    check()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      timers.forEach(clearTimeout)
+      cancelAnimationFrame(raf)
+    }
+  }, [location.pathname])
 
+  useEffect(() => { startTransition(() => { setOpen(false); setDd(false) }) }, [location.pathname])
+
+  /* Full-screen menu choreography */
   useEffect(() => {
-    startTransition(() => {
-      setMobileOpen(false)
-      setMobileExpanded(null)
-      setActiveDropdown(null)
-    })
-  }, [location])
+    if (!didMount.current) { didMount.current = true; return }
+    const el = menu.current
+    if (!el) return
+    if (prefersReducedMotion()) { el.style.visibility = open ? 'visible' : 'hidden'; return }
+    if (open) {
+      lockScroll()
+      gsap.set(el, { visibility: 'visible' })
+      gsap.fromTo(el, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.9, ease: 'expo.inOut' })
+      gsap.fromTo('.menu__link span', { yPercent: 115 }, { yPercent: 0, duration: 1.1, stagger: 0.05, ease: 'expo.out', delay: 0.35 })
+      gsap.fromTo('.menu__aside > *', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: 0.6 })
+    } else {
+      unlockScroll()
+      gsap.to(el, {
+        clipPath: 'inset(0 0 100% 0)',
+        duration: 0.8,
+        ease: 'expo.inOut',
+        onComplete: () => gsap.set(el, { visibility: 'hidden' }),
+      })
+    }
+  }, [open])
 
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [mobileOpen])
+  const enter = () => { clearTimeout(ddTimer.current); setDd(true) }
+  const leave = () => { ddTimer.current = setTimeout(() => setDd(false), 160) }
 
-  const handleMouseEnter = (label) => {
-    clearTimeout(dropdownTimeout.current)
-    setActiveDropdown(label)
-  }
-  const handleMouseLeave = () => {
-    dropdownTimeout.current = setTimeout(() => setActiveDropdown(null), 180)
-  }
-
-  /* Same full lockup (AG + wordmark + tagline) everywhere; hero renders it white via CSS */
-  const lightNav = !transparent
-  const logoHeight = transparent ? 48 : 40
+  const cls = ['nav']
+  if (dark && !open) cls.push('nav--dark')
+  if (open) cls.push('nav--open')
+  if (hidden === true && !open) cls.push('nav--hidden')
+  if (!atTop) cls.push('nav--solid')
 
   return (
     <>
-      <nav
-        className={`site-nav ${transparent ? 'site-nav--hero' : 'site-nav--light'}`}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-        }}
-      >
-        <div className={`site-nav__bar site-nav__inner${transparent ? ' site-nav__inner--hero' : ''}`}>
-          <Link to="/" className="site-nav__brand">
-            <img
-              src={logoColor}
-              alt="Anjna Global"
-              height={logoHeight}
-              style={{ height: logoHeight, width: 'auto' }}
-            />
+      <header className={cls.join(' ')}>
+        <div className="nav__bar">
+          <Link to="/" className="nav__brand" aria-label="Anjna Global — home">
+            <img src={logoColor} alt="Anjna Global" height="40" />
           </Link>
 
-          <div className="site-nav__links">
-            {navLinks.map(link => (
-              <div
-                key={link.path}
-                className="site-nav__dropdown-wrap"
-                onMouseEnter={() => link.children && handleMouseEnter(link.label)}
-                onMouseLeave={() => link.children && handleMouseLeave()}
-              >
+          <nav className="nav__links" aria-label="Primary">
+            {navLinks.map((link) =>
+              link.children ? (
+                <div key={link.path} className="nav__item" onMouseEnter={enter} onMouseLeave={leave}>
+                  <NavLink to={link.path} className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
+                    {link.label}
+                    <ChevronDown size={13} aria-hidden className={dd ? 'is-flip' : ''} />
+                  </NavLink>
+                  <div className={`nav__dd${dd ? ' is-open' : ''}`} onMouseEnter={enter} onMouseLeave={leave}>
+                    <p className="mono">Destinations</p>
+                    {link.children.map((c) => (
+                      <Link key={c.path} to={c.path} className="nav__dd-link">
+                        <span>{c.flag}</span>{c.label}<ArrowUpRight size={15} aria-hidden />
+                      </Link>
+                    ))}
+                    <Link to="/destinations" className="nav__dd-all">View all destinations →</Link>
+                  </div>
+                </div>
+              ) : (
                 <NavLink
+                  key={link.path}
                   to={link.path}
                   end={link.end === true}
                   title={link.title}
-                  className={({ isActive }) =>
-                    `site-nav__link${isActive ? ' site-nav__link--active' : ''}`
-                  }
+                  className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}
                 >
                   {link.label}
-                  {link.children && (
-                    <ChevronDown
-                      size={14}
-                      aria-hidden
-                      style={{
-                        opacity: 0.75,
-                        transition: 'transform 0.2s ease',
-                        transform: activeDropdown === link.label ? 'rotate(180deg)' : 'none',
-                      }}
-                    />
-                  )}
                 </NavLink>
+              )
+            )}
+          </nav>
 
-                {link.children && activeDropdown === link.label && (
-                  <div
-                    className={`site-nav__dropdown${lightNav ? ' site-nav__dropdown--light' : ''}`}
-                    onMouseEnter={() => handleMouseEnter(link.label)}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div className="site-nav__dropdown-label">Destinations</div>
-                    {link.children.map(child => (
-                      <Link key={child.path} to={child.path} className="site-nav__dropdown-link">
-                        {child.label}
-                      </Link>
-                    ))}
-                    <div className="site-nav__dropdown-footer">
-                      <Link to="/destinations" className="site-nav__dropdown-all">
-                        View all →
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="site-nav__tail">
-            <div className="site-nav__actions">
-              <a
-                href="tel:+911242786999"
-                className="site-nav__phone"
-                aria-label="Call +91-124-2786999"
-              >
-                <Phone size={16} strokeWidth={1.75} aria-hidden />
-                +91-124-2786999
-              </a>
-              <Link to="/contact" className="btn-primary site-nav__cta" style={{ padding: '10px 18px', fontSize: '14px' }}>
-                Get a quote
-              </Link>
-            </div>
+          <div className="nav__tail">
+            <a href="tel:+911242786999" className="nav__phone" aria-label="Call +91-124-2786999">
+              <Phone size={14} strokeWidth={1.8} aria-hidden /> +91-124-2786999
+            </a>
+            <Link to="/contact" className="btn btn--sm nav__cta">Get a quote <ArrowUpRight size={14} aria-hidden /></Link>
             <button
               type="button"
-              onClick={() => setMobileOpen(o => !o)}
-              className="site-nav__mobile-toggle"
-              aria-expanded={mobileOpen}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              className={`nav__burger${open ? ' is-open' : ''}`}
+              onClick={() => setOpen((o) => !o)}
+              aria-expanded={open}
+              aria-label={open ? 'Close menu' : 'Open menu'}
             >
-              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+              <span /><span />
             </button>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {mobileOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 999,
-            background: 'rgba(10,15,30,0.98)',
-            display: 'flex',
-            flexDirection: 'column',
-            paddingTop: '100px',
-            animation: 'fadeIn 0.25s ease',
-            overflowY: 'auto',
-            fontFamily: 'var(--font-body)',
-          }}
-        >
-          <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            {navLinks.map(link => (
-              <div key={link.path}>
-                {link.children ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '16px 0',
-                        color: 'white',
-                        fontSize: '17px',
-                        fontWeight: '500',
-                        borderBottom: '1px solid rgba(255,255,255,0.06)',
-                        background: 'none',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                      }}
-                    >
-                      {link.label}
-                      <ChevronDown
-                        size={18}
-                        style={{
-                          transform: mobileExpanded === link.label ? 'rotate(180deg)' : 'none',
-                          transition: 'transform 0.2s ease',
-                        }}
-                      />
-                    </button>
-                    {mobileExpanded === link.label && (
-                      <div style={{ paddingLeft: '12px', paddingBottom: '8px' }}>
-                        {link.children.map(child => (
-                          <Link
-                            key={child.path}
-                            to={child.path}
-                            style={{
-                              display: 'block',
-                              padding: '12px 0',
-                              color: 'rgba(255,255,255,0.7)',
-                              fontSize: '15px',
-                              borderBottom: '1px solid rgba(255,255,255,0.04)',
-                            }}
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <Link
-                    to={link.path}
-                    end={link.end === true}
-                    title={link.title}
-                    style={{
-                      display: 'block',
-                      padding: '16px 0',
-                      color: 'white',
-                      fontSize: '17px',
-                      fontWeight: '500',
-                      borderBottom: '1px solid rgba(255,255,255,0.06)',
-                    }}
-                  >
-                    {link.label}
-                  </Link>
-                )}
-              </div>
-            ))}
-
-            <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <a href="tel:+911242786999" className="site-nav__phone" style={{ justifyContent: 'center', border: '1px solid rgba(255,255,255,0.15)' }}>
-                <Phone size={18} aria-hidden />
-                +91-124-2786999
-              </a>
-              <Link to="/contact" className="btn-primary" style={{ textAlign: 'center', justifyContent: 'center' }}>
-                Get a quote
+      <div className="menu" ref={menu} aria-hidden={!open} style={{ visibility: 'hidden' }}>
+        <div className="menu__inner">
+          <nav className="menu__nav" aria-label="Mobile">
+            {navLinks.map((l, i) => (
+              <Link key={l.path} to={l.path} className="menu__link" title={l.title} tabIndex={open ? 0 : -1}>
+                <i>{String(i + 1).padStart(2, '0')}</i>
+                <span>{l.label}</span>
               </Link>
-              <a
-                href="https://wa.me/919958801627"
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  padding: '14px',
-                  background: '#25D366',
-                  color: 'white',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                }}
-              >
-                WhatsApp
-              </a>
-            </div>
-          </div>
+            ))}
+          </nav>
+          <aside className="menu__aside">
+            <p className="mono">Destinations</p>
+            <ul>
+              {navLinks[2].children.map((c) => (
+                <li key={c.path}><Link to={c.path} tabIndex={open ? 0 : -1}>{c.flag} {c.label}</Link></li>
+              ))}
+            </ul>
+            <p className="mono">Talk to us</p>
+            <a href="tel:+911242786999" tabIndex={open ? 0 : -1}>+91-124-2786999</a>
+            <a href="mailto:info@anjnaglobal.com" tabIndex={open ? 0 : -1}>info@anjnaglobal.com</a>
+            <a href="https://wa.me/919958801627" target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1}>WhatsApp ↗</a>
+            <Link to="/contact" className="btn btn--light" tabIndex={open ? 0 : -1}>Get a quote <ArrowUpRight size={14} aria-hidden /></Link>
+          </aside>
         </div>
-      )}
+      </div>
     </>
   )
 }

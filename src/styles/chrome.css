@@ -1,0 +1,89 @@
+/* Global chrome: route curtain, scroll progress, custom cursor */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  background: var(--ink);
+  transform: translate3d(0, 100%, 0);
+  pointer-events: none;
+}
+.curtain::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--red);
+}
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 1100;
+  pointer-events: none;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--red);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* Cursor — only on fine pointers, mounted by MotionRoot */
+.cursor { position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 0.4s; }
+.cursor.is-on { opacity: 1; }
+.cursor.is-hidden { opacity: 0; }
+.cursor__dot, .cursor__ring { position: fixed; top: 0; left: 0; will-change: transform; }
+.cursor__dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #fff;
+  mix-blend-mode: difference;
+  transition: transform 0.4s var(--ease), opacity 0.3s;
+}
+.cursor__ring {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  mix-blend-mode: difference;
+  display: grid;
+  place-items: center;
+  transition: width 0.5s var(--ease), height 0.5s var(--ease), margin 0.5s var(--ease), background 0.4s, border-color 0.4s;
+}
+.cursor.is-link .cursor__ring { width: 74px; height: 74px; margin: -37px 0 0 -37px; background: rgba(255, 255, 255, 1); }
+.cursor.is-link .cursor__dot { transform: scale(0); }
+.cursor.is-label .cursor__ring {
+  width: 96px;
+  height: 96px;
+  margin: -48px 0 0 -48px;
+  background: var(--red);
+  border-color: var(--red);
+  mix-blend-mode: normal;
+}
+.cursor.is-label .cursor__dot { transform: scale(0); }
+.cursor.is-down .cursor__ring { transform: scale(0.85); }
+.cursor__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cursor.is-label .cursor__label { opacity: 1; }
+
+html.has-cursor, html.has-cursor a, html.has-cursor button, html.has-cursor [role='button'], html.has-cursor label, html.has-cursor summary { cursor: none; }
+html.has-cursor input, html.has-cursor textarea, html.has-cursor select { cursor: text; }
+
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+.route-fallback{min-height:100vh;background:var(--ink)}

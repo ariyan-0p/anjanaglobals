@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, MapPin, Clock, Star, Users, Award, Headphones,
-  ChevronRight, CheckCircle, Globe, TrendingUp, Plane, Building2, Heart, Video, Sparkles, Play,
+  ArrowUpRight, MapPin, Clock, Headphones, TrendingUp, CheckCircle, Video, Sparkles, Play,
 } from 'lucide-react'
 import { destinations } from '../data/destinations'
 import { packages } from '../data/packages'
 import { homepagePartners } from '../data/hotelPartners'
 import HotelPartners from '../components/HotelPartners'
+import { gsap, prefersReducedMotion } from '../motion/gsap'
+import { onReady } from '../motion/ready'
 import heroImgDubai from '../assets/Dubai.jpg'
 import heroImgBali from '../assets/Bali.jpg'
 import heroImgSingapore from '../assets/singapore.jpg'
@@ -78,11 +79,13 @@ const heroSlides = [
   },
 ]
 
+const SLIDE_MS = 6500
+
 const stats = [
-  { value: 'Since 2013', label: 'Trusted DMC', icon: <Award size={20} strokeWidth={1.75} /> },
-  { value: '5', label: 'Signature destinations', icon: <Globe size={20} strokeWidth={1.75} /> },
-  { value: '2500+', label: 'Travel partners across India', icon: <Users size={20} strokeWidth={1.75} /> },
-  { value: '24/7', label: 'Dedicated support', icon: <Headphones size={20} strokeWidth={1.75} /> },
+  { value: 'Since 2013', label: 'Trusted DMC' },
+  { value: '5', label: 'Signature destinations', count: true },
+  { value: '2500+', label: 'Travel partners across India', count: true },
+  { value: '24/7', label: 'Dedicated support' },
 ]
 
 const trustSignals = [
@@ -95,21 +98,9 @@ const trustSignals = [
 ]
 
 const servicePillars = [
-  {
-    icon: <Plane size={20} strokeWidth={1.75} />,
-    title: 'FIT & bespoke trips',
-    desc: 'Tailored itineraries for individuals, couples, and private groups.',
-  },
-  {
-    icon: <Building2 size={20} strokeWidth={1.75} />,
-    title: 'Groups & MICE',
-    desc: 'Seamless logistics for incentives, conferences, and large movements.',
-  },
-  {
-    icon: <Heart size={20} strokeWidth={1.75} />,
-    title: 'Celebrations',
-    desc: 'Honeymoons and milestone journeys with end-to-end care.',
-  },
+  { title: 'FIT & bespoke trips', desc: 'Tailored itineraries for individuals, couples, and private groups.' },
+  { title: 'Groups & MICE', desc: 'Seamless logistics for incentives, conferences, and large movements.' },
+  { title: 'Celebrations', desc: 'Honeymoons and milestone journeys with end-to-end care.' },
 ]
 
 const serviceChecks = [
@@ -128,46 +119,41 @@ const homeMoments = destinations.map((dest) => ({
   image: MOMENT_IMAGE_OVERRIDE[dest.id] || dest.galleryImages?.[0] || dest.image,
 }))
 
-function useCounter(target, enabled, isVisible) {
-  const [count, setCount] = useState(0)
-  useEffect(() => {
-    if (!enabled || !isVisible) return
-    const head = String(target).match(/^(\d+)/)
-    const num = head ? parseInt(head[1], 10) : 0
-    if (!num) return
-    let start = 0
-    const timer = setInterval(() => {
-      start += Math.ceil(num / (1800 / 30))
-      if (start >= num) {
-        setCount(num)
-        clearInterval(timer)
-      } else {
-        setCount(start)
-      }
-    }, 30)
-    return () => clearInterval(timer)
-  }, [enabled, isVisible, target])
-  return count
-}
-
-function StatItem({ stat, isVisible }) {
-  const suffix = stat.value.replace(/^\d+/, '')
-  const shouldAnimate = /^\d+/.test(stat.value) && !stat.value.includes('/')
-  const count = useCounter(stat.value, shouldAnimate, isVisible)
-  const display = shouldAnimate ? `${count}${suffix}` : stat.value
-
+function Marquee({ items, className = '' }) {
+  const track = items.map((t, i) => (
+    <span key={`${t}-${i}`} className="mq__item">
+      <span>{t}</span>
+      <i aria-hidden>✦</i>
+    </span>
+  ))
   return (
-    <div className="home-stat">
-      <div className="home-stat__icon">{stat.icon}</div>
-      <div className="home-stat__value">{display}</div>
-      <div className="home-stat__label">{stat.label}</div>
+    <div className={`marquee ${className}`}>
+      <div className="marquee__track">{track}</div>
+      <div className="marquee__track" aria-hidden>{track}</div>
     </div>
   )
 }
 
+/* Headline rendered word-by-word so slide changes can mask-reveal it. */
+function HeroHeadline({ slide, headRef }) {
+  const words = (str, cls) =>
+    str.split(' ').map((w, i) => (
+      <Fragment key={`${cls}-${i}`}>
+        <span className="hw"><span className={`hw__i ${cls}`}>{w}</span></span>{' '}
+      </Fragment>
+    ))
+  return (
+    <h1 className="hero__title" ref={headRef}>
+      {words(slide.title, '')}
+      <br />
+      {words(slide.accent, 'is-accent')}
+    </h1>
+  )
+}
+
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [statsVisible, setStatsVisible] = useState(false)
+  const [current, setCurrent] = useState(0)
+  const [prev, setPrev] = useState(-1)
   const [querySubmitted, setQuerySubmitted] = useState(false)
   const [querySubmitting, setQuerySubmitting] = useState(false)
   const [queryError, setQueryError] = useState('')
@@ -175,6 +161,16 @@ export default function Home() {
   const [playingAgentId, setPlayingAgentId] = useState(null)
   const [agentVoices, setAgentVoices] = useState([])
   const agentVideoRefs = useRef({})
+
+  const heroRef = useRef(null)
+  const headRef = useRef(null)
+  const slideEls = useRef([])
+  const timer = useRef(null)
+  const busy = useRef(false)
+  const currentRef = useRef(0)
+  const introDone = useRef(false)
+  const destRef = useRef(null)
+  const trackRef = useRef(null)
 
   useEffect(() => {
     let alive = true
@@ -200,8 +196,6 @@ export default function Home() {
       alive = false
     }
   }, [])
-  const statsRef = useRef(null)
-  const intervalRef = useRef(null)
 
   const handleAgentPlay = (id) => {
     setPlayingAgentId(id)
@@ -220,29 +214,107 @@ export default function Home() {
     if (playingAgentId === id) setPlayingAgentId(null)
   }
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrentSlide(s => (s + 1) % heroSlides.length)
-    }, 6000)
-    return () => clearInterval(intervalRef.current)
+  /* ── Hero: slide change = old words rise out, new image wipes in, new words rise in ── */
+  const animateWordsIn = useCallback(() => {
+    const words = headRef.current?.querySelectorAll('.hw__i')
+    if (!words?.length) return
+    gsap.fromTo(words, { yPercent: 118 }, { yPercent: 0, duration: 1.2, stagger: 0.045, ease: 'expo.out' })
   }, [])
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setStatsVisible(true)
-      },
-      { threshold: 0.25 }
-    )
-    if (statsRef.current) observer.observe(statsRef.current)
-    return () => observer.disconnect()
+  const goTo = useCallback((next) => {
+    if (busy.current || next === currentRef.current) return
+    busy.current = true
+    const from = currentRef.current
+    const reduce = prefersReducedMotion()
+    const swap = () => {
+      currentRef.current = next
+      setPrev(from)
+      setCurrent(next)
+    }
+    if (reduce) { swap(); busy.current = false; return }
+
+    const outWords = headRef.current?.querySelectorAll('.hw__i')
+    gsap.to(outWords, {
+      yPercent: -118,
+      duration: 0.55,
+      stagger: 0.02,
+      ease: 'power3.in',
+      onComplete: swap,
+    })
   }, [])
 
-  const goToSlide = (i) => {
-    setCurrentSlide(i)
-    clearInterval(intervalRef.current)
-    intervalRef.current = setInterval(() => setCurrentSlide(s => (s + 1) % heroSlides.length), 6000)
-  }
+  // After React commits the new slide: wipe the image in and reveal the headline.
+  useLayoutEffect(() => {
+    if (!introDone.current) return
+    const el = slideEls.current[current]
+    if (el) {
+      gsap.fromTo(
+        el,
+        { clipPath: 'inset(0% 0% 0% 100%)' },
+        { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' }
+      )
+      gsap.fromTo(el.firstElementChild, { scale: 1.25 }, { scale: 1.02, duration: 2.4, ease: 'expo.out' })
+    }
+    const words = headRef.current?.querySelectorAll('.hw__i')
+    if (words?.length) gsap.set(words, { yPercent: 118 })
+    animateWordsIn()
+    const t = setTimeout(() => { busy.current = false }, 1500)
+    return () => clearTimeout(t)
+  }, [current, animateWordsIn])
+
+  // Auto-advance
+  useEffect(() => {
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => goTo((current + 1) % heroSlides.length), SLIDE_MS)
+    return () => clearTimeout(timer.current)
+  }, [current, goTo])
+
+  // First-load intro, held until the preloader lifts.
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const words = headRef.current?.querySelectorAll('.hw__i')
+      const bg = slideEls.current[0]?.firstElementChild
+      if (prefersReducedMotion()) { introDone.current = true; return }
+      gsap.set(words, { yPercent: 118 })
+      gsap.set('.hero [data-hero-in]', { opacity: 0, y: 28 })
+      if (bg) gsap.set(bg, { scale: 1.3 })
+      onReady(() => {
+        const tl = gsap.timeline({ onComplete: () => { introDone.current = true } })
+        if (bg) tl.to(bg, { scale: 1.02, duration: 2.6, ease: 'expo.out' }, 0)
+        tl.to(words, { yPercent: 0, duration: 1.4, stagger: 0.06, ease: 'expo.out' }, 0.1)
+        tl.to('.hero [data-hero-in]', { opacity: 1, y: 0, duration: 1.1, stagger: 0.09, ease: 'power3.out' }, 0.5)
+      })
+    }, heroRef)
+    return () => ctx.revert()
+  }, [])
+
+  /* ── Horizontal destinations (desktop): the section is made tall, the inner
+        stage is CSS-sticky, and scroll progress drives the track sideways. No
+        GSAP pin wrapper, so React can unmount the section cleanly. ── */
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) return
+    const mm = gsap.matchMedia()
+    mm.add('(min-width: 900px)', () => {
+      const section = destRef.current
+      const track = trackRef.current
+      if (!section || !track) return
+      const dist = () => Math.max(0, track.scrollWidth - window.innerWidth + 1)
+      const setHeight = () => { section.style.height = `${dist() * 1.05 + window.innerHeight}px` }
+      setHeight()
+      const st = { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.8, invalidateOnRefresh: true, onRefreshInit: setHeight }
+      const tween = gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: st })
+      section.querySelectorAll('.dest__panel .px').forEach((px) => {
+        gsap.fromTo(px, { xPercent: -9 }, {
+          xPercent: 9,
+          ease: 'none',
+          scrollTrigger: { trigger: px.closest('.dest__panel'), containerAnimation: tween, start: 'left right', end: 'right left', scrub: true },
+        })
+      })
+      gsap.to('.dest__bar i', { scaleX: 1, ease: 'none', scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: true } })
+      return () => { section.style.height = '' }
+    })
+    return () => mm.revert()
+  }, [])
 
   // B2B / agent specials lead the section, then the retail favourites.
   const featuredPackages = [
@@ -272,404 +344,413 @@ export default function Home() {
     }
   }
 
+  const slide = heroSlides[current]
 
   return (
     <main className="home">
-      <section className="home-hero">
-        {heroSlides.map((slide, i) => (
-          <div
-            key={slide.image}
-            className="home-hero__slide"
-            style={{
-              backgroundImage: `url(${slide.image})`,
-              opacity: i === currentSlide ? 1 : 0,
-              transform: i === currentSlide ? 'scale(1.03)' : 'scale(1)',
-              pointerEvents: 'none',
-            }}
-          />
-        ))}
-        <div className="home-hero__overlay" />
-        <div className="home-hero__fade" />
+      {/* ── HERO ─────────────────────────────────────────── */}
+      <section className="hero" ref={heroRef} data-nav="dark">
+        <div className="hero__slides" aria-hidden>
+          {heroSlides.map((s, i) => (
+            <div
+              key={s.image}
+              ref={(n) => { slideEls.current[i] = n }}
+              className="hero__slide"
+              style={{ zIndex: i === current ? 2 : i === prev ? 1 : 0, visibility: i === current || i === prev ? 'visible' : 'hidden' }}
+            >
+              <div className="hero__img" style={{ backgroundImage: `url(${s.image})` }} />
+            </div>
+          ))}
+        </div>
+        <div className="hero__shade" />
 
-        <div className="container home-hero__inner">
-          <div key={currentSlide} className="home-hero__content" style={{ maxWidth: '44rem' }}>
-            <div className="home-hero__badge">
-              <MapPin size={13} color="#C8102E" aria-hidden />
-              <span>
-                {heroSlides[currentSlide].tag} · {heroSlides[currentSlide].dest}
-              </span>
+        <div className="wrap hero__inner">
+          <p className="hero__tag mono" data-hero-in key={`tag-${current}`}>
+            <MapPin size={13} aria-hidden /> {slide.tag} · {slide.dest}
+          </p>
+
+          <HeroHeadline key={current} slide={slide} headRef={headRef} />
+
+          <div className="hero__foot">
+            <div className="hero__actions" data-hero-in>
+              <Link to="/destinations" className="btn" data-magnetic>
+                Explore destinations <ArrowUpRight size={14} aria-hidden />
+              </Link>
+              <Link to="/b2b" className="btn btn--ghost" data-magnetic>
+                Partner with us <ArrowUpRight size={14} aria-hidden />
+              </Link>
             </div>
 
-            <h1 className="home-hero__title">
-              {heroSlides[currentSlide].title}
-              <br />
-              <span className="home-hero__title-accent">{heroSlides[currentSlide].accent}</span>
-            </h1>
-
-            <div className="home-hero__actions">
-              <Link to="/destinations" className="btn-primary">
-                Explore destinations <ArrowRight size={16} aria-hidden />
-              </Link>
-              <Link to="/b2b" className="btn-outline-white">
-                Partner with us
-              </Link>
+            <div className="hero__index" data-hero-in role="tablist" aria-label="Hero slides">
+              {heroSlides.map((s, i) => (
+                <button
+                  key={s.dest}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === current}
+                  className={`hero__idx${i === current ? ' is-active' : ''}`}
+                  onClick={() => goTo(i)}
+                >
+                  <span className="mono">0{i + 1}</span>
+                  <span className="hero__idx-name">{s.dest.split(',')[0]}</span>
+                  <span className="hero__idx-bar"><i key={i === current ? `a-${current}` : 'x'} style={{ animationDuration: `${SLIDE_MS}ms` }} /></span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="home-hero__dots" role="tablist" aria-label="Hero slides">
-          {heroSlides.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              role="tab"
-              aria-selected={i === currentSlide}
-              className={`home-hero__dot${i === currentSlide ? ' is-active' : ''}`}
-              onClick={() => goToSlide(i)}
-            />
-          ))}
+        <div className="hero__scroll mono" data-hero-in aria-hidden>
+          Scroll <span />
         </div>
       </section>
 
-      <section className="home-trust-strip" aria-label="Trust highlights">
-        <div className="home-trust-strip__track">
-          {[...trustSignals, ...trustSignals].map((signal, i) => (
-            <div key={`${signal}-${i}`} className="home-trust-strip__item">
-              <Star size={14} aria-hidden />
-              <span>{signal}</span>
-            </div>
-          ))}
-        </div>
+      {/* ── TRUST MARQUEE ─────────────────────────────────── */}
+      <section className="mq" aria-label="Trust highlights">
+        <Marquee items={trustSignals} />
       </section>
 
-      <section ref={statsRef} className="home-stats">
-        <div className="container">
-          <div className="home-stats__grid">
-            {stats.map(s => (
-              <StatItem key={s.label} stat={s} isVisible={statsVisible} />
+      {/* ── STATEMENT + STATS ─────────────────────────────── */}
+      <section className="sec statement">
+        <div className="wrap">
+          <p className="eyebrow">The Anjna promise</p>
+          <p className="statement__text d-m" data-scrub>
+            From first quote to final transfer, everything just works. Built on reliability and relationships —
+            trusted since 2013. One brand. Five destinations. Consistently exceptional delivery.
+          </p>
+
+          <div className="stats" data-stagger>
+            {stats.map((s) => (
+              <div key={s.label} className="stat">
+                <div className="stat__v" {...(s.count ? { 'data-count': true } : {})}>{s.value}</div>
+                <div className="stat__l mono">{s.label}</div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="home-section home-section--destinations" style={{ background: '#fff' }}>
-        <div className="container">
-          <header className="home-section__head">
-            <span className="tag">Destinations</span>
-            <h2 className="section-heading">Where we excel</h2>
-            <p className="section-sub">
+      {/* ── DESTINATIONS — pinned horizontal scroll ───────── */}
+      <section className="dest on-ink" ref={destRef} data-nav="dark">
+        <div className="dest__pin">
+          <header className="dest__head wrap">
+            <div>
+              <span className="eyebrow eyebrow--light">Destinations</span>
+              <h2 className="d-m" data-split>Where we <em>excel</em></h2>
+            </div>
+            <p className="lead" data-fade>
               Five hand-picked regions — each with dedicated teams, vetted suppliers, and itineraries
               refined over years of operation.
             </p>
           </header>
 
-          <div className="home-dest-grid">
-            <DestCardLarge dest={destinations[0]} />
-            <div className="home-dest-grid__small">
-              {destinations.slice(1).map(d => (
-                <DestCardSmall key={d.id} dest={d} />
-              ))}
-            </div>
-          </div>
-
-          <div className="home-dest-cta">
-            <Link to="/destinations" className="btn-primary">
-              View all destinations <ArrowRight size={16} aria-hidden />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="home-section home-section--surface home-section--services">
-        <div className="container">
-          <div className="home-services">
-            <div>
-              <span className="tag">Services</span>
-              <h2 className="section-heading">Everything in one place</h2>
-              <p className="section-sub" style={{ marginBottom: 0 }}>
-                From first quote to last transfer — one partner, one workflow, clear ownership at
-                every step.
-              </p>
-              <div className="home-services__checks">
-                {serviceChecks.map(line => (
-                  <div key={line} className="home-services__check">
-                    <CheckCircle size={18} color="#C8102E" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden />
-                    <span>{line}</span>
-                  </div>
-                ))}
-              </div>
-              <Link to="/services" className="btn-primary">
-                All services <ArrowRight size={16} aria-hidden />
+          <div className="dest__track" ref={trackRef}>
+            {destinations.map((d, i) => (
+              <Link key={d.id} to={`/destinations/${d.id}`} className="dest__panel" data-cursor="Explore">
+                <div className="dest__media media">
+                  <div className="px" style={{ backgroundImage: `url(${d.image})` }} />
+                  <div className="dest__shade" />
+                </div>
+                <div className="dest__top">
+                  <span className="dest__no">0{i + 1}</span>
+                  <span className="dest__pk mono">{d.packages} packages</span>
+                </div>
+                <div className="dest__body">
+                  <span className="dest__flag">{d.flag}</span>
+                  <h3>{d.name}</h3>
+                  <p>{d.shortDesc}</p>
+                  <span className="dest__cta mono">Explore <ArrowUpRight size={14} aria-hidden /></span>
+                </div>
+              </Link>
+            ))}
+            <div className="dest__panel dest__panel--end">
+              <p className="d-s">Five destinations.<br /><em>One partner.</em></p>
+              <Link to="/destinations" className="btn btn--light" data-magnetic>
+                View all destinations <ArrowUpRight size={14} aria-hidden />
               </Link>
             </div>
+          </div>
 
-            <div className="home-services__pillars">
-              {servicePillars.map(p => (
-                <div key={p.title} className="home-pillar">
-                  <div className="home-pillar__icon">{p.icon}</div>
-                  <h3 className="home-pillar__title">{p.title}</h3>
-                  <p className="home-pillar__desc">{p.desc}</p>
-                </div>
+          <div className="dest__bar wrap" aria-hidden><span><i /></span></div>
+        </div>
+      </section>
+
+      {/* ── SERVICES ──────────────────────────────────────── */}
+      <section className="sec svc">
+        <div className="wrap svc__grid">
+          <div className="svc__lead">
+            <span className="eyebrow">Services</span>
+            <h2 className="d-m" data-split>Everything in <em>one place</em></h2>
+            <p className="lead" data-fade>
+              From first quote to last transfer — one partner, one workflow, clear ownership at every step.
+            </p>
+            <ul className="svc__checks" data-stagger>
+              {serviceChecks.map((line) => (
+                <li key={line}>
+                  <CheckCircle size={18} aria-hidden />
+                  <span>{line}</span>
+                </li>
               ))}
-            </div>
+            </ul>
+            <Link to="/services" className="btn" data-magnetic>
+              All services <ArrowUpRight size={14} aria-hidden />
+            </Link>
+          </div>
+
+          <div className="svc__list">
+            {servicePillars.map((p, i) => (
+              <article key={p.title} className="pillar" data-fade>
+                <span className="pillar__no mono">0{i + 1}</span>
+                <div>
+                  <h3 className="d-s">{p.title}</h3>
+                  <p>{p.desc}</p>
+                </div>
+                <ArrowUpRight className="pillar__arrow" size={28} aria-hidden />
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="home-section home-b2b">
-        <div className="home-b2b__bg" aria-hidden />
-        <div className="container">
-          <div className="home-b2b__grid">
-            <div>
-              <span className="tag tag-light">For travel professionals</span>
-              <h2 className="section-heading section-heading-light" style={{ marginBottom: '14px' }}>
-                Built for agencies & operators
-              </h2>
-              <p className="section-sub section-sub-light" style={{ marginBottom: 0 }}>
-                Competitive net rates, fast quotes, and reliable execution — so you can sell with
-                confidence.
-              </p>
+      {/* ── B2B ───────────────────────────────────────────── */}
+      <section className="sec b2b on-ink" data-nav="dark">
+        <div className="b2b__glow" aria-hidden />
+        <div className="wrap b2b__grid">
+          <div>
+            <span className="eyebrow eyebrow--light">For travel professionals</span>
+            <h2 className="d-l" data-split>Built for agencies <em>&amp; operators</em></h2>
+            <p className="lead" data-fade>
+              Competitive net rates, fast quotes, and reliable execution — so you can sell with confidence.
+            </p>
 
-              <div className="home-b2b__list">
-                {[
-                  { icon: <TrendingUp size={18} />, t: 'Strong net rates', d: 'Direct hotel & supplier relationships.' },
-                  { icon: <Headphones size={18} />, t: 'Dedicated BDM', d: 'A single point of contact for your desk.' },
-                  { icon: <Clock size={18} />, t: 'Rapid turnaround', d: 'Quotes and revisions without the wait.' },
-                ].map(item => (
-                  <div key={item.t} className="home-b2b__list-item">
-                    {item.icon}
-                    <div>
-                      <strong>{item.t}</strong>
-                      <span>{item.d}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                <Link to="/b2b" className="btn-primary">
-                  B2B overview <ArrowRight size={16} aria-hidden />
-                </Link>
-                <Link to="/contact" className="btn-outline-white">
-                  Request trade rates
-                </Link>
-              </div>
-            </div>
-
-            <aside className="home-b2b__panel">
-              <h3>At a glance</h3>
+            <div className="b2b__list" data-stagger>
               {[
-                { label: 'Partner satisfaction', val: '98%' },
-                { label: 'Avg. quote response', val: '2h' },
-                { label: 'Active partners', val: '2000+' },
-              ].map(row => (
-                <div key={row.label} className="home-b2b__metric">
-                  <span>{row.label}</span>
-                  <span>{row.val}</span>
+                { icon: <TrendingUp size={20} />, t: 'Strong net rates', d: 'Direct hotel & supplier relationships.' },
+                { icon: <Headphones size={20} />, t: 'Dedicated BDM', d: 'A single point of contact for your desk.' },
+                { icon: <Clock size={20} />, t: 'Rapid turnaround', d: 'Quotes and revisions without the wait.' },
+              ].map((item) => (
+                <div key={item.t} className="b2b__item">
+                  <span>{item.icon}</span>
+                  <div>
+                    <strong>{item.t}</strong>
+                    <p>{item.d}</p>
+                  </div>
                 </div>
               ))}
-            </aside>
+            </div>
+
+            <div className="b2b__actions">
+              <Link to="/b2b" className="btn btn--light" data-magnetic>
+                B2B overview <ArrowUpRight size={14} aria-hidden />
+              </Link>
+              <Link to="/contact" className="btn btn--ghost" data-magnetic>
+                Request trade rates <ArrowUpRight size={14} aria-hidden />
+              </Link>
+            </div>
           </div>
+
+          <aside className="b2b__panel" data-fade>
+            <h3 className="mono">At a glance</h3>
+            {[
+              { label: 'Partner satisfaction', val: '98%' },
+              { label: 'Avg. quote response', val: '2h' },
+              { label: 'Active partners', val: '2000+' },
+            ].map((row) => (
+              <div key={row.label} className="b2b__metric">
+                <span className="b2b__val" data-count>{row.val}</span>
+                <span className="mono">{row.label}</span>
+              </div>
+            ))}
+          </aside>
         </div>
       </section>
 
-      <section className="home-section" style={{ background: '#fff' }}>
-        <div className="container">
-          <header className="home-section__head home-section__head--row">
+      {/* ── PACKAGES ──────────────────────────────────────── */}
+      <section className="sec pkgs">
+        <div className="wrap">
+          <header className="head head--split">
             <div>
-              <span className="tag">Packages</span>
-              <h2 className="section-heading">Popular journeys</h2>
-              <p className="section-sub" style={{ marginBottom: 0 }}>
+              <span className="eyebrow">Packages</span>
+              <h2 className="d-m" data-split>Popular <em>journeys</em></h2>
+              <p className="lead" data-fade>
                 A sample of itineraries travellers book most often — fully customisable.
               </p>
             </div>
-            <Link to="/packages" className="home-section__link">
-              View all packages <ArrowRight size={16} aria-hidden />
+            <Link to="/packages" className="link-u" data-fade>
+              View all packages <ArrowUpRight size={16} aria-hidden />
             </Link>
           </header>
 
-          <div className="home-packages-grid">
-            {featuredPackages.map(pkg => (
+          <div className="pkgs__grid" data-stagger="0.12">
+            {featuredPackages.map((pkg) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
           </div>
         </div>
       </section>
 
+      {/* ── AGENT VOICES ──────────────────────────────────── */}
       {agentVoices.length > 0 ? (
-      <section className="home-section home-agent-voices">
-        <div className="container">
-          <header className="home-section__head text-center" style={{ marginBottom: 'clamp(1.5rem,4vw,2.4rem)' }}>
-            <span className="tag">Agent voices</span>
-            <h2 className="section-heading" style={{ margin: '0 auto 10px' }}>
-              What our agents say about us
-            </h2>
-            <p className="section-sub" style={{ margin: '0 auto' }}>
-              Real insights from our destination experts across operations, planning, and guest experience.
-            </p>
-          </header>
+        <section className="sec voices on-ink" data-nav="dark">
+          <div className="wrap">
+            <header className="head">
+              <span className="eyebrow eyebrow--light">Agent voices</span>
+              <h2 className="d-m" data-split>What our agents <em>say about us</em></h2>
+              <p className="lead" data-fade>
+                Real insights from our destination experts across operations, planning, and guest experience.
+              </p>
+            </header>
 
-          <div className="home-agent-voices__stage">
-            {agentVoices.map((agent, index) => {
-              const isPlaying = playingAgentId === agent.id
-              const hasError = agentVideoErrors[agent.id]
-              return (
-                <article
-                  key={agent.id}
-                  className={`home-agent-tile${isPlaying ? ' is-playing' : ''}`}
-                  style={{ '--tile-index': index }}
-                >
-                  <div className="home-agent-tile__frame">
-                    <span className="home-agent-tile__index">0{index + 1}</span>
-                    <span className="home-agent-tile__desk">
-                      <Sparkles size={13} aria-hidden />
-                      {agent.desk}
-                    </span>
+            <div className="voices__grid" data-stagger="0.14">
+              {agentVoices.map((agent, index) => {
+                const isPlaying = playingAgentId === agent.id
+                const hasError = agentVideoErrors[agent.id]
+                return (
+                  <article key={agent.id} className={`voice${isPlaying ? ' is-playing' : ''}`}>
+                    <div className="voice__frame">
+                      <span className="voice__index mono">0{index + 1}</span>
+                      <span className="voice__desk mono">
+                        <Sparkles size={12} aria-hidden />
+                        {agent.desk}
+                      </span>
 
-                    {hasError ? (
-                      <div className="home-agent-tile__fallback">
-                        <Video size={22} />
-                        <p>Video unavailable</p>
-                      </div>
-                    ) : (
-                      <video
-                        ref={(node) => { agentVideoRefs.current[agent.id] = node }}
-                        className="home-agent-tile__video"
-                        playsInline
-                        preload="metadata"
-                        controls={isPlaying}
-                        onPlay={() => setPlayingAgentId(agent.id)}
-                        onPause={() => handleAgentPause(agent.id)}
-                        onEnded={() => handleAgentPause(agent.id)}
-                        onError={() => setAgentVideoErrors((prev) => ({ ...prev, [agent.id]: true }))}
-                      >
-                        <source src={agent.src} type="video/mp4" />
-                      </video>
-                    )}
+                      {hasError ? (
+                        <div className="voice__fallback">
+                          <Video size={22} />
+                          <p>Video unavailable</p>
+                        </div>
+                      ) : (
+                        <video
+                          ref={(node) => { agentVideoRefs.current[agent.id] = node }}
+                          className="voice__video"
+                          playsInline
+                          preload="metadata"
+                          controls={isPlaying}
+                          onPlay={() => setPlayingAgentId(agent.id)}
+                          onPause={() => handleAgentPause(agent.id)}
+                          onEnded={() => handleAgentPause(agent.id)}
+                          onError={() => setAgentVideoErrors((prev) => ({ ...prev, [agent.id]: true }))}
+                        >
+                          <source src={agent.src} type="video/mp4" />
+                        </video>
+                      )}
 
-                    {!isPlaying && !hasError ? (
-                      <button
-                        type="button"
-                        className="home-agent-tile__cover"
-                        onClick={() => handleAgentPlay(agent.id)}
-                        aria-label={`Play video from ${agent.name}`}
-                      >
-                        <span className="home-agent-tile__play">
-                          <Play size={20} aria-hidden />
-                        </span>
-                        <span className="home-agent-tile__cover-label">Watch testimonial</span>
-                      </button>
-                    ) : null}
-                  </div>
+                      {!isPlaying && !hasError ? (
+                        <button
+                          type="button"
+                          className="voice__cover"
+                          onClick={() => handleAgentPlay(agent.id)}
+                          aria-label={`Play video from ${agent.name}`}
+                          data-cursor="Play"
+                        >
+                          <span className="voice__play"><Play size={22} aria-hidden /></span>
+                          <span className="voice__cover-label mono">Watch testimonial</span>
+                        </button>
+                      ) : null}
+                    </div>
 
-                  <div className="home-agent-tile__panel">
-                    <div className="home-agent-tile__panel-head">
+                    <div className="voice__meta">
                       <div>
                         <h3>{agent.name}</h3>
-                        <p>{agent.role}</p>
+                        <p className="mono">{agent.role}</p>
                       </div>
+                      <p className="voice__quote">
+                        <span aria-hidden>“</span>{agent.quote}<span aria-hidden>”</span>
+                      </p>
                     </div>
-                    <p className="home-agent-tile__quote">
-                      <span aria-hidden>"</span>{agent.quote}<span aria-hidden>"</span>
-                    </p>
-                  </div>
-                </article>
-              )
-            })}
+                  </article>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       ) : null}
 
-      <section className="home-section home-section--light home-moments">
-        <div className="container">
-          <header className="home-section__head text-center" style={{ marginBottom: 'clamp(2rem,4vw,2.75rem)' }}>
-            <span className="tag">Testimonials</span>
-            <h2 className="section-heading" style={{ margin: '0 auto 10px' }}>
-              Client moments
-            </h2>
-            <p className="section-sub" style={{ margin: '0 auto' }}>
-              Explore photo stories from all five destinations and jump directly to any location.
-            </p>
-            <div style={{ marginTop: '14px' }}>
-              <Link to="/testimonials" className="home-section__link" style={{ justifyContent: 'center' }}>
-                Explore all destination moments <ArrowRight size={16} aria-hidden />
-              </Link>
+      {/* ── CLIENT MOMENTS ────────────────────────────────── */}
+      <section className="sec moments">
+        <div className="wrap">
+          <header className="head head--split">
+            <div>
+              <span className="eyebrow">Testimonials</span>
+              <h2 className="d-m" data-split>Client <em>moments</em></h2>
+              <p className="lead" data-fade>
+                Explore photo stories from all five destinations and jump directly to any location.
+              </p>
             </div>
+            <Link to="/testimonials" className="link-u" data-fade>
+              Explore all destination moments <ArrowUpRight size={16} aria-hidden />
+            </Link>
           </header>
 
-          <div className="home-moments__tabs">
+          <div className="moments__tabs" data-fade>
             {homeMoments.map((dest) => (
-              <Link key={`tab-${dest.id}`} to={`/destinations/${dest.id}`} className="home-moments__tab">
+              <Link key={`tab-${dest.id}`} to={`/destinations/${dest.id}`} className="chip">
                 <span>{dest.flag}</span>
                 {dest.name}
               </Link>
             ))}
           </div>
 
-          <div className="home-moments__grid">
-            {homeMoments.map((dest) => (
-              <Link key={dest.id} to={`/testimonials#${dest.id}`} className="home-moment-card">
-                <div className="home-moment-card__img" style={{ backgroundImage: `url(${dest.image})` }} />
-                <div className="home-moment-card__overlay" />
-                <div className="home-moment-card__body">
-                  <p className="home-moment-card__meta">{dest.flag} {dest.name}, {dest.country}</p>
+          <div className="moments__grid">
+            {homeMoments.map((dest, i) => (
+              <Link key={dest.id} to={`/testimonials#${dest.id}`} className={`moment moment--${i + 1}`} data-cursor="View">
+                <div className="media moment__media" data-wipe data-parallax="8">
+                  <div className="px" style={{ backgroundImage: `url(${dest.image})` }} />
+                </div>
+                <div className="moment__body">
+                  <p className="mono">{dest.flag} {dest.name}, {dest.country}</p>
                   <h3>{dest.tagline}</h3>
-                  <span className="home-moment-card__cta">
-                    View gallery <ArrowRight size={14} aria-hidden />
-                  </span>
+                  <span className="moment__cta mono">View gallery <ArrowUpRight size={13} aria-hidden /></span>
                 </div>
               </Link>
             ))}
           </div>
 
-          <div className="home-moments__footer">
-            <Link to="/testimonials" className="btn-primary">
-              Open full testimonials page <ArrowRight size={16} aria-hidden />
+          <div className="moments__foot" data-fade>
+            <Link to="/testimonials" className="btn" data-magnetic>
+              Open full testimonials page <ArrowUpRight size={14} aria-hidden />
             </Link>
-            <div className="home-moments__dest-links">
+            <div className="moments__links">
               {homeMoments.map((dest) => (
-                <Link key={`quick-${dest.id}`} to={`/destinations/${dest.id}`}>
-                  {dest.name}
-                </Link>
+                <Link key={`quick-${dest.id}`} to={`/destinations/${dest.id}`}>{dest.name}</Link>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="home-section home-query">
-        <div className="container">
-          <div className="home-query__wrap">
-            <div>
-              <span className="tag">Quick query</span>
-              <h2 className="section-heading">Tell us your plan, we will call you back</h2>
-              <p className="section-sub" style={{ marginBottom: 0 }}>
-                Share your details and travel requirement. Our team will get in touch shortly with
-                options tailored for you.
-              </p>
-            </div>
+      {/* ── QUICK QUERY ───────────────────────────────────── */}
+      <section className="sec query sec--paper">
+        <div className="wrap query__wrap">
+          <div>
+            <span className="eyebrow">Quick query</span>
+            <h2 className="d-m" data-split>Tell us your plan, <em>we will call you back</em></h2>
+            <p className="lead" data-fade>
+              Share your details and travel requirement. Our team will get in touch shortly with
+              options tailored for you.
+            </p>
+          </div>
 
-            {querySubmitted ? (
-              <div className="home-query__success">
-                <h3>Thanks! Query received.</h3>
-                <p>Our team will contact you shortly.</p>
-                <button type="button" className="btn-primary" onClick={() => setQuerySubmitted(false)}>
-                  Submit another query
-                </button>
+          {querySubmitted ? (
+            <div className="query__success">
+              <h3 className="d-s">Thanks! Query received.</h3>
+              <p>Our team will contact you shortly.</p>
+              <button type="button" className="btn btn--plain" onClick={() => setQuerySubmitted(false)}>
+                Submit another query
+              </button>
+            </div>
+          ) : (
+            <form className="form" onSubmit={handleHomeQuerySubmit}>
+              <div className="form__row">
+                <label className="field"><span>Full name *</span><input name="name" type="text" required /></label>
+                <label className="field"><span>Phone / WhatsApp *</span><input name="phone" type="tel" required /></label>
               </div>
-            ) : (
-              <form className="home-query__form" onSubmit={handleHomeQuerySubmit}>
-                <div className="home-query__grid">
-                  <input name="name" type="text" placeholder="Full name *" required />
-                  <input name="phone" type="tel" placeholder="Phone / WhatsApp *" required />
-                </div>
-                <div className="home-query__grid">
-                  <input name="email" type="email" placeholder="Email ID *" required />
+              <div className="form__row">
+                <label className="field"><span>Email ID *</span><input name="email" type="email" required /></label>
+                <label className="field">
+                  <span>Destination (optional)</span>
                   <select name="destination" defaultValue="">
-                    <option value="" disabled>
-                      Destination (optional)
-                    </option>
+                    <option value="" disabled>Select</option>
                     <option>Dubai</option>
                     <option>Azerbaijan</option>
                     <option>Singapore</option>
@@ -677,19 +758,15 @@ export default function Home() {
                     <option>Bali</option>
                     <option>Not sure yet</option>
                   </select>
-                </div>
-                <textarea name="message" rows={4} placeholder="Travel dates / requirements (optional)" />
-                {queryError ? (
-                  <p style={{ margin: 0, padding: '10px 14px', background: 'rgba(200,16,46,0.08)', border: '1px solid rgba(200,16,46,0.3)', borderRadius: '8px', color: '#c8102e', fontSize: '13px' }}>
-                    {queryError}
-                  </p>
-                ) : null}
-                <button type="submit" className="btn-primary home-query__submit" disabled={querySubmitting}>
-                  {querySubmitting ? 'Sending…' : 'Submit query'}
-                </button>
-              </form>
-            )}
-          </div>
+                </label>
+              </div>
+              <label className="field"><span>Travel dates / requirements (optional)</span><textarea name="message" rows={3} /></label>
+              {queryError ? <p className="form__error">{queryError}</p> : null}
+              <button type="submit" className="btn" disabled={querySubmitting}>
+                {querySubmitting ? 'Sending…' : 'Submit query'} <ArrowUpRight size={14} aria-hidden />
+              </button>
+            </form>
+          )}
         </div>
       </section>
 
@@ -701,30 +778,30 @@ export default function Home() {
         background="white"
       />
 
-      <section className="home-cta">
-        <div
-          className="home-cta__bg"
-          style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1920&q=80)',
-          }}
-        />
-        <div className="home-cta__overlay" />
-        <div className="container home-cta__inner">
-          <span className="tag tag-light" style={{ marginBottom: 12 }}>Get started</span>
-          <h2>
-            Plan something <span style={{ color: '#C8102E' }}>memorable</span>
+      {/* ── CTA ───────────────────────────────────────────── */}
+      <section className="cta on-ink" data-nav="dark">
+        <div className="cta__bg media" data-parallax="12">
+          <div
+            className="px"
+            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1920&q=80)' }}
+          />
+        </div>
+        <div className="cta__shade" />
+        <div className="wrap cta__inner">
+          <span className="eyebrow eyebrow--light">Get started</span>
+          <h2 className="d-xl" data-split>
+            Plan something <em>memorable</em>
           </h2>
-          <p>
+          <p className="lead" data-fade>
             Tell us your brief — FIT, group, or corporate — and we&apos;ll respond with a clear,
             actionable proposal.
           </p>
-          <div className="home-cta__actions">
-            <Link to="/contact" className="btn-primary" style={{ padding: '15px 32px' }}>
-              Request a quote <ArrowRight size={16} aria-hidden />
+          <div className="cta__actions" data-fade>
+            <Link to="/contact" className="btn" data-magnetic>
+              Request a quote <ArrowUpRight size={14} aria-hidden />
             </Link>
-            <Link to="/packages" className="btn-outline-white" style={{ padding: '14px 32px' }}>
-              Browse packages
+            <Link to="/packages" className="btn btn--ghost" data-magnetic>
+              Browse packages <ArrowUpRight size={14} aria-hidden />
             </Link>
           </div>
         </div>
@@ -733,85 +810,39 @@ export default function Home() {
   )
 }
 
-function DestCardLarge({ dest }) {
-  return (
-    <Link to={`/destinations/${dest.id}`} className="home-card-dest home-card-dest--lg">
-      <div className="home-card-dest__img" style={{ backgroundImage: `url(${dest.image})` }} />
-      <div className="home-card-dest__grad" />
-      <span className="home-card-dest__badge">{dest.packages} packages</span>
-      <div className="home-card-dest__body">
-        <div className="home-card-dest__flag">{dest.flag}</div>
-        <h3>{dest.name}</h3>
-        <p>{dest.shortDesc}</p>
-        <span className="home-card-dest__cta">
-          Explore <ArrowRight size={14} aria-hidden />
-        </span>
-      </div>
-    </Link>
-  )
-}
-
-function DestCardSmall({ dest }) {
-  const hasImage = Boolean(dest.image)
-  return (
-    <Link to={`/destinations/${dest.id}`} className="home-card-dest home-card-dest--sm">
-      {hasImage ? (
-        <div className="home-card-dest__img" style={{ backgroundImage: `url(${dest.image})` }} />
-      ) : (
-        <div className="home-card-dest__placeholder">
-          <Video size={22} aria-hidden />
-          <span>No photo yet</span>
-        </div>
-      )}
-      <div className="home-card-dest__grad" />
-      <span className="home-card-dest__badge">{dest.packages} pkgs</span>
-      <div className="home-card-dest__body">
-        <div className="home-card-dest__flag">{dest.flag}</div>
-        <h3>{dest.name}</h3>
-      </div>
-    </Link>
-  )
-}
-
 function PackageCard({ pkg }) {
   return (
-    <div className="home-card-pkg">
-      <div className="home-card-pkg__img">
-        <div className="home-card-pkg__img-inner" style={{ backgroundImage: `url(${pkg.image})` }} />
+    <article className="pcard">
+      <div className="pcard__media media">
+        <div className="px pcard__img" style={{ backgroundImage: `url(${pkg.image})` }} />
         {pkg.tag && (
-          <span className="home-card-pkg__tag" style={{ background: pkg.tagColor || '#C8102E' }}>
+          <span className="pcard__tag mono" style={{ background: pkg.tagColor || 'var(--red)' }}>
             {pkg.tag}
           </span>
         )}
       </div>
-      <div className="home-card-pkg__body">
-        <div className="home-card-pkg__meta">
-          <MapPin size={13} color="#6B7280" aria-hidden />
-          <span style={{ fontWeight: 600 }}>{pkg.destinationName}</span>
-          <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            {pkg.landOnly ? <Sparkles size={12} aria-hidden /> : <Clock size={12} aria-hidden />} {pkg.duration}
-          </span>
+      <div className="pcard__body">
+        <div className="pcard__meta mono">
+          <span><MapPin size={12} aria-hidden /> {pkg.destinationName}</span>
+          <span>{pkg.landOnly ? <Sparkles size={12} aria-hidden /> : <Clock size={12} aria-hidden />} {pkg.duration}</span>
         </div>
         <h3>{pkg.title}</h3>
-        <div className="home-card-pkg__highlights">
-          {pkg.highlights.slice(0, pkg.maxHighlights || 3).map(h => (
-            <div key={h}>
-              <CheckCircle size={13} color="#10B981" aria-hidden />
-              <span>{h}</span>
-            </div>
+        <ul className="pcard__hl">
+          {pkg.highlights.slice(0, pkg.maxHighlights || 3).map((h) => (
+            <li key={h}><CheckCircle size={13} aria-hidden /><span>{h}</span></li>
           ))}
-        </div>
-        <div className="home-card-pkg__foot">
+        </ul>
+        <div className="pcard__foot">
           <div>
-            <div className="home-card-pkg__price-label">From</div>
-            <div className="home-card-pkg__price">{pkg.price}</div>
-            <div className="home-card-pkg__note">{pkg.priceNote}</div>
+            <span className="mono">From</span>
+            <div className="pcard__price">{pkg.price}</div>
+            <div className="pcard__note">{pkg.priceNote}</div>
           </div>
-          <Link to="/contact" className="btn-primary" style={{ padding: '10px 18px', fontSize: 13 }}>
-            Enquire <ChevronRight size={14} aria-hidden />
+          <Link to="/contact" className="pcard__btn" aria-label={`Enquire about ${pkg.title}`}>
+            Enquire <ArrowUpRight size={16} aria-hidden />
           </Link>
         </div>
       </div>
-    </div>
+    </article>
   )
 }

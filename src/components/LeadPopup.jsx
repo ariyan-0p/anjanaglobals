@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { api } from '../lib/api'
+import { lockScroll, unlockScroll } from '../motion/scrollLock'
 import './LeadPopup.css'
 
 const FIRST_DELAY_MS = 30000
@@ -24,6 +25,12 @@ export default function LeadPopup() {
 
     return () => window.clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    if (!open) return
+    lockScroll()
+    return unlockScroll
+  }, [open])
 
   const closePopup = () => {
     setOpen(false)
@@ -120,7 +127,7 @@ export default function LeadPopup() {
                 onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
               />
               {error ? <p className="lead-popup__error">{error}</p> : null}
-              <button type="submit" className="btn-primary lead-popup__submit" disabled={submitting}>
+              <button type="submit" className="btn btn--plain lead-popup__submit" disabled={submitting}>
                 {submitting ? 'Sending…' : 'Submit query'}
               </button>
             </form>

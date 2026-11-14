@@ -35,7 +35,6 @@ export default function BlogPostPage() {
         if (!alive) return
         setData(res)
         setLoading(false)
-        window.scrollTo({ top: 0, behavior: 'instant' })
       })
       .catch((err) => {
         if (!alive) return
@@ -78,7 +77,7 @@ export default function BlogPostPage() {
   return (
     <main className="blog-detail">
       <article>
-        <header className="blog-detail__hero">
+        <header className="blog-detail__hero" data-nav="dark">
           {post.coverUrl ? (
             <div
               className="blog-detail__cover"
@@ -149,7 +148,7 @@ export default function BlogPostPage() {
         <Link to="/blog" className="blog-detail__back">
           <ArrowLeft size={15} /> All articles
         </Link>
-        <Link to="/contact" className="btn-primary">
+        <Link to="/contact" className="btn" data-magnetic>
           Plan your trip <ArrowRight size={15} />
         </Link>
       </section>

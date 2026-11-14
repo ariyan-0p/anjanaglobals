@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { ArrowRight, MapPin, Camera, Star, Play, Video as VideoIcon, Sparkles, Quote, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUpRight, MapPin, Camera, Star, Play, Video as VideoIcon, Sparkles, Quote, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import PageHero from '../components/PageHero'
+import { lockScroll, unlockScroll } from '../motion/scrollLock'
 import { destinations } from '../data/destinations'
 import { useAllGalleries } from '../hooks/useGalleries'
 import { api, apiBase } from '../lib/api'
@@ -92,11 +94,10 @@ function MomentsShowcase() {
       else if (e.key === 'ArrowLeft') setLightbox((i) => (i - 1 + photos.length) % photos.length)
     }
     document.addEventListener('keydown', onKey)
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    lockScroll()
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
+      unlockScroll()
     }
   }, [lightbox, photos.length])
 
@@ -107,7 +108,7 @@ function MomentsShowcase() {
 
   return (
     <section className="t-moments">
-      <div className="container">
+      <div className="wrap">
         <header className="t-section-head">
           <span className="tag">Happy travellers</span>
           <h2>Real moments from real trips</h2>
@@ -210,8 +211,8 @@ function AgentVoicesSection() {
   if (voices.length === 0) return null
 
   return (
-    <section className="t-agents">
-      <div className="container">
+    <section className="t-agents" data-nav="dark">
+      <div className="wrap">
         <header className="t-section-head">
           <span className="tag">Agent voices</span>
           <h2>Hear it from our team</h2>
@@ -314,21 +315,12 @@ export default function Testimonials() {
 
   return (
     <main className="testimonials-page">
-      <section className="testimonials-page__hero">
-        <div className="container testimonials-page__hero-inner">
-          <div className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>›</span>
-            <span>Testimonials</span>
-          </div>
-          <span className="tag tag-light">Client & team voices</span>
-          <h1>Real journeys, real teams, real promises kept</h1>
-          <p>
-            Watch our destination specialists, browse photo moments from real trips, and read
-            what travellers say about working with Anjna Global.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Client & team voices"
+        title={<>Real journeys, real teams, <em>real promises kept</em></>}
+        sub="Watch our destination specialists, browse photo moments from real trips, and read what travellers say about working with Anjna Global."
+        crumbs={[{ label: 'Home', to: '/' }, { label: 'Testimonials' }]}
+      />
 
       {/* Shared happy-traveller moments */}
       <MomentsShowcase />
@@ -338,7 +330,7 @@ export default function Testimonials() {
 
       {/* Destination tabs */}
       <section className="testimonials-page__tabs-wrap">
-        <div className="container">
+        <div className="wrap">
           <div className="testimonials-page__tabs" aria-label="Destination jump links">
             {destinations.map((dest) => (
               <a key={dest.id} href={`#${dest.id}`} className="testimonials-page__tab">
@@ -352,7 +344,7 @@ export default function Testimonials() {
 
       {/* Per-destination sections */}
       <section className="testimonials-page__content">
-        <div className="container">
+        <div className="wrap">
           {destinations.map((dest) => {
             const images = imagesFor(dest)
             const destReviews = reviewsFor(dest.id)
@@ -370,7 +362,7 @@ export default function Testimonials() {
                     <p>{dest.shortDesc}</p>
                   </div>
                   <Link to={`/destinations/${dest.id}`} className="testi-destination__link">
-                    View {dest.name} page <ArrowRight size={15} />
+                    View {dest.name} page <ArrowUpRight size={15} />
                   </Link>
                 </header>
 

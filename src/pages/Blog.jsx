@@ -81,7 +81,7 @@ export default function Blog() {
 
   return (
     <main className="blog-page">
-      <section className="blog-hero">
+      <section className="blog-hero" data-nav="dark">
         <div className="container">
           <div className="breadcrumb">
             <Link to="/">Home</Link>
@@ -102,7 +102,7 @@ export default function Blog() {
               onChange={(e) => setSearchInput(e.target.value)}
               aria-label="Search blog"
             />
-            <button type="submit" className="btn-primary">Search</button>
+            <button type="submit" className="btn btn--plain btn--sm">Search</button>
           </form>
         </div>
       </section>
@@ -146,7 +146,7 @@ export default function Blog() {
             <div className="blog-empty">
               <p>No posts found{q ? ` for "${q}"` : ''}.</p>
               {(q || category) && (
-                <button type="button" className="btn-secondary" onClick={() => setSearchParams({})}>
+                <button type="button" className="btn btn--plain btn--ghost-dark" onClick={() => setSearchParams({})}>
                   Clear filters
                 </button>
               )}

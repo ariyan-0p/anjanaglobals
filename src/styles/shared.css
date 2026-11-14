@@ -1,0 +1,101 @@
+/* Shared UI atoms: chips, editorial form fields, cards used across pages */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink);
+  transition: background 0.45s var(--ease), color 0.35s, border-color 0.35s;
+  cursor: pointer;
+}
+.chip:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chip.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chip--red.is-active { background: var(--red); border-color: var(--red); }
+.on-ink .chip, .sec--ink .chip { border-color: var(--line-light); color: #fff; }
+.on-ink .chip:hover, .sec--ink .chip:hover, .on-ink .chip.is-active, .sec--ink .chip.is-active { background: #fff; color: var(--ink); border-color: #fff; }
+
+/* Forms — underlined, editorial */
+.form { display: flex; flex-direction: column; gap: clamp(22px, 2.6vw, 34px); align-items: flex-start; }
+.form > .btn, .form > button { align-self: flex-start; }
+.form__row { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(22px, 2.6vw, 34px); }
+.field { position: relative; display: block; width: 100%; }
+.field > span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 12px 0 14px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  font-size: 18px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.4s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23121a2c' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 28px;
+}
+.field textarea { resize: vertical; min-height: 96px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--muted-2); }
+.field:focus-within input, .field:focus-within select, .field:focus-within textarea { border-bottom-color: var(--red); }
+.field:focus-within > span { color: var(--red); }
+.form__error { width: 100%; padding: 12px 16px; border-radius: 12px; background: rgba(200, 16, 46, 0.08); border: 1px solid rgba(200, 16, 46, 0.3); color: var(--red); font-size: 14px; }
+.form__note { font-size: 13px; color: var(--muted-2); }
+.on-ink .field > span, .sec--ink .field > span { color: rgba(255, 255, 255, 0.55); }
+.on-ink .field input, .on-ink .field select, .on-ink .field textarea,
+.sec--ink .field input, .sec--ink .field select, .sec--ink .field textarea { color: #fff; border-bottom-color: var(--line-light); }
+
+@media (max-width: 640px) { .form__row { grid-template-columns: 1fr; } }
+
+/* ── Package card (Home + Packages) ───────────────────── */
+.pcard { display: flex; flex-direction: column; }
+.pcard__media { aspect-ratio: 4 / 3.3; border-radius: 6px; }
+.pcard__img { inset: 0 !important; height: 100% !important; transition: transform 1.4s var(--ease); }
+.pcard:hover .pcard__img { transform: scale(1.06); }
+.pcard__tag { position: absolute; z-index: 2; top: 16px; left: 16px; padding: 7px 12px; border-radius: 999px; color: #fff; font-size: 10.5px; }
+.pcard__body { display: flex; flex-direction: column; flex: 1; padding-top: 22px; }
+.pcard__meta { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; }
+.pcard__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.pcard h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.7rem, 2.2vw, 2.3rem); line-height: 1.03; letter-spacing: -0.025em; margin: 14px 0 16px; }
+.pcard__hl { display: flex; flex-direction: column; gap: 8px; margin-bottom: 26px; }
+.pcard__hl li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: var(--muted); line-height: 1.4; }
+.pcard__hl svg { flex: none; margin-top: 3px; color: var(--red); }
+.pcard__foot { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.pcard__foot .mono { color: var(--muted-2); font-size: 10.5px; }
+.pcard__price { font-family: var(--font-display); font-size: clamp(2rem, 2.6vw, 2.7rem); line-height: 1; letter-spacing: -0.03em; color: var(--ink); margin-top: 4px; }
+.pcard__note { margin-top: 5px; font-size: 12px; color: var(--muted-2); }
+.pcard__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 20px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.5s var(--ease), color 0.4s;
+  flex: none;
+}
+.pcard__btn:hover { background: var(--ink); color: #fff; }
+

@@ -1,125 +1,22 @@
-.evg-section {
-  padding: clamp(56px, 9vw, 100px) 0;
-  background: #ffffff;
-}
-.evg-mason {
-  columns: 4 240px;
-  column-gap: 16px;
-}
-.evg-item {
-  display: block;
-  width: 100%;
-  margin: 0 0 16px;
-  padding: 0;
-  border: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: zoom-in;
-  background: #eef1f5;
-  position: relative;
-  break-inside: avoid;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.evg-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
-}
-.evg-item img { display: block; width: 100%; height: auto; }
-.evg-cap {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: 1.4rem 0.85rem 0.7rem;
-  font-size: 0.8rem;
-  color: #fff;
-  text-align: left;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-.evg-item:hover .evg-cap { opacity: 1; }
-.evg-more-wrap { text-align: center; margin-top: 2rem; }
-.evg-more {
-  border: 1.5px solid #27406F;
-  background: #fff;
-  color: #27406F;
-  font-weight: 600;
-  padding: 0.75rem 1.75rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-.evg-more:hover {
-  background: linear-gradient(135deg, #C8102E 0%, #27406F 100%);
-  color: #fff;
-  border-color: transparent;
-}
+.evg-section { padding-block: var(--section-y); background: var(--cream); }
+.evg-mason { columns: 4 240px; column-gap: clamp(12px, 1.4vw, 20px); }
+.evg-item { position: relative; display: block; width: 100%; margin: 0 0 clamp(12px, 1.4vw, 20px); break-inside: avoid; border-radius: 6px; overflow: hidden; background: var(--paper); cursor: zoom-in; }
+.evg-item img { width: 100%; height: auto; transition: transform 1.2s var(--ease); }
+.evg-item:hover img { transform: scale(1.05); }
+.evg-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 16px 14px; color: #fff; font-size: 13px; text-align: left; background: linear-gradient(transparent, rgba(10, 16, 32, 0.8)); }
+.evg-more-wrap { margin-top: clamp(32px, 4vw, 56px); text-align: center; }
+.evg-more { height: 54px; padding: 0 30px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 600; font-size: 15px; transition: background 0.5s var(--ease), color 0.3s; }
+.evg-more:hover { background: var(--ink); color: #fff; }
 
-/* Lightbox */
-.evg-lb {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: rgba(8, 11, 20, 0.92);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3.5rem 1rem;
-}
-.evg-lb__fig {
-  margin: 0;
-  max-width: min(1100px, 92vw);
-  max-height: 86vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.evg-lb__fig img {
-  max-width: 100%;
-  max-height: 80vh;
-  border-radius: 10px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-.evg-lb__fig figcaption {
-  color: #e2e8f0;
-  font-size: 0.9rem;
-  margin-top: 0.85rem;
-  text-align: center;
-}
-.evg-lb__x,
-.evg-lb__nav {
-  position: fixed;
-  background: rgba(255, 255, 255, 0.12);
-  border: 0;
-  color: #fff;
-  width: 46px;
-  height: 46px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-.evg-lb__x:hover,
-.evg-lb__nav:hover { background: rgba(255, 255, 255, 0.25); }
-.evg-lb__x { top: 1.25rem; right: 1.25rem; }
-.evg-lb__nav { top: 50%; transform: translateY(-50%); }
-.evg-lb__nav--prev { left: 1.25rem; }
-.evg-lb__nav--next { right: 1.25rem; }
-.evg-lb__count {
-  position: fixed;
-  bottom: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #cbd5e1;
-  font-size: 0.85rem;
-  letter-spacing: 0.03em;
-}
-@media (max-width: 640px) {
-  .evg-mason { columns: 2 150px; column-gap: 10px; }
-  .evg-item { margin-bottom: 10px; }
-  .evg-lb__nav { width: 40px; height: 40px; }
-  .evg-lb__nav--prev { left: 0.5rem; }
-  .evg-lb__nav--next { right: 0.5rem; }
-}
+.evg-lb { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: 28px; background: rgba(10, 16, 32, 0.94); backdrop-filter: blur(8px); animation: lp-fade 0.4s ease both; }
+.evg-lb__fig { max-width: min(92vw, 1200px); max-height: 88vh; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.evg-lb__fig img { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 6px; }
+.evg-lb__fig figcaption { color: rgba(255, 255, 255, 0.8); font-size: 14px; }
+.evg-lb__x, .evg-lb__nav { position: absolute; width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid var(--line-light); border-radius: 50%; color: #fff; transition: background 0.3s, color 0.3s; }
+.evg-lb__x:hover, .evg-lb__nav:hover { background: #fff; color: var(--ink); }
+.evg-lb__x { top: 22px; right: 22px; }
+.evg-lb__nav { top: 50%; margin-top: -26px; }
+.evg-lb__nav--prev { left: 22px; }
+.evg-lb__nav--next { right: 22px; }
+.evg-lb__count { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; color: rgba(255, 255, 255, 0.6); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; }
+@media (max-width: 640px) { .evg-mason { columns: 2 140px; } }
