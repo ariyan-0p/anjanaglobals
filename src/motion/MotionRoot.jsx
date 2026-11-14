@@ -116,16 +116,21 @@ export default function MotionRoot() {
     prevPath.current = pathname
     if (isAdmin || prefersReducedMotion() || !curtain.current) return
     const el = curtain.current
-    gsap.set(el, { yPercent: 0 })
+    gsap.killTweensOf(el)
+    gsap.set(el, { visibility: 'visible', yPercent: 0 })
     gsap.to(el, {
       yPercent: -100,
       duration: 1,
       delay: 0.08,
       ease: 'expo.inOut',
-      onComplete: () => { busy.current = false },
+      onComplete: () => { gsap.set(el, { visibility: 'hidden' }); busy.current = false },
     })
     // Never leave the page covered, even if animation frames are throttled.
-    const safety = setTimeout(() => { gsap.killTweensOf(el); gsap.set(el, { yPercent: -100 }); busy.current = false }, 2400)
+    const safety = setTimeout(() => {
+      gsap.killTweensOf(el)
+      gsap.set(el, { yPercent: -100, visibility: 'hidden' })
+      busy.current = false
+    }, 2400)
     return () => clearTimeout(safety)
   }, [pathname, isAdmin])
 
@@ -158,7 +163,8 @@ export default function MotionRoot() {
         getLenis()?.start()
         navigate(dest)
       }
-      gsap.set(curtain.current, { yPercent: 100 })
+      gsap.killTweensOf(curtain.current)
+      gsap.set(curtain.current, { visibility: 'visible', yPercent: 100 })
       gsap.to(curtain.current, { yPercent: 0, duration: 0.7, ease: 'expo.inOut', onComplete: go })
       setTimeout(go, 1100) // frames throttled? navigate anyway
     }

@@ -4,7 +4,9 @@
   inset: 0;
   z-index: 8000;
   background: var(--ink);
-  transform: translate3d(0, 100%, 0);
+  /* No CSS transform here: GSAP would absorb it as a fixed pixel offset and every yPercent
+     move would land 100vh off. Hidden until MotionRoot animates it. */
+  visibility: hidden;
   pointer-events: none;
 }
 .curtain::after {
