@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, ArrowUpRight } from 'lucide-react'
-import logoWhite from '../assets/white logo.png'
+import logoWide from '../assets/Anjna Global Logo final.png'
 import './Footer.css'
 
 const SocialIcons = {
@@ -76,7 +76,7 @@ export default function Footer() {
 
       <div className="foot__grid wrap">
         <div className="foot__brand">
-          <img src={logoWhite} alt="Anjna Global" />
+          <img src={logoWide} alt="Anjna Global" />
           <p>
             Your trusted DMC partner for Dubai, Azerbaijan, Singapore, Malaysia &amp; Bali. Crafting extraordinary travel
             experiences since 2013.

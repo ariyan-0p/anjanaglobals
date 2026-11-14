@@ -39,7 +39,8 @@
   padding-top: clamp(56px, 7vw, 96px);
   padding-bottom: clamp(48px, 6vw, 80px);
 }
-.foot__brand img { height: 46px; width: auto; margin-bottom: 24px; }
+.foot__brand img { height: 46px; width: auto; margin-bottom: 24px; filter: brightness(0) invert(1); }
+@media (max-width: 700px) { .foot__brand img { height: 42px; } }
 .foot__brand p { font-size: 15px; line-height: 1.75; max-width: 24em; }
 .foot__label { margin: 30px 0 14px; color: rgba(255, 255, 255, 0.4); }
 .foot__social { display: flex; gap: 10px; }

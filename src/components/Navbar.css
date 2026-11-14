@@ -127,6 +127,8 @@
   background: var(--ink);
   color: #fff;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   clip-path: inset(0 0 100% 0);
 }
 .menu::before {
@@ -187,4 +189,27 @@
 @media (max-width: 860px) {
   .menu__inner { grid-template-columns: 1fr; align-items: start; gap: 36px; }
   .nav__cta { display: none; }
+}
+
+@media (max-width: 860px) {
+  .nav__bar { background: rgba(250, 247, 241, 0.96); height: 62px; }
+  .nav__brand img { height: 32px; }
+}
+
+/* Short phones: tighten the menu so more of it (and the CTA) is visible without scrolling */
+@media (max-width: 860px) {
+  .menu__inner { padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); gap: 28px; }
+  .menu__link { font-size: clamp(2rem, min(9vw, 5.4vh), 6rem); padding: 1px 0; }
+  .menu__aside { gap: 8px; }
+  .menu__aside .btn { margin-top: 14px; width: 100%; justify-content: space-between; }
+}
+
+/* While the menu is open, links that scroll up must slide under a solid header, not collide with the logo */
+.nav--open::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: calc(var(--header-h) + 14px);
+  background: linear-gradient(180deg, var(--ink) 68%, rgba(10, 16, 32, 0));
+  pointer-events: none;
 }

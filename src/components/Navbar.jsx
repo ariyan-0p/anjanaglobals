@@ -162,7 +162,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      <div className="menu" ref={menu} aria-hidden={!open} style={{ visibility: 'hidden' }}>
+      <div className="menu" ref={menu} aria-hidden={!open} data-lenis-prevent style={{ visibility: 'hidden' }}>
         <div className="menu__inner">
           <nav className="menu__nav" aria-label="Mobile">
             {navLinks.map((l, i) => (

@@ -245,6 +245,7 @@
   .tline__row { grid-template-columns: 1fr; gap: 6px; }
 }
 @media (max-width: 640px) {
+  .member__img { aspect-ratio: 1 / 1; }
   .vgrid, .vgrid--4, .team, .adv, .visas, .steps { grid-template-columns: 1fr; }
   .adv__item + .adv__item, .step + .step { border-left: 0; padding-left: 0; border-top: 1px solid var(--line-light); }
   .step + .step { border-top-color: var(--line); }
