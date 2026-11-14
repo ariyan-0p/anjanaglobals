@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import WhatsAppFloat from './components/WhatsAppFloat'
 import LeadPopup from './components/LeadPopup'
 import SitePreloader from './components/SitePreloader'
+import RouteErrorBoundary from './components/RouteErrorBoundary'
 import MotionRoot from './motion/MotionRoot'
 import { AuthProvider } from './context/AuthContext'
 
@@ -42,7 +43,9 @@ function PublicChrome({ children }) {
           <Navbar />
         </>
       )}
-      <Suspense fallback={<div className="route-fallback" />}>{children}</Suspense>
+      <RouteErrorBoundary key={pathname}>
+        <Suspense fallback={<div className="route-fallback" />}>{children}</Suspense>
+      </RouteErrorBoundary>
       {!isAdmin && (
         <>
           <Footer />

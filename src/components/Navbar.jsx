@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, startTransition } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ChevronDown, Phone, ArrowUpRight } from 'lucide-react'
 import { gsap, prefersReducedMotion } from '../motion/gsap'
+import { scrollToTop } from '../motion/lenis'
 import { lockScroll, unlockScroll } from '../motion/scrollLock'
 import logoColor from '../assets/Anjna Global Logo final.png'
 import './Navbar.css'
@@ -70,7 +71,7 @@ export default function Navbar() {
     }
   }, [location.pathname])
 
-  useEffect(() => { startTransition(() => { setOpen(false); setDd(false) }) }, [location.pathname])
+  useEffect(() => { startTransition(() => { setOpen(false); setDd(false) }) }, [location.pathname, location.search])
 
   /* Full-screen menu choreography */
   useEffect(() => {
@@ -94,6 +95,13 @@ export default function Navbar() {
       })
     }
   }, [open])
+
+  // Any tap inside the menu closes it. A tap on the page you're already on changes no route,
+  // so without this the menu (and its scroll lock) would stay open; scroll to the top instead.
+  const closeMenu = (to) => {
+    setOpen(false)
+    if (to && to === location.pathname) scrollToTop(false)
+  }
 
   const enter = () => { clearTimeout(ddTimer.current); setDd(true) }
   const leave = () => { ddTimer.current = setTimeout(() => setDd(false), 160) }
@@ -166,7 +174,7 @@ export default function Navbar() {
         <div className="menu__inner">
           <nav className="menu__nav" aria-label="Mobile">
             {navLinks.map((l, i) => (
-              <Link key={l.path} to={l.path} className="menu__link" title={l.title} tabIndex={open ? 0 : -1}>
+              <Link key={l.path} to={l.path} className="menu__link" title={l.title} tabIndex={open ? 0 : -1} onClick={() => closeMenu(l.path)}>
                 <i>{String(i + 1).padStart(2, '0')}</i>
                 <span>{l.label}</span>
               </Link>
@@ -176,14 +184,14 @@ export default function Navbar() {
             <p className="mono">Destinations</p>
             <ul>
               {navLinks[2].children.map((c) => (
-                <li key={c.path}><Link to={c.path} tabIndex={open ? 0 : -1}>{c.flag} {c.label}</Link></li>
+                <li key={c.path}><Link to={c.path} tabIndex={open ? 0 : -1} onClick={() => closeMenu(c.path)}>{c.flag} {c.label}</Link></li>
               ))}
             </ul>
             <p className="mono">Talk to us</p>
-            <a href="tel:+911242786999" tabIndex={open ? 0 : -1}>+91-124-2786999</a>
-            <a href="mailto:info@anjnaglobal.com" tabIndex={open ? 0 : -1}>info@anjnaglobal.com</a>
-            <a href="https://wa.me/919958801627" target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1}>WhatsApp ↗</a>
-            <Link to="/contact" className="btn btn--light" tabIndex={open ? 0 : -1}>Get a quote <ArrowUpRight size={14} aria-hidden /></Link>
+            <a href="tel:+911242786999" tabIndex={open ? 0 : -1} onClick={() => closeMenu()}>+91-124-2786999</a>
+            <a href="mailto:info@anjnaglobal.com" tabIndex={open ? 0 : -1} onClick={() => closeMenu()}>info@anjnaglobal.com</a>
+            <a href="https://wa.me/919958801627" target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1} onClick={() => closeMenu()}>WhatsApp ↗</a>
+            <Link to="/contact" className="btn btn--light" tabIndex={open ? 0 : -1} onClick={() => closeMenu("/contact")}>Get a quote <ArrowUpRight size={14} aria-hidden /></Link>
           </aside>
         </div>
       </div>

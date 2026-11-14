@@ -138,7 +138,9 @@ export default function MotionRoot() {
       const a = e.target instanceof Element ? e.target.closest('a[href]') : null
       if (!a || a.target === '_blank' || a.hasAttribute('download')) return
       if (a.origin !== window.location.origin) return
-      const samePage = a.pathname === window.location.pathname && a.search === window.location.search
+      // Same path (even with a different query string, e.g. ?utm_source=…) is not a page change:
+      // let the router handle it so no curtain closes and menus can react to the tap.
+      const samePage = a.pathname === window.location.pathname
       if (samePage) return
       if (a.pathname.startsWith('/admin') || window.location.pathname.startsWith('/admin')) return
       if (!isReady() || !curtain.current) return
