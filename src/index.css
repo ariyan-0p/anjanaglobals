@@ -36,7 +36,7 @@
   --wrap: 1440px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
-  --header-h: 76px;
+  --header-h: 90px;
 
   /* legacy aliases so older markup keeps resolving */
   --red-dark: #a00d25;

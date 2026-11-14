@@ -1,41 +1,43 @@
+/* One floating frosted capsule: colour logo · links · CTA. Same on every page and
+   over every background, so it reads as a single designed component. */
 .nav {
   position: fixed;
-  top: 0;
+  top: clamp(10px, 1.6vw, 20px);
   left: 0;
   right: 0;
   z-index: 1000;
-  transition: transform 0.7s var(--ease), background-color 0.5s var(--ease), color 0.4s, box-shadow 0.5s;
+  padding: 0 var(--pad);
   color: var(--ink);
+  pointer-events: none;
+  transition: transform 0.8s var(--ease), opacity 0.9s var(--ease);
 }
-.nav--hidden { transform: translateY(-110%); }
-.nav--solid:not(.nav--dark):not(.nav--open) {
-  background: rgba(250, 247, 241, 0.82);
-  backdrop-filter: blur(18px) saturate(1.3);
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  box-shadow: 0 1px 0 var(--line);
-}
-.nav--dark { color: #fff; }
-.nav--dark.nav--solid {
-  background: rgba(10, 16, 32, 0.38);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-.nav--open { color: #fff; background: transparent; }
+.nav--hidden { transform: translateY(-140%); }
 
 .nav__bar {
-  max-width: var(--wrap);
+  pointer-events: auto;
+  max-width: 1360px;
   margin: 0 auto;
-  height: var(--header-h);
-  padding: 0 var(--pad);
+  height: 66px;
+  padding: 0 10px 0 clamp(18px, 2vw, 30px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 28px;
+  gap: 24px;
+  border-radius: 999px;
+  background: rgba(250, 247, 241, 0.82);
+  backdrop-filter: blur(22px) saturate(1.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 50px rgba(10, 16, 32, 0.18), 0 2px 8px rgba(10, 16, 32, 0.08);
+  transition: background 0.6s var(--ease), box-shadow 0.6s, border-color 0.5s;
 }
-.nav__brand img { height: 40px; width: auto; transition: filter 0.4s; }
-.nav--dark .nav__brand img, .nav--open .nav__brand img { filter: brightness(0) invert(1); }
+.nav--solid .nav__bar { background: rgba(250, 247, 241, 0.92); }
 
-.nav__links { display: flex; align-items: center; gap: clamp(14px, 1.9vw, 30px); }
+.nav__brand { display: inline-flex; align-items: center; flex: none; }
+.nav__brand img { height: 34px; width: auto; transition: transform 0.7s var(--ease); }
+.nav__brand:hover img { transform: scale(1.04); }
+
+.nav__links { display: flex; align-items: center; gap: clamp(12px, 1.7vw, 28px); }
 .nav__item { position: relative; }
 .nav__link {
   position: relative;
@@ -45,8 +47,8 @@
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.005em;
-  padding: 8px 0;
-  opacity: 0.86;
+  padding: 8px 2px;
+  opacity: 0.78;
   transition: opacity 0.3s;
 }
 .nav__link::after {
@@ -55,28 +57,26 @@
   left: 0;
   right: 0;
   bottom: 2px;
-  height: 1px;
-  background: currentColor;
+  height: 1.5px;
+  background: var(--red);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.55s var(--ease);
 }
 .nav__link:hover, .nav__link.is-active { opacity: 1; }
-.nav__link:hover::after { transform: scaleX(1); transform-origin: left; }
-.nav__link.is-active::after { transform: scaleX(1); background: var(--red); }
-.nav--dark .nav__link.is-active::after { background: var(--sand); }
+.nav__link:hover::after, .nav__link.is-active::after { transform: scaleX(1); transform-origin: left; }
 .nav__link svg { transition: transform 0.4s var(--ease); }
 .nav__link svg.is-flip { transform: rotate(180deg); }
 
 .nav__dd {
   position: absolute;
-  top: calc(100% + 14px);
+  top: calc(100% + 22px);
   left: -22px;
   min-width: 270px;
   padding: 22px 22px 18px;
   background: var(--ink);
   color: #fff;
-  border-radius: 18px;
+  border-radius: 22px;
   box-shadow: 0 30px 80px rgba(10, 16, 32, 0.35);
   opacity: 0;
   visibility: hidden;
@@ -99,52 +99,25 @@
 .nav__dd-link svg { margin-left: auto; opacity: 0; transition: opacity 0.3s, transform 0.4s var(--ease); }
 .nav__dd-link:hover { padding-left: 8px; color: var(--sand); }
 .nav__dd-link:hover svg { opacity: 1; transform: translate(2px, -2px); }
-.nav__dd-all {
-  display: block;
-  margin-top: 14px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--sand);
-}
+.nav__dd-all { display: block; margin-top: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sand); }
 
-.nav__tail { display: flex; align-items: center; gap: 18px; }
-.nav__phone {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
-  transition: opacity 0.3s;
-}
+.nav__tail { display: flex; align-items: center; gap: 16px; }
+.nav__phone { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; opacity: 0.75; transition: opacity 0.3s; }
 .nav__phone:hover { opacity: 1; }
-.nav__cta { --b-hover-bg: var(--ink); }
-.nav--dark .nav__cta { --b-hover-bg: #fff; --b-hover-fg: var(--ink); }
+.nav__cta { --b-hover-bg: var(--ink); height: 46px; }
 
-.nav__burger {
-  display: none;
-  position: relative;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  opacity: 0.9;
-}
-.nav__burger span {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  height: 1.5px;
-  background: currentColor;
-  transition: transform 0.5s var(--ease), top 0.5s var(--ease);
-}
+.nav__burger { display: none; position: relative; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); }
+.nav__burger span { position: absolute; left: 14px; right: 14px; height: 1.5px; background: currentColor; transition: transform 0.5s var(--ease), top 0.5s var(--ease); }
 .nav__burger span:first-child { top: 19px; }
 .nav__burger span:last-child { top: 26px; }
 .nav__burger.is-open span:first-child { top: 22px; transform: rotate(45deg); }
 .nav__burger.is-open span:last-child { top: 22px; transform: rotate(-45deg); }
+
+/* Menu open: the capsule dissolves into the dark overlay, logo goes white */
+.nav--open { color: #fff; }
+.nav--open .nav__bar { background: transparent; box-shadow: none; border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.nav--open .nav__brand img { filter: brightness(0) invert(1); }
+.nav--open .nav__burger { border-color: var(--line-light); }
 
 /* Full-screen menu */
 .menu {

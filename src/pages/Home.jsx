@@ -9,8 +9,6 @@ import { homepagePartners } from '../data/hotelPartners'
 import HotelPartners from '../components/HotelPartners'
 import { gsap, prefersReducedMotion } from '../motion/gsap'
 import { onReady } from '../motion/ready'
-import { lockScroll, unlockScroll } from '../motion/scrollLock'
-import { layoutPortal, playPortal } from '../motion/heroPortal'
 import { startTrail } from '../motion/imageTrail'
 import logoColor from '../assets/Anjna Global Logo final.png'
 import heroImgDubai from '../assets/Dubai.jpg'
@@ -41,12 +39,6 @@ function absoluteUrl(url) {
   if (!url) return ''
   if (url.startsWith('http')) return url
   return `${apiBase}${url}`
-}
-
-// The logo-portal opening plays once per session, never on later visits to Home.
-let portalPlayed = false
-const portalSeen = () => {
-  try { return portalPlayed || window.sessionStorage.getItem('anjna:portal') === '1' } catch { return portalPlayed }
 }
 
 const heroImgBaliFresh = `${heroImgBali}?v=2`
@@ -173,11 +165,8 @@ export default function Home() {
   const agentVideoRefs = useRef({})
 
   const heroRef = useRef(null)
-  const veilBgRef = useRef(null)
-  const veilLogoRef = useRef(null)
   const trailRef = useRef(null)
   const slidesRef = useRef(null)
-  const [withPortal] = useState(() => !prefersReducedMotion() && !portalSeen())
   const headRef = useRef(null)
   const slideEls = useRef([])
   const timer = useRef(null)
@@ -284,11 +273,9 @@ export default function Home() {
     return () => clearTimeout(timer.current)
   }, [current, goTo])
 
-  // First-load intro, held until the preloader lifts. With the portal, the logo
-  // zoom runs first and the headline reveal fires as the photo floods the screen.
+  // First-load intro: the preloader's logo dive calls markReady() as the photo
+  // floods the screen, and the headline reveal rides that moment.
   useEffect(() => {
-    let locked = false
-    const html = document.documentElement
     const ctx = gsap.context(() => {
       const words = headRef.current?.querySelectorAll('.hw__i')
       const bg = slideEls.current[0]?.firstElementChild
@@ -296,45 +283,15 @@ export default function Home() {
       gsap.set(words, { yPercent: 118 })
       gsap.set('.hero [data-hero-in]', { opacity: 0, y: 28 })
       if (bg) gsap.set(bg, { scale: 1.3 })
-
-      const reveal = () => {
+      onReady(() => {
         const tl = gsap.timeline({ onComplete: () => { introDone.current = true } })
         if (bg) tl.to(bg, { scale: 1.02, duration: 2.6, ease: 'expo.out' }, 0)
         tl.to(words, { yPercent: 0, duration: 1.4, stagger: 0.06, ease: 'expo.out' }, 0.1)
         tl.to('.hero [data-hero-in]', { opacity: 1, y: 0, duration: 1.1, stagger: 0.09, ease: 'power3.out' }, 0.5)
-      }
-
-      const veilBg = veilBgRef.current
-      const logo = veilLogoRef.current
-      if (!withPortal || !veilBg || !logo) { onReady(reveal); return }
-
-      portalPlayed = true
-      try { window.sessionStorage.setItem('anjna:portal', '1') } catch { /* private mode */ }
-      const geo = layoutPortal(veilBg, logo)
-      html.classList.add('intro-playing')
-      onReady(() => {
-        lockScroll()
-        locked = true
-        playPortal({
-          veilBg,
-          logo,
-          geo,
-          onZoom: reveal,
-          onDone: () => {
-            locked = false
-            unlockScroll()
-            html.classList.remove('intro-playing')
-            veilBg.parentElement.style.display = 'none'
-          },
-        })
       })
     }, heroRef)
-    return () => {
-      ctx.revert()
-      html.classList.remove('intro-playing')
-      if (locked) unlockScroll()
-    }
-  }, [withPortal])
+    return () => ctx.revert()
+  }, [])
 
   // Cursor photo trail + gentle depth parallax on the slideshow (fine pointers only).
   useEffect(() => {
@@ -468,16 +425,18 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="hero__seal" data-hero-in aria-hidden>
+          <svg viewBox="0 0 200 200" className="hero__seal-ring">
+            <defs><path id="sealPath" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0" /></defs>
+            <text><textPath href="#sealPath" startOffset="0">FABULOUSLY PLANNED · REMEMBERED ALWAYS · SINCE 2013 · </textPath></text>
+          </svg>
+          <span className="hero__seal-mark" style={{ backgroundImage: `url(${logoColor})` }} />
+        </div>
+
         <div className="hero__scroll mono" data-hero-in aria-hidden>
           Scroll <span />
         </div>
 
-        {withPortal ? (
-          <div className="hero__veil" aria-hidden>
-            <div className="hero__veil-bg" ref={veilBgRef} />
-            <img className="hero__veil-logo" ref={veilLogoRef} src={logoColor} alt="" />
-          </div>
-        ) : null}
       </section>
 
       {/* ── TRUST MARQUEE ─────────────────────────────────── */}

@@ -1,67 +1,24 @@
-.preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  background: var(--ink);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(20px, 3vw, 40px) var(--pad);
-  overflow: hidden;
-}
-.preloader::before {
+.pl { position: fixed; inset: 0; z-index: 10000; color: var(--ink); overflow: hidden; }
+.pl__bg { position: absolute; inset: 0; background: var(--cream); }
+.pl__bg::before {
   content: '';
   position: absolute;
-  width: 70vmax;
-  height: 70vmax;
-  right: -25vmax;
-  bottom: -35vmax;
-  background: radial-gradient(circle, rgba(200, 16, 46, 0.35), transparent 62%);
-  filter: blur(20px);
-}
-.preloader__top, .preloader__bottom {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-.preloader__top .mono, .preloader__bottom .mono { color: rgba(255, 255, 255, 0.6); }
-.preloader__center {
-  position: relative;
-  flex: 1;
-  display: flex;
-  align-items: center;
-}
-.preloader__tag {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 9vw, 9.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.035em;
-}
-.preloader__tag em { font-style: italic; color: var(--sand); }
-.preloader__count {
-  font-family: var(--font-display);
-  font-size: clamp(3.5rem, 9vw, 8rem);
-  line-height: 0.8;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-}
-.preloader__bar {
-  flex: 1;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
-  position: relative;
-  overflow: hidden;
-}
-.preloader__bar i {
-  position: absolute;
   inset: 0;
-  background: var(--red-2);
-  transform-origin: left;
-  transform: scaleX(0);
+  background:
+    radial-gradient(60% 60% at 100% 100%, rgba(200, 16, 46, 0.1), transparent 62%),
+    radial-gradient(50% 50% at 0% 0%, rgba(27, 47, 85, 0.08), transparent 62%);
 }
-@media (max-width: 640px) {
-  .preloader__bottom .mono { display: none; }
+/* The logo-shaped hole the page shows through during the dive */
+.pl__bg.has-hole {
+  -webkit-mask-image: url('../assets/Anjna Global Logo final.png'), linear-gradient(#000, #000);
+  mask-image: url('../assets/Anjna Global Logo final.png'), linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
+
+.pl__logo { position: absolute; will-change: transform, opacity; }
+.pl__logo img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+.pl__ghost { filter: grayscale(1); opacity: 0.12; }
+.pl__color { clip-path: inset(0 100% 0 0); }
